@@ -86,9 +86,6 @@
         "description": "The name prefix for the name of the SQL DB servers"
       }
     },
-    // ---------------------------------
-    // - Existing parameters
-    // ---------------------------------
     "adminUsername": {
       "type": "string",
       "metadata": {
@@ -183,26 +180,6 @@
       },
       "defaultValue": "Premium_LRS"
     },
-    "dcStorageAccountName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of  DC Storage Account"
-      }
-    },
-    // "adPDCNICIPAddress": {
-    //   "type": "string",
-    //   "metadata": {
-    //     "description": "The IP address of the new AD VM"
-    //   },
-    //   "defaultValue": "10.0.0.4"
-    // },
-    // "adBDCNICIPAddress": {
-    //   "type": "string",
-    //   "metadata": {
-    //     "description": "The IP address of the new backup AD VM"
-    //   },
-    //   "defaultValue": "10.0.0.5"
-    // },
     "sqlLBIPAddress": {
       "type": "string",
       "metadata": {
@@ -215,7 +192,7 @@
       "metadata": {
         "description": "Linked Templates base url"
       },
-      "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/sqlvm-alwayson-cluster/nested"
+      "defaultValue": "https://raw.githubusercontent.com/jf781/Sample-Arm-Template/master/sql-aoag/nested/"
     },
     "scriptsBaseUrl": {
       "type": "string",
@@ -230,7 +207,8 @@
       "allowedValues": [
         "SQL2012SP3-WS2012R2",
         "SQL2014SP1-WS2012R2",
-        "SQL2016-WS2012R2"
+        "SQL2016-WS2012R2",
+        "sql2019-ws2019"
       ],
       "metadata": {
         "description": "The Sql Server Version"
@@ -304,11 +282,11 @@
       "sqllbFEConfigID": "[concat(variables('ids').sqllbID,'/frontendIPConfigurations/',variables('lbSettings').sqlLBFE)]",
       "sqllbProbeID": "[concat(variables('ids').sqllbID,'/probes/',variables('SQLAOProbe'))]"
     },
-    "SQL2012SP2-WS2012R2": "Enterprise",
-    "SQL2012SP3-WS2012R2": "Enterprise",
-    "SQL2014-WS2012R2": "Enterprise",
-    "SQL2014SP1-WS2012R2": "Enterprise",
-    "SQL2016-WS2012R2": "Enterprise",
+    // "SQL2012SP2-WS2012R2": "Enterprise",
+    // "SQL2012SP3-WS2012R2": "Enterprise",
+    // "SQL2014-WS2012R2": "Enterprise",
+    // "SQL2014SP1-WS2012R2": "Enterprise",
+    // "SQL2016-WS2012R2": "Enterprise",
     // "subnets": [
     //   {
     //     "name": "[variables('subnetNames').staticSubnetName]",
@@ -326,8 +304,8 @@
     // "virtualNetworkNameWithSuffix": "[substring(concat(parameters('virtualNetworkName'), uniqueString(parameters('sqlStorageAccountName'),parameters('dcStorageAccountName'))),0,15)]",
     // "primaryDCIPAddressNameWithSuffix": "[substring(concat(variables('primaryDCIPAddressName'), uniqueString(parameters('sqlStorageAccountName'),parameters('dcStorageAccountName'))),0,15)]",
     // "backupDCIPAddressNameWithSuffix": "[substring(concat(variables('backupDCIPAddressName'), uniqueString(parameters('sqlStorageAccountName'),parameters('dcStorageAccountName'))),0,15)]",
-    "sql1AddressNameWithSuffix": "[substring(concat(variables('sql1AddressName'), uniqueString(parameters('sqlStorageAccountName'),parameters('dcStorageAccountName'))),0,15)]",
-    "sql0AddressNameWithSuffix": "[substring(concat(variables('sql0AddressName'), uniqueString(parameters('sqlStorageAccountName'),parameters('dcStorageAccountName'))),0,15)]",
+    // "sql1AddressNameWithSuffix": "[substring(concat(variables('sql1AddressName'), uniqueString(parameters('sqlStorageAccountName'),parameters('dcStorageAccountName'))),0,15)]",
+    // "sql0AddressNameWithSuffix": "[substring(concat(variables('sql0AddressName'), uniqueString(parameters('sqlStorageAccountName'),parameters('dcStorageAccountName'))),0,15)]",
     "configuration": {
       "vnetwithDNSTemplateURL": "[concat(parameters('templatesBaseUrl'),'/vnet-with-dns-server.json')]",
       "nicTemplateURL": "[concat(parameters('templatesBaseUrl'),'/nic.json')]",
@@ -583,9 +561,6 @@
       "name": "UpdatingSQLWNic",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "Microsoft.Resources/deployments/UpdatingDNStoPrimaryADVM"
-      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {

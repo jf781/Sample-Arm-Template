@@ -84,9 +84,9 @@
       "location": "[parameters('location')]",
       "comments": "This will build a Virtual Network.",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('webFrontEndNsgName'))]",
-        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('appServerNsgName'))]",
-        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('dbServerNsgName'))]"
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('webFrontEndNsgName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('appServerNsgName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('dbServerNsgName'))]"
       ],
       "properties": {
         "addressSpace": {
@@ -126,7 +126,7 @@
       }
     },
     {
-      "name": "parameters('webFrontEndNsgName')",
+      "name": "[parameters('webFrontEndNsgName')]",
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2020-05-01",
       "location": "[parameters('location')]",
