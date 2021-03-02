@@ -1,0 +1,108 @@
+{  
+   "$schema":"https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+   "contentVersion":"1.0.0.0",
+   "parameters":{  
+    // ---------------------------------
+    // - New parameters
+    // ---------------------------------
+      "location": {
+        "value": "[resourceGroup().location]"
+      },
+      "virtualNetworkName": {
+        "value": "## TO BE DEFINED ##"
+      },
+      "virtualNetworkAddressSpace": {
+        "value": "## TO BE DEFINED ##"
+      },
+      "webFrontEndSubnetName": {
+        "value": "## TO BE DEFINED ##"
+      },
+      "webFrontEndSubnetAddressPrefix": {
+        "value": "## TO BE DEFINED ##"
+      },
+      "appServerSubnetName": {
+        "value": "## TO BE DEFINED ##"
+      },
+      "appServerSubnetAddresSpace": {
+        "value": "## TO BE DEFINED ##"
+      },
+      "dbServerSubnetName": {
+        "value": "## TO BE DEFINED ##"
+      },
+      "dbServerSubnetAddressSpace": {
+        "value": "## TO BE DEFINED ##"
+      },
+      "adminUsername":{  
+         "value":"alwaysonadmin"
+      },
+      // ---------------------------------
+      // - Existing Parameters
+      // ---------------------------------
+      "adminPassword":{  
+         "value":"GEN-PASSWORD"
+      },
+      "sqlServerServiceAccountUserName":{  
+         "value":"sqlservice"
+      },
+      "sqlServerServiceAccountPassword":{  
+         "value":"GEN-PASSWORD"
+      },
+      "sqlStorageAccountType":{  
+         "value":"Premium_LRS"
+      },
+      "dcStorageAccountType":{  
+         "value":"Standard_LRS"
+      },
+      "sqlStorageAccountName":{  
+         "value":"GEN-UNIQUE"
+      },
+      "dcStorageAccountName":{  
+         "value":"GEN-UNIQUE"
+      },
+      "adVMSize":{  
+         "value":"Standard_D1_v2"
+      },
+      "sqlVMSize":{  
+         "value":"Standard_DS4"
+      },
+      "witnessVMSize":{  
+         "value":"Standard_DS1"
+      },
+      "domainName":{  
+         "value":"contoso.local"
+      },
+      "virtualNetworkAddressRange":{  
+         "value":"10.0.0.0/16"
+      },
+      "staticSubnet":{  
+         "value":"10.0.0.0/24"
+      },
+      "sqlSubnet":{  
+         "value":"10.0.1.0/26"
+      },
+      "autoPatchingDay":{  
+         "value":"Sunday"
+      },
+      "autoPatchingStartHour":{  
+         "value":"2"
+      },
+      "sqlAOAGName":{  
+         "value":"alwayson-ag"
+      },
+      "sqlAOListenerPort":{  
+         "value":"1433"
+      },
+      "sqlAOListenerName":{  
+         "value":"alwayson-ag-listener"
+      },
+      "sqlServerVersion":{  
+         "value":"SQL2014SP1-WS2012R2"
+      },
+      "numberOfSqlVMDisks":{  
+         "value":"2"
+      },
+      "workloadType":{  
+         "value":"OLTP"
+      }
+   }
+}
