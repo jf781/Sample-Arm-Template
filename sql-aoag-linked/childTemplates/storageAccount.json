@@ -18,6 +18,9 @@
       "name": "[parameters('diagStorageAccountName')]",
       "apiVersion": "2019-06-01",
       "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('diagStorageAccountType')]",
+      },
       "properties": {
         "accountType": "[parameters('diagStorageAccountType')]",
         "minimumTlsVersion": "TLS1_2",
