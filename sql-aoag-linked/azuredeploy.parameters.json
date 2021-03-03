@@ -1,0 +1,69 @@
+{  
+   "$schema":"https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+   "contentVersion":"1.0.0.0",
+   "parameters":{  
+      "virtualNetworkName": {
+        "value": "uat-dr-vnet"
+      },
+      "virtualNetworkAddressSpace": {
+        "value": "10.10.0.0/24"
+      },
+      "webFrontEndSubnetName": {
+        "value": "uat-wfe-subnet"
+      },
+      "webFrontEndSubnetAddressPrefix": {
+        "value": "10.10.0.0/26"
+      },
+      "appServerSubnetName": {
+        "value": "uat-app-subnet"
+      },
+      "appServerSubnetAddresSpace": {
+        "value": "10.10.0.64/26"
+      },
+      "dbServerSubnetName": {
+        "value": "uat-db-subnet"
+      },
+      "dbServerSubnetAddressSpace": {
+        "value": "10.10.0.128/26"
+      },
+      "primaryDNSAddress":{  
+         "value":"1.1.1.1"
+      },
+      "secondaryDNSAddress": {
+        "value": "8.8.8.8"
+      },
+      "sqlLBIPAddress": {
+        "value": "10.10.0.132"
+      },
+      "adminUsername": {
+        "value": "uatAdmin"
+      },
+      "adminPassword": {
+        "value": "Password123"
+      },
+      "sqlDBServerBaseName":{  
+         "value":"uatDBSvr"
+      },
+      "sqlFileWitnessName":{  
+         "value":"uatDBSvr-FSW"
+      },
+      "sqlVMSize":{  
+         "value":"Standard_DS1"
+      },
+      "witnessVMSize":{  
+         "value":"Standard_DS1"
+      },
+      "diagStorageAccountName":{  
+         "value":"uatstgacct"
+      },
+      "diagStorageAccountType":{  
+         "value":"Standard_LRS"
+      },
+      "templatesBaseUrl":{  
+         "value":"https://raw.githubusercontent.com/jf781/Sample-Arm-Template/master/sql-aoag/nested"
+      },
+      "sqlServerVersion":{  
+         "value":"sql2019-ws2019"
+      }
+   }
+}
