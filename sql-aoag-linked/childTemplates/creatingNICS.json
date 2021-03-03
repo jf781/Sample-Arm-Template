@@ -48,5 +48,16 @@
       }
     }
   ],
-  "outputs": {}
+  "outputs": {
+    "networkInterfaces": {
+      "type": "array",
+      "copy": {
+        "count": "[parameters('sqlVMCount')]",
+        "input": {
+          "id": "[reference(concat(parameters('sqlVMName'), copyindex(), '-nic'), '2015-06-15', 'Full').resourceId]",
+          "vmName": "[parameters('sqlVMName')]" 
+        }
+      }
+    }
+  }
 }
