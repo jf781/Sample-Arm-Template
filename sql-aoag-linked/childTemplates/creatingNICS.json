@@ -14,9 +14,6 @@
     "sqlVMCount": {
       "type": "int"
     },
-    "sqlwNicName": {
-      "type": "string"
-    },
     "sqlBEAddressPoolID": {
       "type": "string"
     }
