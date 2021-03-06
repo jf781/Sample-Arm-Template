@@ -5,10 +5,10 @@
     "location": {
       "type": "string"
     },
-    "dbSubnetRef": {
+    "sqlVMName": {
       "type": "string"
     },
-    "sqlVMName": {
+    "sqlFileWitnessName": {
       "type": "string"
     },
     "sqlVMCount": {
@@ -17,11 +17,54 @@
     "sqlBEAddressPoolID": {
       "type": "string"
     },
-    "sqlFileWitnessName": {
+    "dbSubnetRef": {
+      "type": "string"
+    },
+    "wfeVMName": {
+      "type": "string"
+    },
+    "wfeVMCount": {
+      "type": "int"
+    },
+    "wfeBEAddressPoolID": {
+      "type": "string"
+    },
+    "webFrontEndSubnetRef": {
+      "type": "string"
+    },
+    "appVMName": {
+      "type": "string"
+    },
+    "appVMCount": {
+      "type": "int"
+    },
+    "appBEAddressPoolID": {
+      "type": "string"
+    },
+    "appServerSubnetRef": {
       "type": "string"
     }
   },
   "resources": [
+    {
+      "name": "[concat(parameters('sqlFileWitnessName'), '-nic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-06-15",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('dbSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "[concat(parameters('sqlVMName'), copyindex(), '-nic')]",
       "type": "Microsoft.Network/networkInterfaces",
@@ -51,10 +94,14 @@
       }
     },
     {
-      "name": "[concat(parameters('sqlFileWitnessName'), '-nic')]",
+      "name": "[concat(parameters('wfeVMName'), copyindex(), '-nic')]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
       "apiVersion": "2015-06-15",
+      "copy": {
+        "name": "wfeNicLoop",
+        "count": "[parameters('wfeVMCount')]"
+      },
       "properties": {
         "ipConfigurations": [
           {
@@ -62,24 +109,48 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[parameters('dbSubnetRef')]"
-              }
+                "id": "[parameters('webFrontEndSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[parameters('wfeBEAddressPoolID')]"
+                }
+              ]
             }
           }
         ]
       }
-    }
+    },
+    {
+      "name": "[concat(parameters('appVMName'), copyindex(), '-nic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-06-15",
+      "copy": {
+        "name": "appNicLoop",
+        "count": "[parameters('appVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('appServerSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[parameters('appBEAddressPoolID')]"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+
   ],
   "outputs": {
-    "networkInterfaces": {
-      "type": "array",
-      "copy": {
-        "count": "[parameters('sqlVMCount')]",
-        "input": {
-          "id": "[reference(concat(parameters('sqlVMName'), copyindex(), '-nic'), '2015-06-15', 'Full').resourceId]",
-          "vmName": "[parameters('sqlVMName')]" 
-        }
-      }
-    }
   }
 }
