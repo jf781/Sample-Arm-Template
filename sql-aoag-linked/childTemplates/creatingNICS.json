@@ -23,7 +23,7 @@
     "wfeVMName": {
       "type": "string"
     },
-    "wfeVMCount": {
+    "wfeServerVMCount": {
       "type": "int"
     },
     "wfeBEAddressPoolID": {
@@ -35,7 +35,7 @@
     "appVMName": {
       "type": "string"
     },
-    "appVMCount": {
+    "appServerVMCount": {
       "type": "int"
     },
     "appBEAddressPoolID": {
@@ -100,7 +100,7 @@
       "apiVersion": "2015-06-15",
       "copy": {
         "name": "wfeNicLoop",
-        "count": "[parameters('wfeVMCount')]"
+        "count": "[parameters('wfeServerVMCount')]"
       },
       "properties": {
         "ipConfigurations": [
@@ -128,7 +128,7 @@
       "apiVersion": "2015-06-15",
       "copy": {
         "name": "appNicLoop",
-        "count": "[parameters('appVMCount')]"
+        "count": "[parameters('appServerVMCount')]"
       },
       "properties": {
         "ipConfigurations": [
