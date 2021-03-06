@@ -62,7 +62,7 @@
         "name": "Aligned"
         },
       "properties": {
-        "platformFaultDomainCount": 3,a
+        "platformFaultDomainCount": 3,
         "platformUpdateDomainCount": 3
       }
     },
@@ -111,7 +111,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',parameters('sqlwNicName'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces', concat(parameters('sqlVMName'), copyindex(), '-nic'))]"
             }
           ]
         },
