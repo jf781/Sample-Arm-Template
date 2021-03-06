@@ -20,7 +20,7 @@
     "dbSubnetRef": {
       "type": "string"
     },
-    "wfeVMName": {
+    "wfeServerBaseName": {
       "type": "string"
     },
     "wfeServerVMCount": {
@@ -32,7 +32,7 @@
     "webFrontEndSubnetRef": {
       "type": "string"
     },
-    "appVMName": {
+    "appServerBaseName": {
       "type": "string"
     },
     "appServerVMCount": {
@@ -94,7 +94,7 @@
       }
     },
     {
-      "name": "[concat(parameters('wfeVMName'), copyindex(), '-nic')]",
+      "name": "[concat(parameters('wfeServerBaseName'), copyindex(), '-nic')]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
       "apiVersion": "2015-06-15",
@@ -122,7 +122,7 @@
       }
     },
     {
-      "name": "[concat(parameters('appVMName'), copyindex(), '-nic')]",
+      "name": "[concat(parameters('appServerBaseName'), copyindex(), '-nic')]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
       "apiVersion": "2015-06-15",
