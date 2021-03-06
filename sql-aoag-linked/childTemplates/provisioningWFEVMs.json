@@ -8,7 +8,7 @@
     "adminPassword": {
       "type": "securestring"
     },
-    "wfeServerVMName": {
+    "wfeServerBaseName": {
       "type": "string"
     },
     "location": {
@@ -54,7 +54,7 @@
     {
       "apiVersion": "2017-03-30",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('wfeServerVMName'), copyindex())]",
+      "name": "[concat(parameters('wfeServerBaseName'), copyindex())]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/availabilitySets/',parameters('wfeAvailabilitySetName'))]"
@@ -71,7 +71,7 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('wfeAvailabilitySetName'))]"
         },
         "osProfile": {
-          "computerName": "[concat(parameters('wfeServerVMName'), copyindex())]",
+          "computerName": "[concat(parameters('wfeServerBaseName'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -83,7 +83,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('wfeServerVMName'), copyindex(),'_OSDisk')]",
+            "name": "[concat(parameters('wfeServerBaseName'), copyindex(),'_OSDisk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -91,7 +91,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('wfeServerVMName'), copyindex(),'-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('wfeServerBaseName'), copyindex(),'-nic'))]"
             }
           ]
         },
