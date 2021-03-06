@@ -29,7 +29,7 @@
     "sqlLBProbeID": {
       "type": "string"
     },
-    "SQLAOProbe": {
+    "sqlLBProbe": {
       "type": "string"
     },
     "wfeLBName": {
@@ -106,7 +106,7 @@
         ],
         "probes": [
           {
-            "name": "[parameters('SQLAOProbe')]",
+            "name": "[parameters('sqlLBProbe')]",
             "properties": {
               "protocol": "Tcp",
               "port": 59999,
