@@ -8,7 +8,7 @@
     "adminPassword": {
       "type": "securestring"
     },
-    "wfeVMName": {
+    "wfeServerVMName": {
       "type": "string"
     },
     "location": {
@@ -20,16 +20,19 @@
     "wfeAvailabilitySetName": {
       "type": "string"
     },
-    "wfeVMSize": {
+    "wfeServerVMSize": {
       "type": "string"
     },
-    "wfeImagePublisher": {
+    "wfeServerVMCount": {
+      "type": "int"
+    },
+    "wfeServerImagePublisher": {
       "type": "string"
     },
-    "wfeImageOffer": {
+    "wfeServerImageOffer": {
       "type": "string"
     },
-    "wfeImageSKU": {
+    "wfeServerImageSKU": {
       "type": "string"
     }
   },
@@ -51,36 +54,36 @@
     {
       "apiVersion": "2017-03-30",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('wfeVMName'), copyindex())]",
+      "name": "[concat(parameters('wfeServerVMName'), copyindex())]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/availabilitySets/',parameters('wfeAvailabilitySetName'))]"
       ],
       "copy": {
-        "name": "sqlvirtualMachineLoop",
-        "count": 2
+        "name": "wfeServerMachineLoop",
+        "count": "[parameters('wfeServerVMCount')]"
       },
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[parameters('wfeVMSize')]"
+          "vmSize": "[parameters('wfeServerVMSize')]"
         },
         "availabilitySet": {
           "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('wfeAvailabilitySetName'))]"
         },
         "osProfile": {
-          "computerName": "[concat(parameters('wfeVMName'), copyindex())]",
+          "computerName": "[concat(parameters('wfeServerVMName'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "[parameters('wfeImagePublisher')]",
-            "offer": "[parameters('wfeImageOffer')]",
-            "sku": "[parameters('wfeImageSKU')]",
+            "publisher": "[parameters('wfeServerImagePublisher')]",
+            "offer": "[parameters('wfeServerImageOffer')]",
+            "sku": "[parameters('wfeServerImageSKU')]",
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('wfeVMName'), copyindex(),'_OSDisk')]",
+            "name": "[concat(parameters('wfeServerVMName'), copyindex(),'_OSDisk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -88,7 +91,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('wfeVMName'), copyindex(),'-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('wfeServerVMName'), copyindex(),'-nic'))]"
             }
           ]
         },
