@@ -16,6 +16,9 @@
     },
     "sqlBEAddressPoolID": {
       "type": "string"
+    },
+    "sqlFileWitnessName": {
+      "type": "string"
     }
   },
   "resources": [
@@ -42,6 +45,25 @@
                   "id": "[parameters('sqlBEAddressPoolID')]"
                 }
               ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('sqlFileWitnessName'), '-nic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-06-15",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('dbSubnetRef')]"
+              }
             }
           }
         ]
