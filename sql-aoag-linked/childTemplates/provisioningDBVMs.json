@@ -108,7 +108,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces', concat(parameters('sqlFileWitnessName'), copyindex(), '-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces', concat(parameters('sqlFileWitnessName'), '-nic'))]"
             }
           ]
         },
