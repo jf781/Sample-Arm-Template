@@ -44,10 +44,7 @@
     "witnessVMSize": {
       "type": "string"
     },
-    "sqlwVMName": {
-      "type": "string"
-    },
-    "sqlwNicName": {
+    "sqlFileWitnessName": {
       "type": "string"
     }
   },
@@ -69,7 +66,7 @@
     {
       "apiVersion": "2017-03-30",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('sqlwVMName')]",
+      "name": "[parameters('sqlFileWitnessName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]"
@@ -82,7 +79,7 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('sqlAvailabilitySetName'))]"
         },
         "osProfile": {
-          "computerName": "[parameters('sqlwVMName')]",
+          "computerName": "[parameters('sqlFileWitnessName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -94,13 +91,13 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('sqlwVMName'),'_OSDisk')]",
+            "name": "[concat(parameters('sqlFileWitnessName'),'_OSDisk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
           "dataDisks": [
-            { 
-              "name": "[concat(parameters('sqlwVMName'),'-data-disk1')]",
+            {
+              "name": "[concat(parameters('sqlFileWitnessName'),'-data-disk1')]",
               "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128,
@@ -111,7 +108,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces', concat(parameters('sqlVMName'), copyindex(), '-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces', concat(parameters('sqlFileWitnessName'), copyindex(), '-nic'))]"
             }
           ]
         },
