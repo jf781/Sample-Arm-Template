@@ -38,6 +38,9 @@
     "appServerVMCount": {
       "type": "int"
     },
+    "appBEAddressPoolID": {
+      "type": "string"
+    },
     "appServerSubnetRef": {
       "type": "string"
     }
@@ -135,7 +138,12 @@
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "id": "[parameters('appServerSubnetRef')]"
-              }
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[parameters('appBEAddressPoolID')]"
+                }
+              ]
             }
           }
         ]
