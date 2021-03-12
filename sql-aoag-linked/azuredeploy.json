@@ -27,6 +27,12 @@
         "description": "Name of web front end subnet."
       }
     },
+    "webFrontEndLBIPAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The IP address of the new Web Front End Server Internal Load Balancer"
+      }
+    },
     "webFrontEndSubnetAddressPrefix": {
       "type": "string",
       "metadata": {
@@ -37,6 +43,12 @@
       "type": "string",
       "metadata": {
         "description": "Name of app server subnet."
+      }
+    },
+    "appServerLBIPAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The IP address of the new application servers Internal Load Balancer"
       }
     },
     "appServerSubnetAddresSpace": {
@@ -70,6 +82,96 @@
         "description": "The IP address of the secondary DNS Server"
       },
       "defaultValue": "10.0.0.4"
+    },
+    "wfeServerBaseName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name prefix for the name of the Web Front End servers"
+      }
+    },
+    "wfeServerVMSize": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_DS1",
+        "Standard_DS2",
+        "Standard_DS3",
+        "Standard_DS4",
+        "Standard_DS11",
+        "Standard_DS12",
+        "Standard_DS13",
+        "Standard_DS14",
+        "Standard_DS1_v2",
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2",
+        "Standard_DS5_v2",
+        "Standard_DS11_v2",
+        "Standard_DS12_v2",
+        "Standard_DS13_v2",
+        "Standard_DS14_v2",
+        "Standard_DS15_v2",
+        "Standard_GS1",
+        "Standard_GS2",
+        "Standard_GS3",
+        "Standard_GS4",
+        "Standard_GS4",
+        "Standard_GS5"
+      ],
+      "metadata": {
+        "description": "The size of the Web Front End server(s)"
+      },
+      "defaultValue": "Standard_DS1"
+    },
+    "wfeServerVMCount": {
+      "type": "int",
+      "metadata": {
+        "description": "The number of Web Front End servers to deploy"
+      }
+    },
+    "appServerBaseName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name prefix for the name of the App servers"
+      }
+    },
+    "appServerVMSize": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_DS1",
+        "Standard_DS2",
+        "Standard_DS3",
+        "Standard_DS4",
+        "Standard_DS11",
+        "Standard_DS12",
+        "Standard_DS13",
+        "Standard_DS14",
+        "Standard_DS1_v2",
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2",
+        "Standard_DS5_v2",
+        "Standard_DS11_v2",
+        "Standard_DS12_v2",
+        "Standard_DS13_v2",
+        "Standard_DS14_v2",
+        "Standard_DS15_v2",
+        "Standard_GS1",
+        "Standard_GS2",
+        "Standard_GS3",
+        "Standard_GS4",
+        "Standard_GS4",
+        "Standard_GS5"
+      ],
+      "metadata": {
+        "description": "The size of the App Server(s)"
+      },
+      "defaultValue": "Standard_DS1"
+    },
+    "appServerVMCount": {
+      "type": "int",
+      "metadata": {
+        "description": "The number of Web Front End servers to deploy"
+      }
     },
     "sqlDBServerBaseName": {
       "type": "string",
@@ -186,8 +288,7 @@
       "type": "string",
       "metadata": {
         "description": "The IP address of the new SQL Server Internal Load Balancer"
-      },
-      "defaultValue": "10.0.1.9"
+      }
     },
     "templatesBaseUrl": {
       "type": "string",
@@ -228,14 +329,24 @@
     "appServerSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'),parameters('appServerSubnetName'))]",
     "dbSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'),parameters('dbServerSubnetName'))]",
     "lbSettings": {
+      "appLBFE": "appLBFE",
+      "appLBBE": "appLBBE",
+      "appLBName": "appLoadBalancer",
+      "wfeLBFE": "wfeLBFE",
+      "wfeLBBE": "wfeLBBE",
+      "wfeLBName": "wfeLoadBalancer",
       "sqlLBFE": "sqlLBFE",
       "sqlLBBE": "sqlLBBE",
       "sqlLBName": "sqlLoadBalancer"
     },
-    "SQLAOProbe": "SQLAlwaysOnEndPointProbe",
+    "sqlLBProbe": "SQLAlwaysOnEndPointProbe",
+    "wfeLBProbe": "WebFrontEndProbe",
+    "appLBProbe": "AppSvrEndProbe",
     "vmSettings": {
       "availabilitySets": {
-        "sqlAvailabilitySetName": "sqlAvailabilitySet"
+        "sqlAvailabilitySetName": "sqlAvailabilitySet",
+        "wfeAvailabilitySetName": "wfeAvailabilitySet",
+        "appAvailabilitySetName": "appAvailabilitySet"
       },
       "noOfSqlVMs": 2,
       "sqlVMName": "[parameters('sqlDBServerBaseName')]",
@@ -249,14 +360,21 @@
       "windowsDiskSize": 128,
       "sqlDiskSize": 1000
     },
-    "sqlwNicName": "[concat(variables('vmSettings').sqlwVMName,'-nic')]",
     "ids": {
-      "sqllbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').sqlLBName)]"
+      "sqlLBID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').sqlLBName)]",
+      "appLBID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').appLBName)]",
+      "wfeLBID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').wfeLBName)]"
     },
     "derivedIds": {
-      "sqlBEAddressPoolID": "[concat(variables('ids').sqllbID,'/backendAddressPools/',variables('lbSettings').sqlLBBE)]",
-      "sqllbFEConfigID": "[concat(variables('ids').sqllbID,'/frontendIPConfigurations/',variables('lbSettings').sqlLBFE)]",
-      "sqllbProbeID": "[concat(variables('ids').sqllbID,'/probes/',variables('SQLAOProbe'))]"
+      "sqlBEAddressPoolID": "[concat(variables('ids').sqlLBID,'/backendAddressPools/',variables('lbSettings').sqlLBBE)]",
+      "sqlLBFEConfigID": "[concat(variables('ids').sqlLBID,'/frontendIPConfigurations/',variables('lbSettings').sqlLBFE)]",
+      "sqlLBProbeID": "[concat(variables('ids').sqlLBID,'/probes/',variables('sqlLBProbe'))]",
+      "appBEAddressPoolID": "[concat(variables('ids').appLBID,'/backendAddressPools/',variables('lbSettings').appLBBE)]",
+      "appLBFEConfigID": "[concat(variables('ids').appLBID,'/frontendIPConfigurations/',variables('lbSettings').appLBFE)]",
+      "appLBProbeID": "[concat(variables('ids').appLBID,'/probes/',variables('appLBProbe'))]",
+      "wfeBEAddressPoolID": "[concat(variables('ids').wfeLBID,'/backendAddressPools/',variables('lbSettings').wfeLBBE)]",
+      "wfeLBFEConfigID": "[concat(variables('ids').wfeLBID,'/frontendIPConfigurations/',variables('lbSettings').wfeLBFE)]",
+      "wfeLBProbeID": "[concat(variables('ids').wfeLBID,'/probes/',variables('wfeLBProbe'))]"
     },
     "SQL2012SP2-WS2012R2": "Enterprise",
     "SQL2012SP3-WS2012R2": "Enterprise",
@@ -271,10 +389,10 @@
       "vnetURL": "[concat(parameters('templatesBaseUrl'),'/vnet.json')]",
       "setupLBsUrl": "[concat(parameters('templatesBaseUrl'),'/setupLBs.json')]",
       "creatingNicsUrl": "[concat(parameters('templatesBaseUrl'),'/creatingNICS.json')]",
-      "storageAccount": "[concat(parameters('templatesBaseUrl'),'/storageAccount.json')]",
-      "provisioningDBVMs": "[concat(parameters('templatesBaseUrl'),'/provisioningDBVMs.json')]",
-      "provisioningVMs": "[concat(parameters('templatesBaseUrl'),'/creatingNICS.json')]",
-      "provisioningSQLVMs": "[concat(parameters('templatesBaseUrl'),'/creatingNICS.json')]",
+      "storageAccountUrl": "[concat(parameters('templatesBaseUrl'),'/storageAccount.json')]",
+      "provisioningDBVMsUrl": "[concat(parameters('templatesBaseUrl'),'/provisioningDBVMs.json')]",
+      "provisioningWFEVMsUrl": "[concat(parameters('templatesBaseUrl'),'/provisioningWFEVMs.json')]",
+      "provisioningAppVMsUrl": "[concat(parameters('templatesBaseUrl'),'/provisioningAppVMs.json')]",
       // "configuringBackupADVM": "[concat(parameters('templatesBaseUrl'),'/configuringBackupADVM.json')]",
       // "preparingAlwaysOnSqlServer": "[concat(parameters('templatesBaseUrl'),'/preparingSqlServer.json')]",
       // "configuringAlwaysOn": "[concat(parameters('templatesBaseUrl'),'/configuringAlwaysOn.json')]",
@@ -294,11 +412,11 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2020-06-01",
-      "name": "vnetTemplate",
+      "name": "virtualNetwork",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "relativePath": "childTemplates/vnet.json"
+          "uri": "[variables('configuration').vnetURL]"
         },
         "parameters": {
           "location": {
@@ -341,7 +459,355 @@
         "outputs": {
         }
       }
+    },
+    {
+      "name": "StorageAccount",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "This resource will create storage accounts for diagnostics.",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').storageAccountUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "diagStorageAccountName": {
+            "value": "[parameters('diagStorageAccountName')]"
+          },
+          "diagStorageAccountType": {
+            "value": "[parameters('diagStorageAccountType')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "LoadBalancers",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "comments": "Create Load Balancers for SQL, Web Front End, and App Servers",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/virtualNetwork"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').setupLBsUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "sqlLBName": {
+            "value": "[variables('lbSettings').sqlLBName]"
+          },
+          "sqlLBFE": {
+            "value": "[variables('lbSettings').sqlLBFE]"
+          },
+          "sqlLBIPAddress": {
+            "value": "[parameters('sqlLBIPAddress')]"
+          },
+          "dbSubnetRef": {
+            "value": "[variables('dbSubnetRef')]"
+          },
+          "sqlLBBE": {
+            "value": "[variables('lbSettings').sqlLBBE]"
+          },
+          "sqlLBBEID": {
+            "value": "[variables('derivedIds').sqlBEAddressPoolID]"
+          },
+          "sqlLBFEConfigID": {
+            "value": "[variables('derivedIds').sqlLBFEConfigID]"
+          },
+          "sqlLBProbeID": {
+            "value": "[variables('derivedIds').sqlLBProbeID]"
+          },
+          "sqlLBProbe": {
+            "value": "[variables('sqlLBProbe')]"
+          },
+          "appLBName": {
+            "value": "[variables('lbSettings').appLBName]"
+          },
+          "appLBFE": {
+            "value": "[variables('lbSettings').appLBFE]"
+          },
+          "appLBIPAddress": {
+            "value": "[parameters('appServerLBIPAddress')]"
+          },
+          "appSubnetRef": {
+            "value": "[variables('appServerSubnetRef')]"
+          },
+          "appLBBE": {
+            "value": "[variables('lbSettings').appLBBE]"
+          },
+          "appLBBEID": {
+            "value": "[variables('derivedIds').appBEAddressPoolID]"
+          },
+          "appLBFEConfigID": {
+            "value": "[variables('derivedIds').appLBFEConfigID]"
+          },
+          "appLBProbeID": {
+            "value": "[variables('derivedIds').appLBProbeID]"
+          },
+          "appLBProbe": {
+            "value": "[variables('appLBProbe')]"
+          },
+          "wfeLBName": {
+            "value": "[variables('lbSettings').wfeLBName]"
+          },
+          "wfeLBFE": {
+            "value": "[variables('lbSettings').wfeLBFE]"
+          },
+          "wfeLBIPAddress": {
+            "value": "[parameters('webFrontEndLBIPAddress')]"
+          },
+          "webFrontEndSubnetRef": {
+            "value": "[variables('webFrontEndSubnetRef')]"
+          },
+          "wfeLBBE": {
+            "value": "[variables('lbSettings').wfeLBBE]"
+          },
+          "wfeLBBEID": {
+            "value": "[variables('derivedIds').wfeBEAddressPoolID]"
+          },
+          "wfeLBFEConfigID": {
+            "value": "[variables('derivedIds').wfeLBFEConfigID]"
+          },
+          "wfeLBProbeID": {
+            "value": "[variables('derivedIds').wfeLBProbeID]"
+          },
+          "wfeLBProbe": {
+            "value": "[variables('wfeLBProbe')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "CreatingNetworkInterfaces",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/LoadBalancers"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').creatingNicsUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "sqlVMName": {
+            "value": "[variables('vmSettings').sqlVMName]"
+          },
+          "sqlFileWitnessName": {
+            "value": "[parameters('sqlFileWitnessName')]"
+          },
+          "dbSubnetRef": {
+            "value": "[variables('dbSubnetRef')]"
+          },
+          "sqlBEAddressPoolID": {
+            "value": "[variables('derivedIds').sqlBEAddressPoolID]"
+          },
+          "sqlVMCount": {
+            "value": "[variables('vmSettings').noOfSqlVMs]"
+          },
+          "wfeServerBaseName": {
+            "value": "[parameters('wfeServerBaseName')]"
+          },
+          "webFrontEndSubnetRef": {
+            "value": "[variables('webFrontEndSubnetRef')]"
+          },
+          "wfeBEAddressPoolID": {
+            "value": "[variables('derivedIds').wfeBEAddressPoolID]"
+          },
+          "wfeServerVMCount": {
+            "value": "[parameters('wfeServerVMCount')]"
+          },
+          "appServerBaseName": {
+            "value": "[parameters('appServerBaseName')]"
+          },
+          "appServerSubnetRef": {
+            "value": "[variables('appServerSubnetRef')]"
+          },
+          "appBEAddressPoolID": {
+            "value": "[variables('derivedIds').appBEAddressPoolID]"
+          },
+          "appServerVMCount": {
+            "value": "[parameters('appServerVMCount')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "ProvisioningDBVMs",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/CreatingNetworkInterfaces"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').provisioningDBVMsUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "sqlAvailabilitySetName": {
+            "value": "[variables('vmSettings').availabilitySets.sqlAvailabilitySetName]"
+          },
+          "diagStorageAccountName": {
+            "value": "[parameters('diagStorageAccountName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "sqlVMName": {
+            "value": "[variables('vmSettings').sqlVMName]"
+          },
+          "sqlVMSize": {
+            "value": "[parameters('sqlVMSize')]"
+          },
+          "fswImagePublisher": {
+            "value": "[variables('vmSettings').windowsImagePublisher]"
+          },
+          "fswImageOffer": {
+            "value": "[variables('vmSettings').windowsImageOffer]"
+          },
+          "fswImageSKU": {
+            "value": "[variables('vmSettings').windowsImageSKU]"
+          },
+          "sqlImagePublisher": {
+            "value": "[variables('vmSettings').sqlImagePublisher]"
+          },
+          "sqlImageOffer": {
+            "value": "[variables('vmSettings').sqlImageOffer]"
+          },
+          "sqlImageSKU": {
+            "value": "[variables(parameters('sqlServerVersion'))]"
+          },
+          "witnessVMSize": {
+            "value": "[parameters('witnessVMSize')]"
+          },
+          "sqlFileWitnessName": {
+            "value": "[variables('vmSettings').sqlwVMName]"
+          }
+        }
+      }
+    },
+    {
+      "name": "ProvisioningAppEVMs",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/CreatingNetworkInterfaces"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').provisioningAppVMsUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appAvailabilitySetName": {
+            "value": "[variables('vmSettings').availabilitySets.appAvailabilitySetName]"
+          },
+          "diagStorageAccountName": {
+            "value": "[parameters('diagStorageAccountName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "appServerBaseName": {
+            "value": "[parameters('appServerBaseName')]"
+          },
+          "appServerVMSize": {
+            "value": "[parameters('appServerVMSize')]"
+          },
+          "appServerVMCount": {
+            "value": "[parameters('appServerVMCount')]"
+          },
+          "appServerImagePublisher": {
+            "value": "[variables('vmSettings').windowsImagePublisher]"
+          },
+          "appServerImageOffer": {
+            "value": "[variables('vmSettings').windowsImageOffer]"
+          },
+          "appServerImageSKU": {
+            "value": "[variables('vmSettings').windowsImageSKU]"
+          }
+        }
+      }
+    },
+    {
+      "name": "ProvisioningWFEVMs",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/CreatingNetworkInterfaces"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').provisioningWFEVMsUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "wfeAvailabilitySetName": {
+            "value": "[variables('vmSettings').availabilitySets.wfeAvailabilitySetName]"
+          },
+          "diagStorageAccountName": {
+            "value": "[parameters('diagStorageAccountName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "wfeServerBaseName": {
+            "value": "[parameters('wfeServerBaseName')]"
+          },
+          "wfeServerVMSize": {
+            "value": "[parameters('wfeServerVMSize')]"
+          },
+          "wfeServerVMCount": {
+            "value": "[parameters('wfeServerVMCount')]"
+          },
+          "wfeServerImagePublisher": {
+            "value": "[variables('vmSettings').windowsImagePublisher]"
+          },
+          "wfeServerImageOffer": {
+            "value": "[variables('vmSettings').windowsImageOffer]"
+          },
+          "wfeServerImageSKU": {
+            "value": "[variables('vmSettings').windowsImageSKU]"
+          }
+        }
+      }
     }
   ],
-  "outputs": {}
+  "outputs": {
+  }
 }

@@ -14,11 +14,17 @@
       "webFrontEndSubnetAddressPrefix": {
         "value": "10.10.0.0/26"
       },
+      "webFrontEndLBIPAddress": {
+        "value": "10.10.0.4"
+      },
       "appServerSubnetName": {
         "value": "uat-app-subnet"
       },
       "appServerSubnetAddresSpace": {
         "value": "10.10.0.64/26"
+      },
+      "appServerLBIPAddress": {
+        "value": "10.10.0.68"
       },
       "dbServerSubnetName": {
         "value": "uat-db-subnet"
@@ -26,20 +32,38 @@
       "dbServerSubnetAddressSpace": {
         "value": "10.10.0.128/26"
       },
+      "sqlLBIPAddress": {
+        "value": "10.10.0.132"
+      },
       "primaryDNSAddress":{  
          "value":"1.1.1.1"
       },
       "secondaryDNSAddress": {
         "value": "8.8.8.8"
       },
-      "sqlLBIPAddress": {
-        "value": "10.10.0.132"
-      },
       "adminUsername": {
         "value": "uatAdmin"
       },
       "adminPassword": {
         "value": "Password123"
+      },
+      "wfeServerBaseName": {
+        "value": "wfeSvr"
+      },
+      "wfeServerVMSize": {
+        "value": "Standard_DS1"
+      },
+      "wfeServerVMCount": {
+        "value": 2
+      },
+      "appServerBaseName": {
+        "value": "appSvr"
+      },
+      "appServerVMSize": {
+        "value": "Standard_DS1"
+      },
+      "appServerVMCount": {
+        "value": 2
       },
       "sqlDBServerBaseName":{  
          "value":"uatDBSvr"
@@ -60,7 +84,7 @@
          "value":"Standard_LRS"
       },
       "templatesBaseUrl":{  
-         "value":"https://raw.githubusercontent.com/jf781/Sample-Arm-Template/master/sql-aoag/nested"
+         "value":"https://raw.githubusercontent.com/jf781/Sample-Arm-Template/master/sql-aoag-linked/childTemplates"
       },
       "sqlServerVersion":{  
          "value":"sql2019-ws2019"
