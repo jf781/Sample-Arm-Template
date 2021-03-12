@@ -113,7 +113,7 @@
         ],
         "loadBalancingRules": [
           {
-            "name": "SQLAlwaysOnEndPointListener",
+            "name": "SQLAlwaysOnListener",
             "properties": {
               "backendAddressPool": {
                 "id": "[parameters('sqlLBBEID')]"
@@ -169,7 +169,7 @@
         ],
         "loadBalancingRules": [
           {
-            "name": "SQLAlwaysOnEndPointListener",
+            "name": "AppServersListener",
             "properties": {
               "backendAddressPool": {
                 "id": "[parameters('appLBBEID')]"
@@ -181,8 +181,9 @@
                 "id": "[parameters('appLBProbeID')]"
               },
               "protocol": "Tcp",
-              "frontendPort": 1433,
-              "backendPort": 1433,
+              "frontendPort": 80,
+              "backendPort": 80,
+              "loadDistribution": "SourceIP",
               "enableFloatingIP": true
             }
           }
@@ -225,7 +226,7 @@
         ],
         "loadBalancingRules": [
           {
-            "name": "SQLAlwaysOnEndPointListener",
+            "name": "WebFrontEndListner",
             "properties": {
               "backendAddressPool": {
                 "id": "[parameters('wfeLBBEID')]"
@@ -237,8 +238,9 @@
                 "id": "[parameters('wfeLBProbeID')]"
               },
               "protocol": "Tcp",
-              "frontendPort": 1433,
-              "backendPort": 1433,
+              "frontendPort": 80,
+              "backendPort": 80,
+              "loadDistribution": "SourceIP",
               "enableFloatingIP": true
             }
           }
