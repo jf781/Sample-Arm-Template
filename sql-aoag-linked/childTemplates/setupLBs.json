@@ -44,7 +44,7 @@
     "appLBIPAddress": {
       "type": "string"
     },
-    "appFrontEndSubnetRef": {
+    "appSubnetRef": {
       "type": "string"
     },
     "appLBBEID": {
@@ -157,7 +157,7 @@
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[parameters('appLBIPAddress')]",
               "subnet": {
-                "id": "[parameters('appFrontEndSubnetRef')]"
+                "id": "[parameters('appSubnetRef')]"
               }
             }
           }
