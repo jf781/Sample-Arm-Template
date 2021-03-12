@@ -60,7 +60,7 @@
         "[concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]"
       ],
       "copy": {
-        "name": "wfeServerMachineLoop",
+        "name": "appServerMachineLoop",
         "count": "[parameters('appServerVMCount')]"
       },
       "properties": {
