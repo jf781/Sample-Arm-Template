@@ -23,6 +23,9 @@
     "sqlVMSize": {
       "type": "string"
     },
+    "sqlVMCount": {
+      "type": "int"
+    },
     "fswImagePublisher": {
       "type": "string"
     },
@@ -130,7 +133,7 @@
       ],
       "copy": {
         "name": "sqlvirtualMachineLoop",
-        "count": 2
+        "count": "[parameters('sqlVMCount')]"
       },
       "properties": {
         "hardwareProfile": {

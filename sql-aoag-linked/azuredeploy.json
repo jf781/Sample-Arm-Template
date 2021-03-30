@@ -230,6 +230,12 @@
       },
       "defaultValue": "Standard_DS4"
     },
+    "sqlVMCount": {
+      "type": "int",
+      "metadata": {
+        "description": "The number of SQL servers to deploy"
+      }
+    },
     "witnessVMSize": {
       "type": "string",
       "allowedValues": [
@@ -616,7 +622,7 @@
             "value": "[variables('derivedIds').sqlBEAddressPoolID]"
           },
           "sqlVMCount": {
-            "value": "[variables('vmSettings').noOfSqlVMs]"
+            "value": "[parameters('sqlVMCount')]"
           },
           "wfeServerBaseName": {
             "value": "[parameters('wfeServerBaseName')]"
@@ -679,6 +685,9 @@
           },
           "sqlVMSize": {
             "value": "[parameters('sqlVMSize')]"
+          },
+          "sqlVMCount": {
+            "value": "[parameters('sqlVMCount')]"
           },
           "fswImagePublisher": {
             "value": "[variables('vmSettings').windowsImagePublisher]"
