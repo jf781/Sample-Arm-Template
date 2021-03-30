@@ -354,7 +354,6 @@
         "wfeAvailabilitySetName": "wfeAvailabilitySet",
         "appAvailabilitySetName": "appAvailabilitySet"
       },
-      "noOfSqlVMs": 2,
       "sqlVMName": "[parameters('sqlDBServerBaseName')]",
       "sqlwVMName": "[parameters('sqlFileWitnessName')]",
       "windowsImagePublisher": "MicrosoftWindowsServer",
