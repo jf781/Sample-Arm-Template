@@ -31,6 +31,12 @@
     },
     "webAppFirewallRuleSet": {
       "type": "string"
+    },
+    "webAppBackendPoolAddresses": {
+      "type": "array"
+    },
+    "wfeServerVMCount": {
+      "type": "int"
     }
   },
   "variables": {
@@ -143,10 +149,14 @@
         "backendAddressPools": [
           {
             "name": "[variables('appGwBackendAddressPoolName')]",
+            "copy": {
+              "name": "appGatewayBackendLoop",
+              "count": "[parameters('wfeServerVMCount')]"
+            },
             "properties": {
               "backendAddresses": [
                 {
-                  "fqdn": "[reference(parameters('appName')).hostNames[0]]"
+                  "ipAddress": "[parameters('webAppBackendPoolAddresses')]"
                 }
               ]
             }

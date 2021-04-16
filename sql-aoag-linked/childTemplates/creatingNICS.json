@@ -151,5 +151,12 @@
     }
   ],
   "outputs": {
+    "webFrontEndIpAddresses": {
+      "type": "array",
+      "copy": {
+        "count": "[parameters('wfeServerVMCount')]",
+        "input": "[reference(concat(parameters('wfeServerBaseName'), copyindex(), '-nic').ipConfigurations.NetwrokInteraces.privateIPAddress.value)]"
+      }
+    }
   }
 }
