@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "uniqueDnsName": {
+    "publicAppUrl": {
       "type": "string",
       "metadata": {
         "description": "Relative DNS name for the traffic manager profile, must be globally unique."
@@ -13,6 +13,12 @@
       "metadata": {
         "description": "The region to deploy the resources into"
       }
+    },
+    "frontDoorTrafficRoutingMethod": {
+      "type": "string"
+    },
+    "primaryEndpointUrl": {
+      "type": "string"
     }
   },
   "resources": [
@@ -23,14 +29,14 @@
       "location": "global",
       "properties": {
         "profileStatus": "Enabled",
-        "trafficRoutingMethod": "Performance",
+        "trafficRoutingMethod": "[parameters('frontDoorTrafficRoutingMethod')]",
         "dnsConfig": {
-          "relativeName": "[parameters('uniqueDnsName')]",
+          "relativeName": "[parameters('publicAppUrl')]",
           "ttl": 30
         },
         "monitorConfig": {
-          "protocol": "HTTPS",
-          "port": 443,
+          "protocol": "HTTP",
+          "port": 80,
           "path": "/",
           "expectedStatusCodeRanges": [
             {
@@ -48,7 +54,7 @@
             "type": "Microsoft.Network/TrafficManagerProfiles/ExternalEndpoints",
             "name": "[concat(parameters('location'), '-endpoint')]",
             "properties": {
-              "target": "www.microsoft.com",
+              "target": "[parameters('primaryEndpointUrl')]",
               "endpointStatus": "Enabled",
               "endpointLocation": "[parameters('location')]"
             }

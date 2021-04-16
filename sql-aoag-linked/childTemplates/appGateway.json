@@ -2,9 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "applicationGatewayName": {
-      "type": "string"
-    },
     "appGatewayName": {
       "type": "string"
     },
@@ -14,10 +11,10 @@
     "appName": {
       "type": "string"
     },
-    "applicationGatewayAutoScaleMinCapacity": {
+    "appGatewayAutoScaleMinValue": {
       "type": "int"
     },
-    "applicationGatewayAutoScaleMaxCapacity": {
+    "appGatewayAutoScaleMaxValue": {
       "type": "int"
     },
     "virtualNetworkName": {
@@ -43,8 +40,8 @@
     "publicIpAddressSku": "Standard",
     "publicIpAddressAllocationType": "Static",
     "publicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIpAddressName'))]",
-    "applicationGatewaySkuSize": "WAF_v2",
-    "applicationGatewayTier": "WAF_v2",
+    "appGatewaySkuSize": "WAF_v2",
+    "appGatewayTier": "WAF_v2",
     "appGwIpConfigName": "appGatewayIpConfigName",
     "appGwFrontendPortName": "appGatewayFrontendPort_80",
     "appGwFrontendPort": 80,
@@ -104,7 +101,7 @@
     {
       "type": "Microsoft.Network/applicationGateways",
       "apiVersion": "2020-05-01",
-      "name": "[parameters('applicationGatewayName')]",
+      "name": "[parameters('appGatewayName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddress/', variables('publicIpAddressName'))]",
@@ -112,8 +109,8 @@
       ],
       "properties": {
         "sku": {
-          "name": "[variables('applicationGatewaySkuSize')]",
-          "tier": "[variables('applicationGatewayTier')]"
+          "name": "[variables('appGatewaySkuSize')]",
+          "tier": "[variables('appGatewayTier')]"
         },
         "gatewayIPConfigurations": [
           {
@@ -219,8 +216,8 @@
           }
         ],
         "autoscaleConfiguration": {
-          "minCapacity": "[parameters('applicationGatewayAutoScaleMinCapacity')]",
-          "maxCapacity": "[parameters('applicationGatewayAutoScaleMaxCapacity')]"
+          "minCapacity": "[parameters('appGatewayAutoScaleMinValue')]",
+          "maxCapacity": "[parameters('appGatewayAutoScaleMaxValue')]"
         },
         "firewallPolicy": {
           "id": "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/', parameters('webAppFirewallName'))]"
