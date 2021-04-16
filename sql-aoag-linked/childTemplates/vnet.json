@@ -21,6 +21,18 @@
         "description": "Virtual Network Address Space."
       }
     },
+    "appGatewaySubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of web front end subnet."
+      }
+    },
+    "appGatewaySubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Web front end subnet address space."
+      }
+    },
     "webFrontEndSubnetName": {
       "type": "string",
       "metadata": {
@@ -95,6 +107,12 @@
           ]
         },
         "subnets": [
+          {
+            "name": "[parameters('appGatewaySubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('appGatewaySubnetAddressPrefix')]"
+            }
+          },
           {
             "name": "[parameters('webFrontEndSubnetName')]",
             "properties": {
