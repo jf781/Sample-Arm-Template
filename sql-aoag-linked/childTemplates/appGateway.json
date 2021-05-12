@@ -74,9 +74,9 @@
       },
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIpAddressAllocationType')]",
-        // "dnsSettings": {
-        //   "domainNameLabel": "[toLower(parameters('appName'))]"
-        // }
+        "dnsSettings": {
+          "domainNameLabel": "[toLower(parameters('appName'))]"
+        }
       }
     },
     {
@@ -239,10 +239,6 @@
     "appGatewayUrl": {
       "type": "string",
       "value": "[concat('http://', reference(variables('publicIpAddressName')).dnsSettings.fqdn, '/')]"
-    },
-    "webAppUrl": {
-      "type": "string",
-      "value": "[concat('http://', reference(parameters('appName')).hostNames[0], '/')]"
     }
   }
 }
