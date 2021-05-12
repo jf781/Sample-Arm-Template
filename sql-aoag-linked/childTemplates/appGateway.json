@@ -246,7 +246,7 @@
     },
     "webAppBackendPoolAddresses": {
       "type": "array",
-      "value": "parameters('webAppBackendPoolAddresses')"
+      "value": "[parameters('webAppBackendPoolAddresses')]"
     }
   }
 }
