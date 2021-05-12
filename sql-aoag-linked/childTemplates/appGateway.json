@@ -146,26 +146,26 @@
             }
           }
         ],
-        "backendAddressPools": [
-          {
-            "name": "[variables('appGwBackendAddressPoolName')]",
-            "properties": {
-              "backendAddresses": [
-                {
-                  "copy": [
-                    {
-                      "name": "appGatewayBackendLoop",
-                      "count": "[length(parameters('webAppBackendPoolAddresses'))]",
-                      "input": {
-                        "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('appGatewayBackendLoop')]]"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-        ],
+        // "backendAddressPools": [
+        //   {
+        //     "name": "[variables('appGwBackendAddressPoolName')]",
+        //     "properties": {
+        //       "backendAddresses": [
+        //         {
+        //           "copy": [
+        //             {
+        //               "name": "appGatewayBackendLoop",
+        //               "count": "[length(parameters('webAppBackendPoolAddresses'))]",
+        //               "input": {
+        //                 "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('appGatewayBackendLoop')]]"
+        //               }
+        //             }
+        //           ]
+        //         }
+        //       ]
+        //     }
+        //   }
+        // ],
         "backendHttpSettingsCollection": [
           {
             "name": "[variables('appGwHttpSettingName')]",
@@ -243,6 +243,10 @@
     "appGatewayUrl": {
       "type": "string",
       "value": "[concat('http://', reference(variables('publicIpAddressName')).dnsSettings.fqdn, '/')]"
+    },
+    "webAppBackendPoolAddresses": {
+      "type": "array",
+      "value": "parameters('webAppBackendPoolAddresses')"
     }
   }
 }
