@@ -245,7 +245,7 @@
       "value": "[concat('http://', reference(variables('publicIpAddressName')).dnsSettings.fqdn, '/')]"
     },
     "webAppBackendPoolAddresses": {
-      "type": "array",
+      "type": "string",
       "value": "[parameters('webAppBackendPoolAddresses')]"
     }
   }
