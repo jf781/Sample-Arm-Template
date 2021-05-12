@@ -155,7 +155,7 @@
       "type": "array",
       "copy": {
         "count": "[parameters('wfeServerVMCount')]",
-        "input": "[reference(concat(parameters('wfeServerBaseName'), copyindex(), '-nic').dnsSettings)]"
+        "input": "[reference(concat(parameters('wfeServerBaseName'), copyindex(), '-nic')).ipConfigurations[0]]"
       }
     }
   }
