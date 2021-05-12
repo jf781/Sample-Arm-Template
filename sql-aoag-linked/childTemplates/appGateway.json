@@ -110,7 +110,7 @@
       "name": "[parameters('appGatewayName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddress/', variables('publicIpAddressName'))]",
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpAddressName'))]",
         "[concat('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/', variables('webAppFirewallName'))]"
       ],
       "properties": {
@@ -236,9 +236,9 @@
     }
   ],
   "outputs": {
-    // "appGatewayUrl": {
-    //   "type": "string",
-    //   "value": "[concat('http://', reference(variables('publicIpAddressName')).dnsSettings.fqdn, '/')]"
-    // }
+    "appGatewayUrl": {
+      "type": "string",
+      "value": "[concat('http://', reference(variables('publicIpAddressName')).dnsSettings.fqdn, '/')]"
+    }
   }
 }
