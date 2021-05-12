@@ -74,9 +74,9 @@
       },
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIpAddressAllocationType')]",
-        "dnsSettings": {
-          "domainNameLabel": "[toLower(parameters('appName'))]"
-        }
+        // "dnsSettings": {
+        //   "domainNameLabel": "[toLower(parameters('appName'))]"
+        // }
       }
     },
     {
