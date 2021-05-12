@@ -152,7 +152,7 @@
   ],
   "outputs": {
     "webFrontEndIpAddresses": {
-      "type": "array",
+      "type": "object",
       "copy": {
         "count": "[parameters('wfeServerVMCount')]",
         "input": "[reference(concat(parameters('wfeServerBaseName'), copyindex(), '-nic').enableIPForwarding)]"
