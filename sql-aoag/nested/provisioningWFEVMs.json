@@ -1,0 +1,105 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "type": "string"
+    },
+    "adminPassword": {
+      "type": "securestring"
+    },
+    "wfeVMName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "diagStorageAccountName": {
+      "type": "string"
+    },
+    "wfeAvailabilitySetName": {
+      "type": "string"
+    },
+    "wfeVMSize": {
+      "type": "string"
+    },
+    "wfeImagePublisher": {
+      "type": "string"
+    },
+    "wfeImageOffer": {
+      "type": "string"
+    },
+    "wfeImageSKU": {
+      "type": "string"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[parameters('wfeAvailabilitySetName')]",
+      "apiVersion": "2017-12-01",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Aligned"
+        },
+      "properties": {
+        "platformFaultDomainCount": 3,
+        "platformUpdateDomainCount": 3
+      }
+    },
+    {
+      "apiVersion": "2017-03-30",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(parameters('wfeVMName'), copyindex())]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/availabilitySets/',parameters('wfeAvailabilitySetName'))]"
+      ],
+      "copy": {
+        "name": "sqlvirtualMachineLoop",
+        "count": 2
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('wfeVMSize')]"
+        },
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('wfeAvailabilitySetName'))]"
+        },
+        "osProfile": {
+          "computerName": "[concat(parameters('wfeVMName'), copyindex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('wfeImagePublisher')]",
+            "offer": "[parameters('wfeImageOffer')]",
+            "sku": "[parameters('wfeImageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(parameters('wfeVMName'), copyindex(),'_OSDisk')]",
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('wfeVMName'), copyindex(),'-nic'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('https://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

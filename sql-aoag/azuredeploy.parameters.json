@@ -53,20 +53,17 @@
       "witnessVMSize":{  
          "value":"Standard_DS1"
       },
-      "sqlStorageAccountName":{  
+      "diagStorageAccountName":{  
          "value":"uatstgacct"
       },
-      "sqlStorageAccountType":{  
-         "value":"Premium_LRS"
+      "diagStorageAccountType":{  
+         "value":"Standard_LRS"
       },
       "templatesBaseUrl":{  
          "value":"https://raw.githubusercontent.com/jf781/Sample-Arm-Template/master/sql-aoag/nested"
       },
       "sqlServerVersion":{  
          "value":"sql2019-ws2019"
-      },
-      "numberOfSqlVMDisks":{  
-         "value":"3"
       }
    }
 }

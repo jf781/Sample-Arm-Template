@@ -8,28 +8,22 @@
     "adminPassword": {
       "type": "securestring"
     },
-    "sqlVMName": {
-      "type": "string"
-    },
     "location": {
       "type": "string"
     },
-    "sqlStorageAccountName": {
+    "diagStorageAccountName": {
+      "type": "string"
+    },
+    "sqlVMName": {
       "type": "string"
     },
     "sqlAvailabilitySetName": {
       "type": "string"
     },
+    "sqlVMCount": {
+      "type": "string"
+    },
     "sqlVMSize": {
-      "type": "string"
-    },
-    "fswImagePublisher": {
-      "type": "string"
-    },
-    "fswImageOffer": {
-      "type": "string"
-    },
-    "fswImageSKU": {
       "type": "string"
     },
     "sqlImagePublisher": {
@@ -41,19 +35,26 @@
     "sqlImageSKU": {
       "type": "string"
     },
+    "fswVMName": {
+      "type": "string"
+    },
+    "fswImagePublisher": {
+      "type": "string"
+    },
+    "fswImageOffer": {
+      "type": "string"
+    },
+    "fswImageSKU": {
+      "type": "string"
+    },
+    "fswNicName": {
+      "type": "string"
+    },
     "witnessVMSize": {
-      "type": "string"
-    },
-    "sqlwVMName": {
-      "type": "string"
-    },
-    "sqlwNicName": {
       "type": "string"
     }
   },
-  "variables": {
-    "diagstorageName": "[concat(uniquestring(parameters('sqlStorageAccountName')), 'diag')]"
-  },
+  "variables": {},
   "resources": [
     {
       "type": "Microsoft.Compute/availabilitySets",
@@ -71,7 +72,7 @@
     {
       "apiVersion": "2017-03-30",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('sqlwVMName')]",
+      "name": "[parameters('fswVMName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]"
@@ -84,7 +85,7 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('sqlAvailabilitySetName'))]"
         },
         "osProfile": {
-          "computerName": "[parameters('sqlwVMName')]",
+          "computerName": "[parameters('fswVMName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -96,13 +97,13 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('sqlwVMName'),'_OSDisk')]",
+            "name": "[concat(parameters('fswVMName'),'_OSDisk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
           "dataDisks": [
             { 
-              "name": "[concat(parameters('sqlwVMName'),'-data-disk1')]",
+              "name": "[concat(parameters('fswVMName'),'-data-disk1')]",
               "caching": "None",
               "createOption": "Empty",
               "diskSizeGB": 128,
@@ -113,14 +114,14 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',parameters('sqlwNicName'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',parameters('fswNicName'))]"
             }
           ]
         },
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled":  true ,
-            "storageUri": "[concat('http://',variables('diagstorageName'),'.blob.core.windows.net')]"
+            "storageUri": "[concat('https://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
           }
         }
       }
@@ -135,7 +136,7 @@
       ],
       "copy": {
         "name": "sqlvirtualMachineLoop",
-        "count": 2
+        "count": "[parameters('sqlVMCount')]"
       },
       "properties": {
         "hardwareProfile": {
@@ -195,7 +196,7 @@
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": true,
-            "storageUri": "[concat('http://',variables('diagstorageName'),'.blob.core.windows.net')]"
+            "storageUri": "[concat('http://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
           }
         }
       }
