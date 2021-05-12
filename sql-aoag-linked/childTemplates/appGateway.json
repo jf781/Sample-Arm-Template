@@ -65,8 +65,8 @@
   },
   "resources": [
     {
-      "type": "Microsoft.Network/publicIPAddress",
-      "apiVersion": "2020-05-01",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2020-07-01",
       "name": "[variables('publicIpAddressName')]",
       "location": "[parameters('location')]",
       "sku": {
