@@ -65,7 +65,7 @@
   },
   "resources": [
     {
-      "type": "Microsoft.Network/publicIPAddresses",
+      "type": "Microsoft.Network/publicIPAddress",
       "apiVersion": "2020-05-01",
       "name": "[variables('publicIpAddressName')]",
       "location": "[parameters('location')]",
