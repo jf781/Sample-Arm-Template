@@ -150,20 +150,19 @@
           {
             "name": "[variables('appGwBackendAddressPoolName')]",
             "properties": {
-              "copy": [
-                {
-                  "name": "appGatewayBackendLoop",
-                  "count": "[parameters('wfeServerVMCount')]",
-                  "input": {
-                    "backendAddresses": [
-                      {
-                        "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('appGatewayBackendLoop')]]"
-                      }
-                    ]
+            "backendAddresses": [
+              {
+                "copy": [
+                  {
+                    "name": "appGatewayBackendLoop",
+                    "count": "[parameters('wfeServerVMCount')]",
+                    "input": {
+                      "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('appGatewayBackendLoop')]]"
+                    }
                   }
-                }
-              ]
-            }
+                ]
+              }
+            ]
           }
         ],
         "backendHttpSettingsCollection": [
