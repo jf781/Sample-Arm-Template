@@ -236,9 +236,9 @@
     }
   ],
   "outputs": {
-    "appGatewayUrl": {
-      "type": "string",
-      "value": "[concat('http://', reference(variables('publicIpAddressName')).dnsSettings.fqdn, '/')]"
-    }
+    // "appGatewayUrl": {
+    //   "type": "string",
+    //   "value": "[concat('http://', reference(variables('publicIpAddressName')).dnsSettings.fqdn, '/')]"
+    // }
   }
 }
