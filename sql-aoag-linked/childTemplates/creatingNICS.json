@@ -151,12 +151,12 @@
     }
   ],
   "outputs": {
-    // "webFrontEndIpAddresses": {
-    //   "type": "array",
-    //   "copy": {
-    //     "count": "[parameters('wfeServerVMCount')]",
-    //     "input": "[reference(concat(parameters('wfeServerBaseName'), copyindex(), '-nic').ipConfigurations[0].properties.privateIPAddress)]"
-    //   }
-    // }
+    "webFrontEndIpAddresses": {
+      "type": "array",
+      "copy": {
+        "count": "[parameters('wfeServerVMCount')]",
+        "input": "[reference(concat(parameters('wfeServerBaseName'), copyindex(), '-nic')]"
+      }
+    }
   }
 }
