@@ -149,14 +149,16 @@
         "backendAddressPools": [
           {
             "name": "[variables('appGwBackendAddressPoolName')]",
-            "copy": {
-              "name": "appGatewayBackendLoop",
-              "count": "[parameters('wfeServerVMCount')]"
-            },
             "properties": {
-              "backendAddresses": [
+              "copy": [
                 {
-                  "ipAddress": "[parameters('webAppBackendPoolAddresses')]"
+                  "name": "appGatewayBackendLoop",
+                  "count": "[parameters('wfeServerVMCount')]",
+                  "backendAddresses": [
+                    {
+                      "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('appGatewayBackendLoop')]]"
+                    }
+                  ]
                 }
               ]
             }
