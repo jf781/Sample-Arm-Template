@@ -154,11 +154,13 @@
                 {
                   "name": "appGatewayBackendLoop",
                   "count": "[parameters('wfeServerVMCount')]",
-                  "backendAddresses": [
-                    {
-                      "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('appGatewayBackendLoop')]]"
-                    }
-                  ]
+                  "input": {
+                    "backendAddresses": [
+                      {
+                        "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('appGatewayBackendLoop')]]"
+                      }
+                    ]
+                  }
                 }
               ]
             }
