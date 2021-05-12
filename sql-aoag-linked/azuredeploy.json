@@ -9,16 +9,46 @@
         "description": "Location for all resources."
       }
     },
-    "virtualNetworkName": {
+    "appName": {
       "type": "string",
       "metadata": {
-        "description": "Virtual Network Name."
+        "description": "Name of the application."
+      }
+    },
+    "publicAppUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "The URL that will be used to access the application. Must be globally unique."
       }
     },
     "virtualNetworkAddressSpace": {
       "type": "string",
       "metadata": {
         "description": "Virtual Network Address Space."
+      }
+    },
+    "appGatewaySubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of app gateway end subnet."
+      }
+    },
+    "appGatewaySubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "App Gateway subnet address space."
+      }
+    },
+    "appGatewayAutoScaleMaxValue": {
+      "type": "int",
+      "metadata": {
+        "description": "The maximum number of App Gateway instances to scale to"
+      }
+    },
+    "appGatewayAutoScaleMinValue": {
+      "type": "int",
+      "metadata": {
+        "description": "The minimum number of App Gateway instances to scale to"
       }
     },
     "webFrontEndSubnetName": {
@@ -323,17 +353,48 @@
         "description": "The Sql Server Version"
       },
       "defaultValue": "SQL2014SP1-WS2012R2"
+    },
+    "webAppFirewallMode": {
+      "type": "string",
+      "allowedValues": [
+        "Detection",
+        "Prevention"
+      ],
+      "metadata": {
+        "description": "Weather the WAF will be in Prevention or Detection mode"
+      }
+    },
+    "webAppFirewallRuleSet": {
+      "type": "string",
+      "allowedValues": [
+        "3.2",
+        "3.1",
+        "3.0",
+        "2.2.9"
+      ],
+      "metadata": {
+        "description": "The OWASP Ruleset that will be use for the App Gateways WAF"
+      }
+    },
+    "frontDoorTrafficRoutingMethod": {
+      "type": "string",
+      "metadata": {
+        "description": "The routing method used by Front Door"
+      }
     }
   },
   "variables": {
+    "virtualNetworkName": "[concat(parameters('appName'), '-vnet')]",
+    "appGatewayName": "[concat(parameters('appName'), '-app-gateway')]",
+    "webAppFirewallName": "[concat(parameters('appName'), '-waf')]",
     "nsgNames": {
       "webFrontEnd": "[concat(parameters('webFrontEndSubnetName'), '-nsg')]",
       "appServer": "[concat(parameters('appServerSubnetName'), '-nsg')]",
       "dbServer": "[concat(parameters('dbServerSubnetName'), '-nsg')]"
     },
-    "webFrontEndSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'),parameters('webFrontEndSubnetName'))]",
-    "appServerSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'),parameters('appServerSubnetName'))]",
-    "dbSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'),parameters('dbServerSubnetName'))]",
+    "webFrontEndSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('virtualNetworkName'),parameters('webFrontEndSubnetName'))]",
+    "appServerSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('virtualNetworkName'),parameters('appServerSubnetName'))]",
+    "dbSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('virtualNetworkName'),parameters('dbServerSubnetName'))]",
     "lbSettings": {
       "appLBFE": "appLBFE",
       "appLBBE": "appLBBE",
@@ -398,8 +459,8 @@
       "provisioningDBVMsUrl": "[concat(parameters('templatesBaseUrl'),'/provisioningDBVMs.json')]",
       "provisioningWFEVMsUrl": "[concat(parameters('templatesBaseUrl'),'/provisioningWFEVMs.json')]",
       "provisioningAppVMsUrl": "[concat(parameters('templatesBaseUrl'),'/provisioningAppVMs.json')]",
-      // "configuringBackupADVM": "[concat(parameters('templatesBaseUrl'),'/configuringBackupADVM.json')]",
-      // "preparingAlwaysOnSqlServer": "[concat(parameters('templatesBaseUrl'),'/preparingSqlServer.json')]",
+      "appGatewayUrl": "[concat(parameters('templatesBaseUrl'),'/appGateway.json')]",
+      "trafficManagerUrl": "[concat(parameters('templatesBaseUrl'),'/trafficManager.json')]"
       // "configuringAlwaysOn": "[concat(parameters('templatesBaseUrl'),'/configuringAlwaysOn.json')]",
       // "adPDCModulesURL": "[concat(parameters('scriptsBaseUrl'),'/CreateADPDC.ps1.zip')]",
       // "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
@@ -428,10 +489,16 @@
             "value": "[parameters('location')]"
           },
           "virtualNetworkName": {
-            "value": "[parameters('virtualNetworkName')]"
+            "value": "[variables('virtualNetworkName')]"
           },
           "virtualNetworkAddressSpace": {
             "value": "[parameters('virtualNetworkAddressSpace')]"
+          },
+          "appGatewaySubnetName": {
+            "value": "[parameters('appGatewaySubnetName')]"
+          },
+          "appGatewaySubnetAddressPrefix": {
+            "value": "[parameters('appGatewaySubnetAddressPrefix')]"
           },
           "webFrontEndSubnetName": {
             "value": "[parameters('webFrontEndSubnetName')]"
@@ -651,7 +718,7 @@
       }
     },
     {
-      "name": "ProvisioningDBVMs",
+      "name": "DatabaseVMs",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
@@ -716,7 +783,7 @@
       }
     },
     {
-      "name": "ProvisioningAppEVMs",
+      "name": "ApplicationVMs",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
@@ -766,7 +833,7 @@
       }
     },
     {
-      "name": "ProvisioningWFEVMs",
+      "name": "WebFrontEndVMs",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
@@ -811,6 +878,88 @@
           },
           "wfeServerImageSKU": {
             "value": "[variables('vmSettings').windowsImageSKU]"
+          }
+        }
+      }
+    },
+    {
+      "name": "ApplicationGateway",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/WebFrontEndVMs"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').appGatewayUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appGatewayName" :{
+            "value": "[variables('appGatewayName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "appName": {
+            "value": "[parameters('appName')]"
+          },
+          "wfeServerVMCount": {
+            "value": "[parameters('wfeServerVMCount')]"
+          },
+          "webAppBackendPoolAddresses": {
+            "value": "[reference('CreatingNetworkInterfaces').outputs.webFrontEndIpAddresses.value]"
+          },
+          "appGatewayAutoScaleMaxValue": {
+            "value": "[parameters('appGatewayAutoScaleMaxValue')]"
+          },
+          "appGatewayAutoScaleMinValue": {
+            "value": "[parameters('appGatewayAutoScaleMinValue')]"
+          },
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
+          },
+          "appGatewaySubnetName": {
+            "value": "[parameters('appGatewaySubnetName')]"
+          },
+          "webAppFirewallName": {
+            "value": "[variables('webAppFirewallName')]"
+          },
+          "webAppFirewallMode": {
+            "value": "[parameters('webAppFirewallMode')]"
+          },
+          "webAppFirewallRuleSet": {
+            "value": "[parameters('webAppFirewallRuleSet')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "ProvisioningFrontDoor",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/ApplicationGateway"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').appGatewayUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "publicAppUrl": {
+            "value": "[parameters('publicAppUrl')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "frontDoorTrafficRoutingMethod": {
+            "value": "[parameters('frontDoorTrafficRoutingMethod')]"
+          },
+          "primaryEndpointUrl": {
+            "value": "[reference('ApplicationGateway').outputs.AppGatewayUrl.value]"
           }
         }
       }

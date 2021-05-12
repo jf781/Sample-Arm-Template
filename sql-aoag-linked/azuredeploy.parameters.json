@@ -2,11 +2,26 @@
    "$schema":"https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
    "contentVersion":"1.0.0.0",
    "parameters":{  
-      "virtualNetworkName": {
-        "value": "uat-dr-vnet"
+      "appName": {
+        "value": "uat-dr"
+      },
+      "publicAppUrl": {
+        "value": "jf-sample-app.azurefd.net"
       },
       "virtualNetworkAddressSpace": {
         "value": "10.10.0.0/24"
+      },
+      "appGatewaySubnetName": {
+        "value": "uat-app-gateway-subnet"
+      },
+      "appGatewaySubnetAddressPrefix": {
+        "value": "10.10.0.192/26"
+      },
+      "appGatewayAutoScaleMaxValue": {
+        "value": 3
+      },
+      "appGatewayAutoScaleMinValue": {
+        "value": 1
       },
       "webFrontEndSubnetName": {
         "value": "uat-wfe-subnet"
@@ -81,7 +96,7 @@
          "value":"Standard_DS1"
       },
       "diagStorageAccountName":{  
-         "value":"uatstgacct"
+         "value": "uatstgacct"
       },
       "diagStorageAccountType":{  
          "value":"Standard_LRS"
@@ -91,6 +106,15 @@
       },
       "sqlServerVersion":{  
          "value":"sql2019-ws2019"
+      },
+      "webAppFirewallMode": {
+        "value": "Detection"
+      },
+      "webAppFirewallRuleSet": {
+        "value": "3.1"
+      },
+      "frontDoorTrafficRoutingMethod": {
+        "value": "Priority"
       }
    }
 }
