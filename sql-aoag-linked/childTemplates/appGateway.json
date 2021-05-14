@@ -155,7 +155,7 @@
                   "name": "backendAddresses",
                   "count": "[length(parameters('webAppBackendPoolAddresses'))]",
                   "input": {
-                    "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('appGatewayBackendLoop')]]"
+                    "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('backendAddresses')]]"
                   }
                 }
               ]
