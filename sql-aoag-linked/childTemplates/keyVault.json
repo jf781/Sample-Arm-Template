@@ -15,7 +15,7 @@
       "type": "array"
     },
     "keyVaultVnetAcl": {
-      "type": "string"
+      "type": "array"
     },
     "enabledForDeployment": {
       "type": "bool"
