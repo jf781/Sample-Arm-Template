@@ -74,14 +74,14 @@
           "bypass": "AzureServices",
           "defaultAction": "deny",
           "ipRules": [
-            {
-              "value": "string"
-            }
+            // {
+            //   "value": "string"
+            // }
           ],
           "virtualNetworkRules": [
-            {
-              "id": "string"
-            }
+            // {
+            //   "id": "string"
+            // }
           ]
         }
       }
