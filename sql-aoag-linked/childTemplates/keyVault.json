@@ -11,6 +11,12 @@
     "keyVaultSku": {
       "type": "string"
     },
+    "keyVaultIpAcl": {
+      "type": "array"
+    },
+    "keyVaultVnetAcl": {
+      "type": "string"
+    },
     "enabledForDeployment": {
       "type": "bool"
     },
@@ -74,14 +80,30 @@
           "bypass": "AzureServices",
           "defaultAction": "deny",
           "ipRules": [
-            // {
-            //   "value": "string"
-            // }
+            {
+              "copy": [
+                {
+                  "name": "ipAclLoop",
+                  "count": "[length(parameters('keyVaultIpAcl'))]",
+                  "input": {
+                    "value": "[parameters('keyVaultIpAcl')[copyIndex('ipAclLoop')]]"
+                  }
+                }
+              ]
+            }
           ],
           "virtualNetworkRules": [
-            // {
-            //   "id": "string"
-            // }
+            {
+              "copy": [
+                {
+                  "name": "vnetAclLoop",
+                  "count": "[length(parameters('keyVaultVnetAcl'))]",
+                  "input": {
+                    "value": "[parameters('keyVaultVnetAcl')[copyIndex('vnetAclLoop')]]"
+                  }
+                }
+              ]
+            }
           ]
         }
       }
