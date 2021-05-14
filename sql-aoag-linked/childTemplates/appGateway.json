@@ -149,21 +149,17 @@
         "backendAddressPools": [
           {
             "name": "[variables('appGwBackendAddressPoolName')]",
-            // "properties": {
-            //   "backendAddresses": [
-            //     {
-            //       "copy": [
-            //         {
-            //           "name": "appGatewayBackendLoop",
-            //           "count": "[length(parameters('webAppBackendPoolAddresses'))]",
-            //           "input": {
-            //             "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('appGatewayBackendLoop')]]"
-            //           }
-            //         }
-            //       ]
-            //     }
-            //   ]
-            // }
+            "properties": {
+              "copy": [
+                {
+                  "name": "backendAddresses",
+                  "count": "[length(parameters('webAppBackendPoolAddresses'))]",
+                  "input": {
+                    "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('appGatewayBackendLoop')]]"
+                  }
+                }
+              ]
+            }
           }
         ],
         "backendHttpSettingsCollection": [
