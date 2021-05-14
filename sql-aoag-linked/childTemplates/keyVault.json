@@ -8,6 +8,9 @@
     "location": {
       "type": "string"
     },
+    "keyVaultSku": {
+      "type": "string"
+    }
     "enabledForDeployment": {
       "type": "bool"
     },
@@ -35,7 +38,7 @@
         "tenantId": "[subscription().tenantId]",
         "sku": {
           "family": "A",
-          "name": "string"
+          "name": "[parameters('keyVaultSku')]"
         },
         // "accessPolicies": [
         //   {
