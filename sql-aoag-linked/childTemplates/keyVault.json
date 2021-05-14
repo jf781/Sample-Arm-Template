@@ -37,27 +37,27 @@
           "family": "A",
           "name": "string"
         },
-        "accessPolicies": [
-          {
-            "tenantId": "[subscription().tenantId]",
-            "objectId": "string",
-            "applicationId": "string",
-            "permissions": {
-              "keys": [
-                "string"
-              ],
-              "secrets": [
-                "string"
-              ],
-              "certificates": [
-                "string"
-              ],
-              "storage": [
-                "string"
-              ]
-            }
-          }
-        ],
+        // "accessPolicies": [
+        //   {
+        //     "tenantId": "[subscription().tenantId]",
+        //     "objectId": "string",
+        //     "applicationId": "string",
+        //     "permissions": {
+        //       "keys": [
+        //         "string"
+        //       ],
+        //       "secrets": [
+        //         "string"
+        //       ],
+        //       "certificates": [
+        //         "string"
+        //       ],
+        //       "storage": [
+        //         "string"
+        //       ]
+        //     }
+        //   }
+        // ],
         "vaultUri": "string",
         "enabledForDeployment": "[parameters('enabledForDeployment')]",
         "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
