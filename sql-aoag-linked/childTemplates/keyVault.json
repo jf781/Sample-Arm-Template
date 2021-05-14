@@ -79,30 +79,22 @@
         "networkAcls": {
           "bypass": "AzureServices",
           "defaultAction": "deny",
-          "ipRules": [
+          "copy": [
             {
-              "copy": [
-                {
-                  "name": "ipAclLoop",
-                  "count": "[length(parameters('keyVaultIpAcl'))]",
-                  "input": {
-                    "value": "[parameters('keyVaultIpAcl')[copyIndex('ipAclLoop')]]"
-                  }
-                }
-              ]
+              "name": "ipRules",
+              "count": "[length(parameters('keyVaultIpAcl'))]",
+              "input": {
+                "value": "[parameters('keyVaultIpAcl')[copyIndex('ipRules')]]"
+              }
             }
           ],
-          "virtualNetworkRules": [
+          "copy": [
             {
-              "copy": [
-                {
-                  "name": "vnetAclLoop",
-                  "count": "[length(parameters('keyVaultVnetAcl'))]",
-                  "input": {
-                    "value": "[parameters('keyVaultVnetAcl')[copyIndex('vnetAclLoop')]]"
-                  }
-                }
-              ]
+              "name": "virtualNetworkRules",
+              "count": "[length(parameters('keyVaultVnetAcl'))]",
+              "input": {
+                "value": "[parameters('keyVaultVnetAcl')[copyIndex('virtualNetworkRules')]]"
+              }
             }
           ]
         }
