@@ -10,7 +10,7 @@
     },
     "keyVaultSku": {
       "type": "string"
-    }
+    },
     "enabledForDeployment": {
       "type": "bool"
     },
