@@ -1,0 +1,89 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "enabledForDeployment": {
+      "type": "boolean"
+    },
+    "enabledForDiskEncryption": {
+      "type": "boolean"
+    },
+    "enabledForTemplateDeployment": {
+      "type": "boolean"
+    },
+    "enabledRBACAuthorization": {
+      "type": "boolean"
+    }
+  },
+  "variables": {
+    "keyVaultName": "[concat(parameters('appName'), '-keyVault')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('keyVaultName')]",
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2019-09-01",
+      "location": "[parameters('location')]",
+      "tags": {},
+      "properties": {
+        "tenantId": "[subscription().tenantId]",
+        "sku": {
+          "family": "A",
+          "name": "string"
+        },
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "string",
+            "applicationId": "string",
+            "permissions": {
+              "keys": [
+                "string"
+              ],
+              "secrets": [
+                "string"
+              ],
+              "certificates": [
+                "string"
+              ],
+              "storage": [
+                "string"
+              ]
+            }
+          }
+        ],
+        "vaultUri": "string",
+        "enabledForDeployment": "[parameters('enabledForDeployment')]",
+        "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
+        "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+        "enableSoftDelete": "true",
+        // "softDeleteRetentionInDays": "integer",
+        "enableRbacAuthorization": "[parameters('enabledRBACAuthorization')]",
+        "createMode": "default",
+        "enablePurgeProtection": "true",
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "defaultAction": "deny",
+          "ipRules": [
+            {
+              "value": "string"
+            }
+          ],
+          "virtualNetworkRules": [
+            {
+              "id": "string"
+            }
+          ]
+        }
+      },
+      "resources": []
+    }
+  ],
+  "outputs": {} 
+}
