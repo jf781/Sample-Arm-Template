@@ -93,7 +93,7 @@
               "name": "virtualNetworkRules",
               "count": "[length(parameters('keyVaultVnetAcl'))]",
               "input": {
-                "value": "[parameters('keyVaultVnetAcl')[copyIndex('virtualNetworkRules')]]"
+                "id": "[parameters('keyVaultVnetAcl')[copyIndex('virtualNetworkRules')]]"
               }
             }
           ]
