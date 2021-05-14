@@ -9,16 +9,16 @@
       "type": "string"
     },
     "enabledForDeployment": {
-      "type": "boolean"
+      "type": "bool"
     },
     "enabledForDiskEncryption": {
-      "type": "boolean"
+      "type": "bool"
     },
     "enabledForTemplateDeployment": {
-      "type": "boolean"
+      "type": "bool"
     },
     "enabledRBACAuthorization": {
-      "type": "boolean"
+      "type": "bool"
     }
   },
   "variables": {
