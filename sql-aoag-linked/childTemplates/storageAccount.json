@@ -7,9 +7,6 @@
     },
     "diagStorageAccountName": {
       "type": "string"
-    },
-    "diagStorageAccountType": {
-      "type": "string"
     }
   },
   "resources": [
@@ -19,10 +16,10 @@
       "apiVersion": "2019-06-01",
       "location": "[parameters('location')]",
       "sku": {
-        "name": "[parameters('diagStorageAccountType')]"
+        "name": "Standard_LRS"
       },
       "properties": {
-        "accountType": "[parameters('diagStorageAccountType')]",
+        "accountType": "Standard_LRS",
         "minimumTlsVersion": "TLS1_2",
         "allowBlobPublicAccess": true,
         "networkAcls": {
@@ -35,5 +32,10 @@
       }
     }
   ],
-  "outputs": {}
+  "outputs": {
+      "blobUri": {
+        "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('diagStorageAccountName'))).primaryEndpoints.blob]",
+        "type" : "string"
+    }
+  }
 }
