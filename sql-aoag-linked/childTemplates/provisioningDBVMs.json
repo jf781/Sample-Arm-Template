@@ -26,15 +26,6 @@
     "sqlVMCount": {
       "type": "int"
     },
-    "fswImagePublisher": {
-      "type": "string"
-    },
-    "fswImageOffer": {
-      "type": "string"
-    },
-    "fswImageSKU": {
-      "type": "string"
-    },
     "sqlImagePublisher": {
       "type": "string"
     },
@@ -42,12 +33,6 @@
       "type": "string"
     },
     "sqlImageSKU": {
-      "type": "string"
-    },
-    "witnessVMSize": {
-      "type": "string"
-    },
-    "sqlFileWitnessName": {
       "type": "string"
     }
   },
@@ -64,63 +49,6 @@
       "properties": {
         "platformFaultDomainCount": 3,
         "platformUpdateDomainCount": 3
-      }
-    },
-    {
-      "apiVersion": "2017-03-30",
-      "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('sqlFileWitnessName')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]"
-      ],
-      "properties": {
-        "hardwareProfile": {
-          "vmSize": "[parameters('witnessVMSize')]"
-        },
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('sqlAvailabilitySetName'))]"
-        },
-        "osProfile": {
-          "computerName": "[parameters('sqlFileWitnessName')]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "[parameters('fswImagePublisher')]",
-            "offer": "[parameters('fswImageOffer')]",
-            "sku": "[parameters('fswImageSKU')]",
-            "version": "latest"
-          },
-          "osDisk": {
-            "name": "[concat(parameters('sqlFileWitnessName'),'_OSDisk')]",
-            "caching": "ReadWrite",
-            "createOption": "FromImage"
-          },
-          "dataDisks": [
-            {
-              "name": "[concat(parameters('sqlFileWitnessName'),'-data-disk1')]",
-              "caching": "None",
-              "createOption": "Empty",
-              "diskSizeGB": 128,
-              "lun": 0
-            }
-          ]
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces', concat(parameters('sqlFileWitnessName'), '-nic'))]"
-            }
-          ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled":  true ,
-            "storageUri": "[concat('https://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
-          }
-        }
       }
     },
     {
