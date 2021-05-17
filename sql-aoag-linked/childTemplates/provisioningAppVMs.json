@@ -36,7 +36,9 @@
       "type": "string"
     }
   },
-  "variables": {},
+  "variables": {
+    "emtpyString": {}
+  },
   "resources": [
     {
       "condition": "[not(greater(parameters('appServerVMCount'),1))]" ,
@@ -58,7 +60,7 @@
       "name": "[concat(parameters('appServerBaseName'), copyindex())]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[if(greater(parameters('appServerVMCount'), 1), concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName')), null)]"
+        "[if(greater(parameters('appServerVMCount'), 1), concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName')), variables('emtpyString') )]"
       ],
       "copy": {
         "name": "appServerMachineLoop",
