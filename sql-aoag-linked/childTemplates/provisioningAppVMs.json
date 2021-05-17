@@ -40,6 +40,9 @@
     "emtpyString": {
       "type": "string",
       "value": null
+    },
+    "availabilitySetId": {
+      
     }
   },
   "resources": [
