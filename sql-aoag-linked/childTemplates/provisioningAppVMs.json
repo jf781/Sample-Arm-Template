@@ -64,7 +64,7 @@
       "location": "[parameters('location')]",
       "dependsOn": [
         // "[if(greater(parameters('appServerVMCount'), 1), concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName')), string(variables('emtpyString')) )]"
-        "concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))"
+        //"concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))"
       ],
       "copy": {
         "name": "appServerMachineLoop",
