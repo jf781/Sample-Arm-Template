@@ -39,6 +39,7 @@
   "variables": {},
   "resources": [
     {
+      "condition": "[not(greater(parameters('appServerVMCount'),1))]" ,
       "type": "Microsoft.Compute/availabilitySets",
       "name": "[parameters('appAvailabilitySetName')]",
       "apiVersion": "2017-12-01",
