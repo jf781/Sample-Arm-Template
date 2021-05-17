@@ -75,9 +75,9 @@
           "vmSize": "[parameters('appServerVMSize')]"
         },
         "availabilitySet": {
-          "condition": "[not(greater(parameters('appServerVMCount'),1))]",
-          "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('appAvailabilitySetName'))]"
-          // "id": "[if(greater(parameters('appServerVMCount'), 1), resourceId('Microsoft.Compute/availabilitySets',parameters('appAvailabilitySetName')), json('null'))]"
+          // "condition": "[not(greater(parameters('appServerVMCount'),1))]",
+          //"id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('appAvailabilitySetName'))]"
+           "id": "[if(greater(parameters('appServerVMCount'), 1), resourceId('Microsoft.Compute/availabilitySets',parameters('appAvailabilitySetName')), json('null'))]"
         },
         "osProfile": {
           "computerName": "[concat(parameters('appServerBaseName'), copyindex())]",
