@@ -37,7 +37,10 @@
     }
   },
   "variables": {
-    "emtpyString": []
+    "emtpyString": {
+      "type": "string",
+      "value": null
+    }
   },
   "resources": [
     {
