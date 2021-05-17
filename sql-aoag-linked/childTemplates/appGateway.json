@@ -237,7 +237,7 @@
   ],
   "outputs": {
     "appGatewayUrl": {
-      "type": "object",
+      "type": "string",
       "value": "[reference(variables('publicIpAddressName')).dnsSettings.fqdn]"
     },
     "webAppBackendPoolAddresses": {
