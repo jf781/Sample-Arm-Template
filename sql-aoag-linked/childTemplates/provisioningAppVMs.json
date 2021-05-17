@@ -58,7 +58,7 @@
       "name": "[concat(parameters('appServerBaseName'), copyindex())]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]"
+        "[if(greater(parameters('appServerVMCount'), 1), concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName')), json('null'))]"
       ],
       "copy": {
         "name": "appServerMachineLoop",
@@ -69,7 +69,7 @@
           "vmSize": "[parameters('appServerVMSize')]"
         },
         "availabilitySet": {
-          "id": "[if(greater(parameters('appServerVMCount'), 1), reference('Microsoft.Compute/availabilitySets',parameters('appAvailabilitySetName')), json('null'))]"
+          "id": "[if(greater(parameters('appServerVMCount'), 1), resourceId('Microsoft.Compute/availabilitySets',parameters('appAvailabilitySetName')), json('null'))]"
         },
         "osProfile": {
           "computerName": "[concat(parameters('appServerBaseName'), copyindex())]",
