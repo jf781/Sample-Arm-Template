@@ -69,7 +69,7 @@
           "vmSize": "[parameters('appServerVMSize')]"
         },
         "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('appAvailabilitySetName'))]"
+          "id": "[if(greater(parameters('appServerVMCount'), 1), reference('Microsoft.Compute/availabilitySets',parameters('appAvailabilitySetName')), json('null'))]"
         },
         "osProfile": {
           "computerName": "[concat(parameters('appServerBaseName'), copyindex())]",
