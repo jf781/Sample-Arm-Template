@@ -37,7 +37,7 @@
     }
   },
   "variables": {
-    "emtpyString": {
+    "emtpyString1": {
       "type": "string",
       "value": null
     }
@@ -63,7 +63,7 @@
       "name": "[concat(parameters('appServerBaseName'), copyindex())]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[if(greater(parameters('appServerVMCount'), 1), concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName')), variables('emtpyString') )]"
+        "[if(greater(parameters('appServerVMCount'), 1), concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName')), variables('emtpyString1') )]"
       ],
       "copy": {
         "name": "appServerMachineLoop",
