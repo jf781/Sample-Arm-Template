@@ -37,17 +37,13 @@
     }
   },
   "variables": {
-    "emtpyString": {
-      "type": "string",
-      "value": null
-    },
     "availabilitySetConfiguration": {
       "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]"
     }
   },
   "resources": [
     {
-      "condition": "[not(greater(parameters('appServerVMCount'),1))]" ,
+      "condition": "[not(greater(parameters('appServerVMCount'), 1))]" ,
       "type": "Microsoft.Compute/availabilitySets",
       "name": "[parameters('appAvailabilitySetName')]",
       "apiVersion": "2017-12-01",
@@ -66,8 +62,7 @@
       "name": "[concat(parameters('appServerBaseName'), copyindex())]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        // "[if(greater(parameters('appServerVMCount'), 1), concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName')), string(variables('emtpyString')) )]"
-        //"concat('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))"
+        "resourceId('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))"
       ],
       "copy": {
         "name": "appServerMachineLoop",
@@ -78,7 +73,6 @@
           "vmSize": "[parameters('appServerVMSize')]"
         },
         "availabilitySet": "[if(greater(parameters('appServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]"
-          //"id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('appAvailabilitySetName'))]"  
         ,
         "osProfile": {
           "computerName": "[concat(parameters('appServerBaseName'), copyindex())]",
