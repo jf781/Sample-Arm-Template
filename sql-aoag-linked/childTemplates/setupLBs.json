@@ -5,6 +5,9 @@
     "location": {
       "type": "string"
     },
+    "sqlServerVMCount": {
+      "type": "int"
+    },
     "sqlLBName": {
       "type": "string"
     },
@@ -32,6 +35,9 @@
     "sqlLBProbe": {
       "type": "string"
     },
+    "appServerVMCount": {
+      "type": "int"
+    },
     "appLBName": {
       "type": "string"
     },
@@ -58,6 +64,9 @@
     },
     "appLBProbe": {
       "type": "string"
+    },
+    "wfeServerVMCount": {
+      "type": "int"
     },
     "wfeLBName": {
       "type": "string"
@@ -89,6 +98,7 @@
   },
   "resources": [
     {
+      "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
       "apiVersion": "2015-06-15",
       "name": "[parameters('sqlLBName')]",
       "type": "Microsoft.Network/loadBalancers",
@@ -137,14 +147,15 @@
             "properties": {
               "protocol": "Tcp",
               "port": 59999,
-              "intervalInSeconds": "5",
-              "numberOfProbes": "2"
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
             }
           }
         ]
       }
     },
     {
+      "condition": "[greater(parameters('appServerVMCount'), 1)]",
       "apiVersion": "2015-06-15",
       "name": "[parameters('appLBName')]",
       "type": "Microsoft.Network/loadBalancers",
@@ -194,14 +205,15 @@
             "properties": {
               "protocol": "Tcp",
               "port": 80,
-              "intervalInSeconds": "5",
-              "numberOfProbes": "2"
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
             }
           }
         ]
       }
     },
     {
+      "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "apiVersion": "2015-06-15",
       "name": "[parameters('wfeLBName')]",
       "type": "Microsoft.Network/loadBalancers",
@@ -251,8 +263,8 @@
             "properties": {
               "protocol": "Tcp",
               "port": 80,
-              "intervalInSeconds": "5",
-              "numberOfProbes": "2"
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
             }
           }
         ]
