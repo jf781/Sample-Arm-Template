@@ -34,9 +34,6 @@
     },
     "webAppBackendPoolAddresses": {
       "type": "array"
-    },
-    "wfeServerVMCount": {
-      "type": "int"
     }
   },
   "variables": {
@@ -66,7 +63,7 @@
   "resources": [
     {
       "type": "Microsoft.Network/publicIPAddresses",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2020-08-01",
       "name": "[variables('publicIpAddressName')]",
       "location": "[parameters('location')]",
       "sku": {
@@ -82,7 +79,7 @@
     {
       "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
       "apiVersion": "2020-06-01",
-      "name": "[variables('webAppFirewallName')]",
+      "name": "[parameters('webAppFirewallName')]",
       "location": "[parameters('location')]",
       "properties": {
         "customRules": [
