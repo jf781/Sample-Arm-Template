@@ -38,7 +38,6 @@
   },
   "variables": {
     "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'), parameters('appGatewaySubnetName'))]",
-    "webAppFirewallName": "[concat(parameters('appGatewayName'),'-waf')]",
     "publicIpAddressName": "[concat(parameters('appGatewayName'), '-pip')]",
     "publicIpAddressSku": "Standard",
     "publicIpAddressAllocationType": "Static",
