@@ -88,6 +88,8 @@
       }
     }
   },
+  "variables": {
+  },
   "resources": [
     {
       "type": "Microsoft.Network/virtualNetworks",
@@ -119,7 +121,15 @@
               "addressPrefix": "[parameters('webFrontEndSubnetAddressPrefix')]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('webFrontEndNsgName'))]"
-              }
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
             }
           },
           {
@@ -128,7 +138,15 @@
               "addressPrefix": "[parameters('appServerSubnetAddresSpace')]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('appServerNsgName'))]"
-              }
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
             }
           },
           {
@@ -137,7 +155,15 @@
               "addressPrefix": "[parameters('dbServerSubnetAddressSpace')]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('dbServerNsgName'))]"
-              }
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
             }
           }
         ]
