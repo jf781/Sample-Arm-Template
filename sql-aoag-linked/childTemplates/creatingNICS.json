@@ -42,6 +42,17 @@
       "type": "string"
     }
   },
+  "variables":{
+    "sqlLoadBalancerConfig": {
+      "id": "[parameters('sqlBEAddressPoolID')]"
+    },
+    "appLoadBalancerConfig": {
+      "id": "[parameters('appBEAddressPoolID')]"
+    },
+    "wfeLoadBalancerConfig": {
+      "id": "[parameters('wfeBEAddressPoolID')]"
+    }
+  },
   "resources": [
     {
       "name": "[concat(parameters('sqlVMName'), copyindex(), '-nic')]",
@@ -61,11 +72,7 @@
               "subnet": {
                 "id": "[parameters('dbSubnetRef')]"
               },
-              "loadBalancerBackendAddressPools": [
-                {
-                  "id": "[parameters('sqlBEAddressPoolID')]"
-                }
-              ]
+              "loadBalancerBackendAddressPools": "[if(greater(parameters('appServerVMCount'), 1), variables('sqlLoadBalancerConfig'), json('null'))]"
             }
           }
         ]
@@ -89,11 +96,7 @@
               "subnet": {
                 "id": "[parameters('webFrontEndSubnetRef')]"
               },
-              "loadBalancerBackendAddressPools": [
-                {
-                  "id": "[parameters('wfeBEAddressPoolID')]"
-                }
-              ]
+              "loadBalancerBackendAddressPools": "[if(greater(parameters('appServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
             }
           }
         ]
@@ -117,11 +120,7 @@
               "subnet": {
                 "id": "[parameters('appServerSubnetRef')]"
               },
-              "loadBalancerBackendAddressPools": [
-                {
-                  "id": "[parameters('appBEAddressPoolID')]"
-                }
-              ]
+             "loadBalancerBackendAddressPools": "[if(greater(parameters('appServerVMCount'), 1), variables('appLoadBalancerConfig'), json('null'))]"
             }
           }
         ]
