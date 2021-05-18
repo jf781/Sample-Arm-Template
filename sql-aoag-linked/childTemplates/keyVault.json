@@ -14,7 +14,7 @@
     "keyVaultIpAcl": {
       "type": "array"
     },
-    "keyVaultVnetAcl": {
+    "keyVaultVnetAcls": {
       "type": "array"
     },
     "enabledForDeployment": {
@@ -91,9 +91,9 @@
           "copy": [
             {
               "name": "virtualNetworkRules",
-              "count": "[length(parameters('keyVaultVnetAcl'))]",
+              "count": "[length(parameters('keyVaultVnetAcls'))]",
               "input": {
-                "id": "[parameters('keyVaultVnetAcl')[copyIndex('virtualNetworkRules')]]"
+                "id": "[parameters('keyVaultVnetAcls')[copyIndex('virtualNetworkRules')]]"
               }
             }
           ]
