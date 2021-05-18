@@ -72,9 +72,7 @@
         "hardwareProfile": {
           "vmSize": "[parameters('wfeServerVMSize')]"
         },
-        "availabilitySet": {
-          "availabilitySet": "[if(greater(parameters('wfeServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]"
-        },
+        "availabilitySet": "[if(greater(parameters('wfeServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]",
         "osProfile": {
           "computerName": "[concat(parameters('wfeServerBaseName'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
