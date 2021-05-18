@@ -57,13 +57,13 @@
         "description": "App Server subnet address space."
       }
     },
-    "dbServerSubnetName": {
+    "sqlServerSubnetName": {
       "type": "string",
       "metadata": {
         "description": "Name of database servers subnet."
       }
     },
-    "dbServerSubnetAddressSpace": {
+    "sqlServerSubnetAddressSpace": {
       "type": "string",
       "metadata": {
         "description": "Database servers subnet address space."
@@ -81,7 +81,7 @@
         "description": "NSG for Web Front End Servers."
       }
     },
-    "dbServerNsgName": {
+    "sqlServerNsgName": {
       "type": "string",
       "metadata": {
         "description": "NSG for Web Front End Servers."
@@ -100,7 +100,7 @@
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('webFrontEndNsgName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('appServerNsgName'))]",
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('dbServerNsgName'))]"
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('sqlServerNsgName'))]"
       ],
       "properties": {
         "addressSpace": {
@@ -150,11 +150,11 @@
             }
           },
           {
-            "name": "[parameters('dbServerSubnetName')]",
+            "name": "[parameters('sqlServerSubnetName')]",
             "properties": {
-              "addressPrefix": "[parameters('dbServerSubnetAddressSpace')]",
+              "addressPrefix": "[parameters('sqlServerSubnetAddressSpace')]",
               "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('dbServerNsgName'))]"
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('sqlServerNsgName'))]"
               },
               "serviceEndpoints": [
                 {
@@ -257,7 +257,7 @@
       }
     },
     {
-      "name": "[parameters('dbServerNsgName')]",
+      "name": "[parameters('sqlServerNsgName')]",
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2020-05-01",
       "location": "[parameters('location')]",
