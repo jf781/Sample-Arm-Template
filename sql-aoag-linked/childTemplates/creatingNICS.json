@@ -14,7 +14,7 @@
     "sqlBEAddressPoolID": {
       "type": "string"
     },
-    "dbSubnetRef": {
+    "sqlSubnetRef": {
       "type": "string"
     },
     "wfeServerBaseName": {
@@ -70,7 +70,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[parameters('dbSubnetRef')]"
+                "id": "[parameters('sqlSubnetRef')]"
               },
               "loadBalancerBackendAddressPools": "[if(greater(parameters('appServerVMCount'), 1), variables('sqlLoadBalancerConfig'), json('null'))]"
             }
