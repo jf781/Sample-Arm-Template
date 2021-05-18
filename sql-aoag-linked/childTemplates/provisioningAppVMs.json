@@ -41,8 +41,8 @@
       "type": "string",
       "value": null
     },
-    "availabilitySetId": {
-
+    "availabilitySetConfiguration": {
+      "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]"
     }
   },
   "resources": [
@@ -79,7 +79,7 @@
         },
         "availabilitySet": {
           //"id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('appAvailabilitySetName'))]"
-           "id": "[if(greater(parameters('appServerVMCount'), 1), resourceId('Microsoft.Compute/availabilitySets',parameters('appAvailabilitySetName')), json('null'))]"
+           "id": "[if(greater(parameters('appServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]"
         },
         "osProfile": {
           "computerName": "[concat(parameters('appServerBaseName'), copyindex())]",
