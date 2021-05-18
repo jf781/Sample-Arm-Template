@@ -23,7 +23,7 @@
     "sqlVMSize": {
       "type": "string"
     },
-    "sqlVMCount": {
+    "sqlServerVMCount": {
       "type": "int"
     },
     "sqlImagePublisher": {
@@ -36,9 +36,14 @@
       "type": "string"
     }
   },
-  "variables": {},
+  "variables": {
+    "availabilitySetConfiguration": {
+      "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]"
+    }
+  },
   "resources": [
     {
+      "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
       "type": "Microsoft.Compute/availabilitySets",
       "name": "[parameters('sqlAvailabilitySetName')]",
       "apiVersion": "2017-12-01",
@@ -57,19 +62,17 @@
       "name": "[concat(parameters('sqlVMName'), copyindex())]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]"
+        "[resourceId('Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]"
       ],
       "copy": {
         "name": "sqlvirtualMachineLoop",
-        "count": "[parameters('sqlVMCount')]"
+        "count": "[parameters('sqlServerVMCount')]"
       },
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('sqlVMSize')]"
         },
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('sqlAvailabilitySetName'))]"
-        },
+        "availabilitySet": "[if(greater(parameters('sqlServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]",
         "osProfile": {
           "computerName": "[concat(parameters('sqlVMName'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
