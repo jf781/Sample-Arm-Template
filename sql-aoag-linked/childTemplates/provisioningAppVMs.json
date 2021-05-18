@@ -62,7 +62,7 @@
       "name": "[concat(parameters('appServerBaseName'), copyindex())]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "resourceId('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))"
+        "[resourceId('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]"
       ],
       "copy": {
         "name": "appServerMachineLoop",
