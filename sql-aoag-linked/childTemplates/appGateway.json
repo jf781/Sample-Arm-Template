@@ -107,7 +107,7 @@
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpAddressName'))]",
-        "[concat('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/', variables('webAppFirewallName'))]"
+        "[concat('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/', parameters('webAppFirewallName'))]"
       ],
       "properties": {
         "sku": {
@@ -226,7 +226,7 @@
           "maxCapacity": "[parameters('appGatewayAutoScaleMaxValue')]"
         },
         "firewallPolicy": {
-          "id": "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/', variables('webAppFirewallName'))]"
+          "id": "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/', parameters('webAppFirewallName'))]"
         }
       }
     }
