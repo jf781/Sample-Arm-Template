@@ -38,7 +38,7 @@
   },
   "variables": {
       "availabilitySetConfiguration": {
-      "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]"
+      "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('wfeAvailabilitySetName'))]"
     }
   },
   "resources": [
