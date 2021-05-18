@@ -18,6 +18,7 @@
       "sku": {
         "name": "Standard_LRS"
       },
+      "kind": "StorageV2",
       "properties": {
         "accountType": "Standard_LRS",
         "minimumTlsVersion": "TLS1_2",
