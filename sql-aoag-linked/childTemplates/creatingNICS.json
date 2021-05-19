@@ -72,7 +72,9 @@
               "subnet": {
                 "id": "[parameters('sqlSubnetRef')]"
               },
-              "loadBalancerBackendAddressPools": "[if(greater(parameters('appServerVMCount'), 1), variables('sqlLoadBalancerConfig'), json('null'))]"
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('appServerVMCount'), 1), variables('sqlLoadBalancerConfig'), json('null'))]"
+              ]
             }
           }
         ]
@@ -96,7 +98,9 @@
               "subnet": {
                 "id": "[parameters('webFrontEndSubnetRef')]"
               },
-              "loadBalancerBackendAddressPools": "[if(greater(parameters('appServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('appServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
+              ]
             }
           }
         ]
@@ -120,7 +124,9 @@
               "subnet": {
                 "id": "[parameters('appServerSubnetRef')]"
               },
-             "loadBalancerBackendAddressPools": "[if(greater(parameters('appServerVMCount'), 1), variables('appLoadBalancerConfig'), json('null'))]"
+             "loadBalancerBackendAddressPools": [
+               "[if(greater(parameters('appServerVMCount'), 1), variables('appLoadBalancerConfig'), json('null'))]"
+             ]
             }
           }
         ]
