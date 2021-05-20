@@ -8,6 +8,15 @@
     "location": {
       "type": "string"
     },
+    "managedIdResourceId": {
+      "type": "string"
+    },
+    "managedIdPrincipalId": {
+      "type": "securestring"
+    },
+    "managedIdClientId": {
+      "type": "securestring"
+    },
     "appName": {
       "type": "string"
     },
@@ -108,6 +117,15 @@
       "apiVersion": "2020-05-01",
       "name": "[parameters('appGatewayName')]",
       "location": "[parameters('location')]",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[parameters('managedIdResourceId')]": {
+            "principalId": "[parameters('managedIdPrincipalId')]",
+            "clientId": "[parameters('managedIdClientId')]"
+          }
+        }
+      },
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpAddressName'))]",
         "[concat('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/', parameters('webAppFirewallName'))]"
