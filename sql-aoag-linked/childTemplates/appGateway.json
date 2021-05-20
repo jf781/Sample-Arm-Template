@@ -23,6 +23,9 @@
     "appGatewaySubnetName": {
       "type": "string"
     },
+    "appGatewaySSLCertificateData": {
+      "type": "string"
+    },
     "webAppFirewallName": {
       "type": "string"
     },
@@ -181,6 +184,14 @@
                 "id": "[variables('appGwFrontendPortId')]"
               },
               "protocol": "Http"
+            }
+          }
+        ],
+        "sslCertificates": [
+          {
+            "name": "appGwSslCertificate",
+            "properties": {
+              "data": "[parameters('appGatewaySSLCertificateData')]"
             }
           }
         ],
