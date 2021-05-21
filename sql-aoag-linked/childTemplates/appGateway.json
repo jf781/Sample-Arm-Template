@@ -121,8 +121,8 @@
         "type": "UserAssigned",
         "userAssignedIdentities": {
           "[parameters('managedIdResourceId')]": {
-            "principalId": "[parameters('managedIdPrincipalId')]",
-            "clientId": "[parameters('managedIdClientId')]"
+            // "principalId": "[parameters('managedIdPrincipalId')]",
+            // "clientId": "[parameters('managedIdClientId')]"
           }
         }
       },
