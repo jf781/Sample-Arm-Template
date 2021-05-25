@@ -15,10 +15,22 @@
         "description": "Virtual Network Name."
       }
     },
+    "failoverVirtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover virtual Network Name."
+      }
+    },
     "virtualNetworkAddressSpace": {
       "type": "string",
       "metadata": {
         "description": "Virtual Network Address Space."
+      }
+    },
+    "failoverVirtualNetworkAddressSpace": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover virtual Network Address Space."
       }
     },
     "appGatewaySubnetName": {
@@ -30,7 +42,13 @@
     "appGatewaySubnetAddressPrefix": {
       "type": "string",
       "metadata": {
-        "description": "Web front end subnet address space."
+        "description": "Application Gateway subnet address space."
+      }
+    },
+    "failoverAppGatewaySubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover application Gateway subnet address space."
       }
     },
     "webFrontEndSubnetName": {
@@ -45,6 +63,12 @@
         "description": "Web front end subnet address space."
       }
     },
+    "failoverWebFrontEndSubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover web front end subnet address space."
+      }
+    },
     "appServerSubnetName": {
       "type": "string",
       "metadata": {
@@ -57,16 +81,28 @@
         "description": "App Server subnet address space."
       }
     },
+    "failoverAppServerSubnetAddresSpace": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover app Server subnet address space."
+      }
+    },
     "sqlServerSubnetName": {
       "type": "string",
       "metadata": {
-        "description": "Name of database servers subnet."
+        "description": "Name of SQL servers subnet."
       }
     },
     "sqlServerSubnetAddressSpace": {
       "type": "string",
       "metadata": {
-        "description": "Database servers subnet address space."
+        "description": "SQL servers subnet address space."
+      }
+    },
+    "failoverSqlServerSubnetAddressSpace": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover SQL servers subnet address space."
       }
     },
     "webFrontEndNsgName": {
