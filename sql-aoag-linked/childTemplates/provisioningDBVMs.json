@@ -23,6 +23,9 @@
     "sqlVMSize": {
       "type": "string"
     },
+    "sqlServerDataDiskLayout": {
+      "type": "object"
+    },
     "sqlServerVMCount": {
       "type": "int"
     },
@@ -90,27 +93,17 @@
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
-          "dataDisks": [
-            { 
-              "name": "[concat(parameters('sqlVMName'), copyindex(),'-data-disk1')]",
-              "caching": "None",
-              "createOption": "Empty",
-              "diskSizeGB": 1000,
-              "lun": 0
-            },
-            { 
-              "name": "[concat(parameters('sqlVMName'), copyindex(),'-data-disk2')]",
-              "caching": "None",
-              "createOption": "Empty",
-              "diskSizeGB": 1000,
-              "lun": 1
-            },
-            { 
-              "name": "[concat(parameters('sqlVMName'), copyindex(),'-data-disk3')]",
-              "caching": "None",
-              "createOption": "Empty",
-              "diskSizeGB": 1000,
-              "lun": 2
+          "copy": [
+            {
+              "name": "dataDisks",
+              "count": "[length(parameters('sqlServerDataDiskLayout'))]",
+              "input": {
+                "name" : "[concat(parameters('sqlVMName'), copyindex(),'-data-disk-',parameters('sqlServerDataDiskLayout')[copyindex('dataDisks').lun])]",
+                "createOption": "Empty",
+                "caching": "[parameters('sqlServerDataDiskLayout')[copyIndex('dataDisks').caching]]",
+                "diskSizeGB": "[parameters('sqlServerDataDiskLayout')[copyIndex('dataDisks').diskSizeGB]]",
+                "lun": "[parameters('sqlServerDataDiskLayout')[copyindex('dataDisks').lun])]"
+              }
             }
           ]
         },
