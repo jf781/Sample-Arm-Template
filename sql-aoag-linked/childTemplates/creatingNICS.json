@@ -103,7 +103,7 @@
       }
     },
     {
-      "name": "[concat(parameters('sqlVMName'), copyindex(), '-nic')]",
+      "name": "[concat(parameters('sqlVMName'), '0-nic')]",
       "condition": "[not(greater(parameters('sqlServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -150,7 +150,7 @@
       }
     },
     {
-      "name": "[concat(parameters('failoverSqlVMName'), copyindex(), '-nic')]",
+      "name": "[concat(parameters('failoverSqlVMName'), '0-nic')]",
       "condition": "[not(greater(parameters('failoverSqlServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('failoverLocation')]",
@@ -197,7 +197,7 @@
       }
     },
     {
-      "name": "[concat(parameters('wfeServerBaseName'), copyindex(), '-nic')]",
+      "name": "[concat(parameters('wfeServerBaseName'), '0-nic')]",
       "condition": "[not(greater(parameters('wfeServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -244,7 +244,7 @@
       }
     },
     {
-      "name": "[concat(parameters('appServerBaseName'), copyindex(), '-nic')]",
+      "name": "[concat(parameters('appServerBaseName'), '0-nic')]",
       "condition": "[not(greater(parameters('appServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
