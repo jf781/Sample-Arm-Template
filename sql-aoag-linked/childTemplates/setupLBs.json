@@ -5,6 +5,9 @@
     "location": {
       "type": "string"
     },
+    "failoverLocation": {
+      "type": "string"
+    },
     "sqlServerVMCount": {
       "type": "int"
     },
@@ -33,6 +36,33 @@
       "type": "string"
     },
     "sqlLBProbe": {
+      "type": "string"
+    },
+    "failoverSqlServerVMCount": {
+      "type": "int"
+    },
+    "failoverSqlLBName": {
+      "type": "string"
+    },
+    "failoverSqlLBFE": {
+      "type": "string"
+    },
+    "failoverSqlLBIPAddress": {
+      "type": "string"
+    },
+    "failoverSqlSubnetRef": {
+      "type": "string"
+    },
+    "failoverSqlLBBE": {
+      "type": "string"
+    },
+    "failoverSqlLBBEID": {
+      "type": "string"
+    },
+    "failoverSqlLBFEConfigID": {
+      "type": "string"
+    },
+    "failoverSqlLBProbeID": {
       "type": "string"
     },
     "appServerVMCount": {
@@ -133,6 +163,63 @@
               },
               "probe": {
                 "id": "[parameters('sqlLBProbeID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 1433,
+              "backendPort": 1433,
+              "enableFloatingIP": true
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[parameters('sqlLBProbe')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 59999,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "condition": "[greater(parameters('failoverSqlServerVMCount'), 1)]",
+      "apiVersion": "2015-06-15",
+      "name": "[parameters('failoverSqlLBName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[parameters('failoverLocation')]",
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[parameters('failoverSqlLBFE')]",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('failoverSqlLBIPAddress')]",
+              "subnet": {
+                "id": "[parameters('failoverSqlSubnetRef')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[parameters('failoverSqlLBBE')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "SQLAlwaysOnListener",
+            "properties": {
+              "backendAddressPool": {
+                "id": "[parameters('failoverSqlLBBEID')]"
+              },
+              "frontendIPConfiguration": {
+                "id": "[parameters('failoverSqlLBFEConfigID')]"
+              },
+              "probe": {
+                "id": "[parameters('failoverSqlLBProbeID')]"
               },
               "protocol": "Tcp",
               "frontendPort": 1433,
