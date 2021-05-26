@@ -4,9 +4,14 @@
   "parameters": {
     "location": {
       "type": "string",
-      "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "Location for all resources."
+        "description": "Primary locaiton for the resources"
+      }
+    },
+    "failoverLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "The location for the failover resources"
       }
     },
     "virtualNetworkName": {
@@ -36,7 +41,7 @@
     "appGatewaySubnetName": {
       "type": "string",
       "metadata": {
-        "description": "Name of web front end subnet."
+        "description": "Name of application servers subnet."
       }
     },
     "appGatewaySubnetAddressPrefix": {
@@ -45,10 +50,16 @@
         "description": "Application Gateway subnet address space."
       }
     },
+    "failoverAppGatewaySubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of failover application gateway servers subnet."
+      }
+    },
     "failoverAppGatewaySubnetAddressPrefix": {
       "type": "string",
       "metadata": {
-        "description": "Failover application Gateway subnet address space."
+        "description": "Failover application gateway subnet address space."
       }
     },
     "webFrontEndSubnetName": {
@@ -61,6 +72,12 @@
       "type": "string",
       "metadata": {
         "description": "Web front end subnet address space."
+      }
+    },
+    "failoverWebFrontEndSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of failover web front end subnet."
       }
     },
     "failoverWebFrontEndSubnetAddressPrefix": {
@@ -81,6 +98,12 @@
         "description": "App Server subnet address space."
       }
     },
+    "failoverAppServerSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of failover app server subnet."
+      }
+    },
     "failoverAppServerSubnetAddresSpace": {
       "type": "string",
       "metadata": {
@@ -97,6 +120,12 @@
       "type": "string",
       "metadata": {
         "description": "SQL servers subnet address space."
+      }
+    },
+    "failoverSqlServerSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of failover SQL servers subnet."
       }
     },
     "failoverSqlServerSubnetAddressSpace": {
@@ -189,6 +218,84 @@
             "name": "[parameters('sqlServerSubnetName')]",
             "properties": {
               "addressPrefix": "[parameters('sqlServerSubnetAddressSpace')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('sqlServerNsgName'))]"
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('failoverVirtualNetworkName')]",
+      "apiVersion": "2020-05-01",
+      "location": "[parameters('failoverLocation')]",
+      "comments": "This will build a Virtual Network.",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('webFrontEndNsgName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('appServerNsgName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('sqlServerNsgName'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('failoverVirtualNetworkAddressSpace')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[parameters('failoverAppGatewaySubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('failoverAppGatewaySubnetAddressPrefix')]"
+            }
+          },
+          {
+            "name": "[parameters('failoverWebFrontEndSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('failoverWebFrontEndSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('webFrontEndNsgName'))]"
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "[parameters('failoverAppServerSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('failoverAppServerSubnetAddresSpace')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('appServerNsgName'))]"
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "[parameters('failoverSqlServerSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('failoverSqlServerSubnetAddressSpace')]",
               "networkSecurityGroup": {
                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('sqlServerNsgName'))]"
               },
