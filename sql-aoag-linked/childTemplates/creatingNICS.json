@@ -124,58 +124,58 @@
     //     ]
     //   }
     // },    
-    {
-      "name": "[concat(parameters('wfeServerBaseName'), copyindex(), '-nic')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "location": "[parameters('location')]",
-      "apiVersion": "2015-06-15",
-      "copy": {
-        "name": "wfeNicLoop",
-        "count": "[parameters('wfeServerVMCount')]"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "subnet": {
-                "id": "[parameters('webFrontEndSubnetRef')]"
-              },
-              "loadBalancerBackendAddressPools": [
-                "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "[concat(parameters('appServerBaseName'), copyindex(), '-nic')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "location": "[parameters('location')]",
-      "apiVersion": "2015-06-15",
-      "copy": {
-        "name": "appNicLoop",
-        "count": "[parameters('appServerVMCount')]"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "subnet": {
-                "id": "[parameters('appServerSubnetRef')]"
-              },
-             "loadBalancerBackendAddressPools": [
-               "[if(greater(parameters('appServerVMCount'), 1), variables('appLoadBalancerConfig'), json('null'))]"
-             ]
-            }
-          }
-        ]
-      }
-    }
+    // {
+    //   "name": "[concat(parameters('wfeServerBaseName'), copyindex(), '-nic')]",
+    //   "type": "Microsoft.Network/networkInterfaces",
+    //   "location": "[parameters('location')]",
+    //   "apiVersion": "2015-06-15",
+    //   "copy": {
+    //     "name": "wfeNicLoop",
+    //     "count": "[parameters('wfeServerVMCount')]"
+    //   },
+    //   "properties": {
+    //     "ipConfigurations": [
+    //       {
+    //         "name": "ipconfig1",
+    //         "properties": {
+    //           "privateIPAllocationMethod": "Dynamic",
+    //           "subnet": {
+    //             "id": "[parameters('webFrontEndSubnetRef')]"
+    //           },
+    //           "loadBalancerBackendAddressPools": [
+    //             "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
+    //           ]
+    //         }
+    //       }
+    //     ]
+    //   }
+    // },
+    // {
+    //   "name": "[concat(parameters('appServerBaseName'), copyindex(), '-nic')]",
+    //   "type": "Microsoft.Network/networkInterfaces",
+    //   "location": "[parameters('location')]",
+    //   "apiVersion": "2015-06-15",
+    //   "copy": {
+    //     "name": "appNicLoop",
+    //     "count": "[parameters('appServerVMCount')]"
+    //   },
+    //   "properties": {
+    //     "ipConfigurations": [
+    //       {
+    //         "name": "ipconfig1",
+    //         "properties": {
+    //           "privateIPAllocationMethod": "Dynamic",
+    //           "subnet": {
+    //             "id": "[parameters('appServerSubnetRef')]"
+    //           },
+    //          "loadBalancerBackendAddressPools": [
+    //            "[if(greater(parameters('appServerVMCount'), 1), variables('appLoadBalancerConfig'), json('null'))]"
+    //          ]
+    //         }
+    //       }
+    //     ]
+    //   }
+    // }
   ],
   "outputs": {
     "webFrontEndIpAddresses": {
