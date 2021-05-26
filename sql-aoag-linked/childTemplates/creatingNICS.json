@@ -80,7 +80,7 @@
       "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2020-08-01",
       "copy": {
         "name": "sqlNicLoop",
         "count": "[parameters('sqlServerVMCount')]"
@@ -107,7 +107,7 @@
       "condition": "[not(greater(parameters('sqlServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2020-08-01",
       "properties": {
         "ipConfigurations": [
           {
@@ -127,7 +127,7 @@
       "condition": "[greater(parameters('failoverSqlServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('failoverLocation')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2020-08-01",
       "copy": {
         "name": "sqlNicLoop",
         "count": "[parameters('failoverSqlServerVMCount')]"
@@ -154,7 +154,7 @@
       "condition": "[not(greater(parameters('failoverSqlServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('failoverLocation')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2020-08-01",
       "properties": {
         "ipConfigurations": [
           {
@@ -174,7 +174,7 @@
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2020-08-01",
       "copy": {
         "name": "wfeNicLoop",
         "count": "[parameters('wfeServerVMCount')]"
@@ -201,7 +201,7 @@
       "condition": "[not(greater(parameters('wfeServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2020-08-01",
       "properties": {
         "ipConfigurations": [
           {
@@ -221,7 +221,7 @@
       "condition": "[greater(parameters('appServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2020-08-01",
       "copy": {
         "name": "appNicLoop",
         "count": "[parameters('appServerVMCount')]"
@@ -248,7 +248,7 @@
       "condition": "[not(greater(parameters('appServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
-      "apiVersion": "2020-07-01",
+      "apiVersion": "2020-08-01",
       "properties": {
         "ipConfigurations": [
           {
