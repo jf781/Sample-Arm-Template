@@ -24,7 +24,7 @@
       "type": "string"
     },
     "sqlServerDataDiskLayout": {
-      "type": "object"
+      "type": "array"
     },
     "sqlServerVMCount": {
       "type": "int"
