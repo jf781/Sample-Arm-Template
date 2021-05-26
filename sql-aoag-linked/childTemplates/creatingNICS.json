@@ -89,10 +89,10 @@
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "id": "[parameters('sqlSubnetRef')]"
-              }
-              // "loadBalancerBackendAddressPools": [
-              //   "[if(greater(parameters('sqlServerVMCount'), 1), variables('sqlLoadBalancerConfig'), json('null'))]"
-              // ]
+              },
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('sqlServerVMCount'), 1), variables('sqlLoadBalancerConfig'), json('[]'))]"
+              ]
             }
           }
         ]
