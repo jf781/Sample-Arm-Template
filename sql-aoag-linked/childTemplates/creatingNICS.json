@@ -59,10 +59,16 @@
   },
   "variables":{
     "sqlLoadBalancerConfig": {
-      "id": "[parameters('sqlBEAddressPoolID')]"
+      "enabled": {
+        "id": "[parameters('sqlBEAddressPoolID')]"
+      },
+      "disabled": "[json('null')]"
     },
     "failoverSqlLoadBalancerConfig": {
-      "id": "[parameters('failoverSqlBEAddressPoolID')]"
+      "enabled": {
+        "id": "[parameters('failoverSqlBEAddressPoolID')]"
+      },
+      "disabled": "[json('null')]"
     },
     "appLoadBalancerConfig": {
       "id": "[parameters('appBEAddressPoolID')]"
@@ -91,7 +97,7 @@
                 "id": "[parameters('sqlSubnetRef')]"
               },
               "loadBalancerBackendAddressPools": [
-                "[if(greater(parameters('sqlServerVMCount'), 1), variables('sqlLoadBalancerConfig'), json('[]'))]"
+                "[if(greater(parameters('sqlServerVMCount'), 1), variables('sqlLoadBalancerConfig').enabled, variables('sqlLoadBalancerConfig').disabled)]"
               ]
             }
           }
