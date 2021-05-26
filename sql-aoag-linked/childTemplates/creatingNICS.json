@@ -59,10 +59,7 @@
   },
   "variables":{
     "sqlLoadBalancerConfig": {
-      "enabled": {
-        "id": "[parameters('sqlBEAddressPoolID')]"
-      },
-      "disabled": "[json('null')]"
+      "id": "[parameters('sqlBEAddressPoolID')]"
     },
     "failoverSqlLoadBalancerConfig": {
       "enabled": {
@@ -82,7 +79,7 @@
       "name": "[concat(parameters('sqlVMName'), copyindex(), '-nic')]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "2020-07-01",
       "copy": {
         "name": "sqlNicLoop",
         "count": "[parameters('sqlServerVMCount')]"
@@ -97,18 +94,18 @@
                 "id": "[parameters('sqlSubnetRef')]"
               },
               "loadBalancerBackendAddressPools": [
-                "[if(greater(parameters('sqlServerVMCount'), 1), variables('sqlLoadBalancerConfig').enabled, variables('sqlLoadBalancerConfig').disabled)]"
+                "[if(greater(parameters('sqlServerVMCount'), 1), variables('sqlLoadBalancerConfig'), json('null'))]"
               ]
             }
           }
         ]
       }
-    },
+    }
     // {
     //   "name": "[concat(parameters('failoverSqlVMName'), copyindex(), '-nic')]",
     //   "type": "Microsoft.Network/networkInterfaces",
     //   "location": "[parameters('failoverLocation')]",
-    //   "apiVersion": "2015-06-15",
+    //   "apiVersion": "2020-07-01",
     //   "copy": {
     //     "name": "sqlNicLoop",
     //     "count": "[parameters('failoverSqlServerVMCount')]"
@@ -134,7 +131,7 @@
     //   "name": "[concat(parameters('wfeServerBaseName'), copyindex(), '-nic')]",
     //   "type": "Microsoft.Network/networkInterfaces",
     //   "location": "[parameters('location')]",
-    //   "apiVersion": "2015-06-15",
+    //   "apiVersion": "2020-07-01",
     //   "copy": {
     //     "name": "wfeNicLoop",
     //     "count": "[parameters('wfeServerVMCount')]"
@@ -160,7 +157,7 @@
     //   "name": "[concat(parameters('appServerBaseName'), copyindex(), '-nic')]",
     //   "type": "Microsoft.Network/networkInterfaces",
     //   "location": "[parameters('location')]",
-    //   "apiVersion": "2015-06-15",
+    //   "apiVersion": "2020-07-01",
     //   "copy": {
     //     "name": "appNicLoop",
     //     "count": "[parameters('appServerVMCount')]"
