@@ -169,10 +169,21 @@
       "metadata": {
         "description": "NSG for failover Web Front End Servers."
       }
+    },
+    "primaryDNSAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The Primary DNS server configured for this Vnet"
+      }
+    },
+    "secondaryDNSAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The Primary DNS server configured for this Vnet"
+      }
     }
   },
   "variables": {
-    "failoverNsgName": {}
   },
   "resources": [
     {
@@ -190,6 +201,12 @@
         "addressSpace": {
           "addressPrefixes": [
             "[parameters('virtualNetworkAddressSpace')]"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": [
+            "[parameters('primaryDNSAddress')]",
+            "[parameters('secondaryDNSAddress')]"
           ]
         },
         "subnets": [
@@ -268,6 +285,12 @@
         "addressSpace": {
           "addressPrefixes": [
             "[parameters('failoverVirtualNetworkAddressSpace')]"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": [
+            "[parameters('primaryDNSAddress')]",
+            "[parameters('secondaryDNSAddress')]"
           ]
         },
         "subnets": [
