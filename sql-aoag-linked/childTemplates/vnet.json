@@ -282,7 +282,7 @@
             "properties": {
               "addressPrefix": "[parameters('failoverWebFrontEndSubnetAddressPrefix')]",
               "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('webFrontEndNsgName'))]"
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverWebFrontEndNsgName'))]"
               },
               "serviceEndpoints": [
                 {
@@ -299,7 +299,7 @@
             "properties": {
               "addressPrefix": "[parameters('failoverAppServerSubnetAddresSpace')]",
               "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('appServerNsgName'))]"
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverAppServerNsgName'))]"
               },
               "serviceEndpoints": [
                 {
@@ -316,7 +316,7 @@
             "properties": {
               "addressPrefix": "[parameters('failoverSqlServerSubnetAddressSpace')]",
               "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('sqlServerNsgName'))]"
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverSqlServerNsgName'))]"
               },
               "serviceEndpoints": [
                 {
