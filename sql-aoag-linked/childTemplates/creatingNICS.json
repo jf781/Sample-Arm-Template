@@ -184,6 +184,6 @@
     //     "count": "[parameters('wfeServerVMCount')]",
     //     "input": "[reference(concat(parameters('wfeServerBaseName'), copyindex(), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
     //   }
-    }
+    // }
   }
 }
