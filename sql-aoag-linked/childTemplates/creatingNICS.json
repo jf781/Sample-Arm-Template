@@ -98,32 +98,32 @@
         ]
       }
     },
-    {
-      "name": "[concat(parameters('failoverSqlVMName'), copyindex(), '-nic')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "location": "[parameters('failoverLocation')]",
-      "apiVersion": "2015-06-15",
-      "copy": {
-        "name": "sqlNicLoop",
-        "count": "[parameters('failoverSqlServerVMCount')]"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "subnet": {
-                "id": "[parameters('failoverSqlSubnetRef')]"
-              },
-              "loadBalancerBackendAddressPools": [
-                "[if(greater(parameters('failoverSqlServerVMCount'), 1), variables('failoverSqlLoadBalancerConfig'), json('null'))]"
-              ]
-            }
-          }
-        ]
-      }
-    },    
+    // {
+    //   "name": "[concat(parameters('failoverSqlVMName'), copyindex(), '-nic')]",
+    //   "type": "Microsoft.Network/networkInterfaces",
+    //   "location": "[parameters('failoverLocation')]",
+    //   "apiVersion": "2015-06-15",
+    //   "copy": {
+    //     "name": "sqlNicLoop",
+    //     "count": "[parameters('failoverSqlServerVMCount')]"
+    //   },
+    //   "properties": {
+    //     "ipConfigurations": [
+    //       {
+    //         "name": "ipconfig1",
+    //         "properties": {
+    //           "privateIPAllocationMethod": "Dynamic",
+    //           "subnet": {
+    //             "id": "[parameters('failoverSqlSubnetRef')]"
+    //           },
+    //           "loadBalancerBackendAddressPools": [
+    //             "[if(greater(parameters('failoverSqlServerVMCount'), 1), variables('failoverSqlLoadBalancerConfig'), json('null'))]"
+    //           ]
+    //         }
+    //       }
+    //     ]
+    //   }
+    // },    
     {
       "name": "[concat(parameters('wfeServerBaseName'), copyindex(), '-nic')]",
       "type": "Microsoft.Network/networkInterfaces",
