@@ -103,7 +103,7 @@
       }
     },
     {
-      "name": "[concat(parameters('sqlVMName'), '-nic')]",
+      "name": "[concat(parameters('sqlVMName'), copyindex(), '-nic')]",
       "condition": "[not(greater(parameters('sqlServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -125,93 +125,168 @@
           }
         ]
       }
+    },
+    {
+      "name": "[concat(parameters('failoverSqlVMName'), copyindex(), '-nic')]",
+      "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('failoverLocation')]",
+      "apiVersion": "2020-07-01",
+      "copy": {
+        "name": "sqlNicLoop",
+        "count": "[parameters('failoverSqlServerVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('failoverSqlSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('failoverSqlServerVMCount'), 1), variables('failoverSqlLoadBalancerConfig'), json('null'))]"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('failoverSqlVMName'), copyindex(), '-nic')]",
+      "condition": "[not(greater(parameters('sqlServerVMCount'), 1))]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('failoverLocation')]",
+      "apiVersion": "2020-07-01",
+      "copy": {
+        "name": "sqlNicLoop",
+        "count": "[parameters('failoverSqlServerVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('failoverSqlSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },    
+    {
+      "name": "[concat(parameters('wfeServerBaseName'), copyindex(), '-nic')]",
+      "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "2020-07-01",
+      "copy": {
+        "name": "wfeNicLoop",
+        "count": "[parameters('wfeServerVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('webFrontEndSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('wfeServerBaseName'), copyindex(), '-nic')]",
+      "condition": "[not(greater(parameters('sqlServerVMCount'), 1))]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "2020-07-01",
+      "copy": {
+        "name": "wfeNicLoop",
+        "count": "[parameters('wfeServerVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('webFrontEndSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('appServerBaseName'), copyindex(), '-nic')]",
+      "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "2020-07-01",
+      "copy": {
+        "name": "appNicLoop",
+        "count": "[parameters('appServerVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('appServerSubnetRef')]"
+              },
+             "loadBalancerBackendAddressPools": [
+               "[if(greater(parameters('appServerVMCount'), 1), variables('appLoadBalancerConfig'), json('null'))]"
+             ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('appServerBaseName'), copyindex(), '-nic')]",
+      "condition": "[not(greater(parameters('sqlServerVMCount'), 1))]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "2020-07-01",
+      "copy": {
+        "name": "appNicLoop",
+        "count": "[parameters('appServerVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('appServerSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
     }
-    // {
-    //   "name": "[concat(parameters('failoverSqlVMName'), copyindex(), '-nic')]",
-    //   "type": "Microsoft.Network/networkInterfaces",
-    //   "location": "[parameters('failoverLocation')]",
-    //   "apiVersion": "2020-07-01",
-    //   "copy": {
-    //     "name": "sqlNicLoop",
-    //     "count": "[parameters('failoverSqlServerVMCount')]"
-    //   },
-    //   "properties": {
-    //     "ipConfigurations": [
-    //       {
-    //         "name": "ipconfig1",
-    //         "properties": {
-    //           "privateIPAllocationMethod": "Dynamic",
-    //           "subnet": {
-    //             "id": "[parameters('failoverSqlSubnetRef')]"
-    //           },
-    //           "loadBalancerBackendAddressPools": [
-    //             "[if(greater(parameters('failoverSqlServerVMCount'), 1), variables('failoverSqlLoadBalancerConfig'), json('null'))]"
-    //           ]
-    //         }
-    //       }
-    //     ]
-    //   }
-    // },    
-    // {
-    //   "name": "[concat(parameters('wfeServerBaseName'), copyindex(), '-nic')]",
-    //   "type": "Microsoft.Network/networkInterfaces",
-    //   "location": "[parameters('location')]",
-    //   "apiVersion": "2020-07-01",
-    //   "copy": {
-    //     "name": "wfeNicLoop",
-    //     "count": "[parameters('wfeServerVMCount')]"
-    //   },
-    //   "properties": {
-    //     "ipConfigurations": [
-    //       {
-    //         "name": "ipconfig1",
-    //         "properties": {
-    //           "privateIPAllocationMethod": "Dynamic",
-    //           "subnet": {
-    //             "id": "[parameters('webFrontEndSubnetRef')]"
-    //           },
-    //           "loadBalancerBackendAddressPools": [
-    //             "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
-    //           ]
-    //         }
-    //       }
-    //     ]
-    //   }
-    // },
-    // {
-    //   "name": "[concat(parameters('appServerBaseName'), copyindex(), '-nic')]",
-    //   "type": "Microsoft.Network/networkInterfaces",
-    //   "location": "[parameters('location')]",
-    //   "apiVersion": "2020-07-01",
-    //   "copy": {
-    //     "name": "appNicLoop",
-    //     "count": "[parameters('appServerVMCount')]"
-    //   },
-    //   "properties": {
-    //     "ipConfigurations": [
-    //       {
-    //         "name": "ipconfig1",
-    //         "properties": {
-    //           "privateIPAllocationMethod": "Dynamic",
-    //           "subnet": {
-    //             "id": "[parameters('appServerSubnetRef')]"
-    //           },
-    //          "loadBalancerBackendAddressPools": [
-    //            "[if(greater(parameters('appServerVMCount'), 1), variables('appLoadBalancerConfig'), json('null'))]"
-    //          ]
-    //         }
-    //       }
-    //     ]
-    //   }
-    // }
   ],
   "outputs": {
-    // "webFrontEndIpAddresses": {
-    //   "type": "array",
-    //   "copy": {
-    //     "count": "[parameters('wfeServerVMCount')]",
-    //     "input": "[reference(concat(parameters('wfeServerBaseName'), copyindex(), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
-    //   }
-    // }
+    "webFrontEndIpAddresses": {
+      "type": "array",
+      "copy": {
+        "count": "[parameters('wfeServerVMCount')]",
+        "input": "[reference(concat(parameters('wfeServerBaseName'), copyindex(), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
+      }
+    }
   }
 }
