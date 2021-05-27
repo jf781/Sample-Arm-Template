@@ -28,6 +28,9 @@
     },
     "enabledRBACAuthorization": {
       "type": "bool"
+    },
+    "tags": {
+      "type": "object"
     }
   },
   "variables": {
@@ -38,43 +41,21 @@
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "2019-09-01",
       "location": "[parameters('location')]",
-      "tags": {},
+      "tags": "[parameters('tags')]",
       "properties": {
         "tenantId": "[subscription().tenantId]",
         "sku": {
           "family": "A",
           "name": "[parameters('keyVaultSku')]"
         },
-        // "accessPolicies": [
-        //   {
-        //     "tenantId": "[subscription().tenantId]",
-        //     "objectId": "string",
-        //     "applicationId": "string",
-        //     "permissions": {
-        //       "keys": [
-        //         "string"
-        //       ],
-        //       "secrets": [
-        //         "string"
-        //       ],
-        //       "certificates": [
-        //         "string"
-        //       ],
-        //       "storage": [
-        //         "string"
-        //       ]
-        //     }
-        //   }
-        // ],
         "vaultUri": "string",
         "enabledForDeployment": "[parameters('enabledForDeployment')]",
         "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
         "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
-        "enableSoftDelete": "true",
-        // "softDeleteRetentionInDays": "integer",
+        "enableSoftDelete": true,
         "enableRbacAuthorization": "[parameters('enabledRBACAuthorization')]",
         "createMode": "default",
-        "enablePurgeProtection": "true",
+        "enablePurgeProtection": true,
         "networkAcls": {
           "bypass": "AzureServices",
           "defaultAction": "deny",
