@@ -11,12 +11,6 @@
     "managedIdResourceId": {
       "type": "string"
     },
-    "managedIdPrincipalId": {
-      "type": "securestring"
-    },
-    "managedIdClientId": {
-      "type": "securestring"
-    },
     "appName": {
       "type": "string"
     },
@@ -121,8 +115,6 @@
         "type": "UserAssigned",
         "userAssignedIdentities": {
           "[parameters('managedIdResourceId')]": {
-            // "principalId": "[parameters('managedIdPrincipalId')]",
-            // "clientId": "[parameters('managedIdClientId')]"
           }
         }
       },
