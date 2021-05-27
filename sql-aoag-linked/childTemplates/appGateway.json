@@ -49,7 +49,8 @@
     }
   },
   "variables": {
-    "webAppBackendPool": "[if(greater(parameters('wfeServerVMCount'), 1), parameters('webAppBackendPoolAddresses'), parameters('webAppBackendPoolAddress'))]",
+    // "webAppBackendPool": "[if(greater(parameters('wfeServerVMCount'), 1), parameters('webAppBackendPoolAddresses'), parameters('webAppBackendPoolAddress'))]",
+    "webAppBackendPool": "[if(greater(parameters('wfeServerVMCount'), 1), parameters('webAppBackendPoolAddresses'), '10.10.0.4')]",
     "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'), parameters('appGatewaySubnetName'))]",
     "publicIpAddressName": "[concat(parameters('appGatewayName'), '-pip')]",
     "publicIpAddressSku": "Standard",
