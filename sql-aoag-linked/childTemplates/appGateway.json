@@ -116,7 +116,7 @@
       "type": "Microsoft.Network/applicationGateways",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "apiVersion": "2020-05-01",
-      "name": "[parameters('appGatewayName')]",
+      "name": "[concat(parameters('appGatewayName'), '-01')]",
       "location": "[parameters('location')]",
       "identity": {
         "type": "UserAssigned",
