@@ -34,6 +34,9 @@
     },
     "wfeServerImageSKU": {
       "type": "string"
+    },
+    "tags": {
+      "type": "object"
     }
   },
   "variables": {
@@ -48,6 +51,7 @@
       "name": "[parameters('wfeAvailabilitySetName')]",
       "apiVersion": "2017-12-01",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "sku": {
         "name": "Aligned"
         },
@@ -62,6 +66,7 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(parameters('wfeServerBaseName'), copyindex())]",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/availabilitySets/',parameters('wfeAvailabilitySetName'))]"
       ],
@@ -113,6 +118,7 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('wfeServerBaseName')]",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "dependsOn": [
       ],
       "properties": {

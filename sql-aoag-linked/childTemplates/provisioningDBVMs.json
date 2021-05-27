@@ -37,6 +37,9 @@
     },
     "sqlImageSKU": {
       "type": "string"
+    },
+    "tags": {
+      "type": "object"
     }
   },
   "variables": {
@@ -51,6 +54,7 @@
       "name": "[parameters('sqlAvailabilitySetName')]",
       "apiVersion": "2017-12-01",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "sku": {
         "name": "Aligned"
         },
@@ -65,6 +69,7 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(parameters('sqlVMName'), copyindex())]",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]"
       ],
@@ -132,6 +137,7 @@
       "condition": "[not(greater(parameters('sqlServerVMCount'), 1))]",
       "name": "[parameters('sqlVMName')]",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "dependsOn": [
       ],
       "properties": {

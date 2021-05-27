@@ -46,6 +46,9 @@
     },
     "wfeServerVMCount": {
       "type": "int"
+    },
+    "tags": {
+      "type": "object"
     }
   },
   "variables": {
@@ -77,6 +80,7 @@
       "apiVersion": "2020-08-01",
       "name": "[variables('publicIpAddressName')]",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "sku": {
         "name": "[variables('publicIpAddressSku')]"
       },
@@ -92,6 +96,7 @@
       "apiVersion": "2020-06-01",
       "name": "[parameters('webAppFirewallName')]",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "properties": {
         "customRules": [
         ],
@@ -118,6 +123,7 @@
       "apiVersion": "2020-05-01",
       "name": "[concat(parameters('appGatewayName'), '-01')]",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "identity": {
         "type": "UserAssigned",
         "userAssignedIdentities": {
@@ -264,6 +270,7 @@
       "apiVersion": "2020-05-01",
       "name": "[parameters('appGatewayName')]",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "identity": {
         "type": "UserAssigned",
         "userAssignedIdentities": {

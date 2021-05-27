@@ -19,6 +19,9 @@
     },
     "primaryEndpointUrl": {
       "type": "string"
+    },
+    "tags": {
+      "type": "object"
     }
   },
   "resources": [
@@ -27,6 +30,7 @@
       "apiVersion": "2018-08-01",
       "name": "ExternalEndpointExample",
       "location": "global",
+      "tags": "[parameters('tags')]",
       "properties": {
         "profileStatus": "Enabled",
         "trafficRoutingMethod": "[parameters('frontDoorTrafficRoutingMethod')]",

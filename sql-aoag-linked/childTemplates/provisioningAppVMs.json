@@ -34,6 +34,9 @@
     },
     "appServerImageSKU": {
       "type": "string"
+    },
+    "tags": {
+      "type": "object"
     }
   },
   "variables": {
@@ -48,6 +51,7 @@
       "name": "[parameters('appAvailabilitySetName')]",
       "apiVersion": "2017-12-01",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "sku": {
         "name": "Aligned"
         },
@@ -62,6 +66,7 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(parameters('appServerBaseName'), copyindex())]",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]"
       ],
@@ -114,6 +119,7 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('appServerBaseName')]",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "dependsOn": [
       ],
       "properties": {
