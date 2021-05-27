@@ -167,18 +167,18 @@
           {
             "name": "[variables('appGwBackendAddressPoolName')]",
             "properties": {
-              // "copy": [
-              //   {
-              //     "name": "backendAddresses",
-              //     "count": "[parameters('wfeServerVMCount')]",
-              //     "input": {
-              //       "ipAddress": "[variables('webAppBackendPool')[copyIndex('backendAddresses')]]"
-              //     }
-              //   },
-                "backendAddresses": [
-                  {
-                    "ipAddress": "[parameters('webAppBackendPoolAddress')]"
+              "copy": [
+                {
+                  "name": "backendAddresses",
+                  "count": "[length(variables('webAppBackendPool'))]",
+                  "input": {
+                    "ipAddress": "[variables('webAppBackendPool')[copyIndex('backendAddresses', 1)]]"
                   }
+                }
+                // "backendAddresses": [
+                //   {
+                //     "ipAddress": "[parameters('webAppBackendPoolAddress')]"
+                //   }
               ]
             }
           }
