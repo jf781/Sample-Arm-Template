@@ -58,6 +58,7 @@
     },
     {
       "apiVersion": "2020-12-01",
+      "condition": "[greater(parameters('appServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(parameters('appServerBaseName'), copyindex())]",
       "location": "[parameters('location')]",
@@ -96,6 +97,51 @@
           "networkInterfaces": [
             {
               "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('appServerBaseName'), copyindex(),'-nic'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('https://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2020-12-01",
+      "condition": "[not(greater(parameters('appServerVMCount'), 1))]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('appServerBaseName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('appServerVMSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('appServerBaseName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('appServerImagePublisher')]",
+            "offer": "[parameters('appServerImageOffer')]",
+            "sku": "[parameters('appServerImageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(parameters('appServerBaseName'), '_OSDisk')]",
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('appServerBaseName'), '-nic'))]"
             }
           ]
         },
