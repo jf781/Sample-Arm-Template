@@ -40,9 +40,16 @@
     },
     "webAppBackendPoolAddresses": {
       "type": "array"
+    },
+    "webAppBackendPoolAddress": {
+      "type": "array"
+    }.
+    "wfeServerVMCount": {
+      "type": "int"
     }
   },
   "variables": {
+    "webAppBackendPool": "[if(greater(parameters('wfeServerVMCount'), 1), parameters('webAppBackendPoolAddresses'), parameters('webAppBackendPoolAddress'))]",
     "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'), parameters('appGatewaySubnetName'))]",
     "publicIpAddressName": "[concat(parameters('appGatewayName'), '-pip')]",
     "publicIpAddressSku": "Standard",
@@ -162,9 +169,9 @@
               "copy": [
                 {
                   "name": "backendAddresses",
-                  "count": "[length(parameters('webAppBackendPoolAddresses'))]",
+                  "count": "[length(variables('webAppBackendPool'))]",
                   "input": {
-                    "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('backendAddresses')]]"
+                    "ipAddress": "[variables('webAppBackendPool')[copyIndex('backendAddresses')]]"
                   }
                 }
               ]
