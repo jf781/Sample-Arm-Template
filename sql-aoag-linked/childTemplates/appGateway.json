@@ -169,7 +169,7 @@
               "copy": [
                 {
                   "name": "backendAddresses",
-                  "count": "[length(variables('webAppBackendPool'))]",
+                  "count": "[parameters('wfeServerVMCount')]",
                   "input": {
                     "ipAddress": "[variables('webAppBackendPool')[copyIndex('backendAddresses')]]"
                   }
@@ -264,9 +264,9 @@
       "type": "string",
       "value": "[reference(variables('publicIpAddressName')).dnsSettings.fqdn]"
     },
-    "webAppBackendPoolAddresses": {
+    "webAppBackendPool": {
       "type": "array",
-      "value": "[parameters('webAppBackendPoolAddresses').value]"
+      "value": "[variables('webAppBackendPool')]"
     }
   }
 }
