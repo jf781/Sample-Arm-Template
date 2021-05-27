@@ -58,6 +58,7 @@
     },
     {
       "apiVersion": "2017-03-30",
+      "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(parameters('wfeServerBaseName'), copyindex())]",
       "location": "[parameters('location')]",
@@ -95,6 +96,52 @@
           "networkInterfaces": [
             {
               "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('wfeServerBaseName'), copyindex(),'-nic'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('https://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-03-30",
+      "condition": "[not(greater(parameters('wfeServerVMCount'), 1))]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('wfeServerBaseName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('wfeServerVMSize')]"
+        },
+        "availabilitySet": "[if(greater(parameters('wfeServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]",
+        "osProfile": {
+          "computerName": "[parameters('wfeServerBaseName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('wfeServerImagePublisher')]",
+            "offer": "[parameters('wfeServerImageOffer')]",
+            "sku": "[parameters('wfeServerImageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(parameters('wfeServerBaseName'), '_OSDisk')]",
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('wfeServerBaseName'), '-nic'))]"
             }
           ]
         },
