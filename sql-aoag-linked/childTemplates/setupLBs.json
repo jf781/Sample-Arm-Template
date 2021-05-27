@@ -124,6 +124,9 @@
     },
     "wfeLBProbe": {
       "type": "string"
+    },
+    "tags": {
+      "type": "object"
     }
   },
   "resources": [
@@ -133,6 +136,7 @@
       "name": "[parameters('sqlLBName')]",
       "type": "Microsoft.Network/loadBalancers",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "properties": {
         "frontendIPConfigurations": [
           {
@@ -190,6 +194,7 @@
       "name": "[parameters('failoverSqlLBName')]",
       "type": "Microsoft.Network/loadBalancers",
       "location": "[parameters('failoverLocation')]",
+      "tags": "[parameters('tags')]",
       "properties": {
         "frontendIPConfigurations": [
           {
@@ -247,6 +252,7 @@
       "name": "[parameters('appLBName')]",
       "type": "Microsoft.Network/loadBalancers",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "properties": {
         "frontendIPConfigurations": [
           {
@@ -305,6 +311,7 @@
       "name": "[parameters('wfeLBName')]",
       "type": "Microsoft.Network/loadBalancers",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "properties": {
         "frontendIPConfigurations": [
           {

@@ -7,6 +7,9 @@
     },
     "diagStorageAccountName": {
       "type": "string"
+    },
+    "tags": {
+      "type": "object"
     }
   },
   "resources": [
@@ -15,6 +18,7 @@
       "name": "[parameters('diagStorageAccountName')]",
       "apiVersion": "2019-06-01",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "sku": {
         "name": "Standard_LRS"
       },

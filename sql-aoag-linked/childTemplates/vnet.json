@@ -181,6 +181,9 @@
       "metadata": {
         "description": "The Primary DNS server configured for this Vnet"
       }
+    },
+    "tags": {
+      "type": "object"
     }
   },
   "variables": {
@@ -191,6 +194,7 @@
       "name": "[parameters('virtualNetworkName')]",
       "apiVersion": "2020-05-01",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "comments": "This will build a Virtual Network.",
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('webFrontEndNsgName'))]",
@@ -275,6 +279,7 @@
       "name": "[parameters('failoverVirtualNetworkName')]",
       "apiVersion": "2020-05-01",
       "location": "[parameters('failoverLocation')]",
+      "tags": "[parameters('tags')]",
       "comments": "This will build a Virtual Network.",
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('failoverWebFrontEndNsgName'))]",
@@ -359,6 +364,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2020-05-01",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "comments": "Network Security Group (NSG) for your web front end server subnet",
       "properties": {
         "securityRules": [
@@ -409,6 +415,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2020-05-01",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "comments": "Network Security Group (NSG) for your application server subnet",
       "properties": {
         "securityRules": [
@@ -446,6 +453,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2020-05-01",
       "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
       "comments": "Network Security Group (NSG) for your DB server subnet",
       "properties": {
         "securityRules": [
@@ -483,6 +491,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2020-05-01",
       "location": "[parameters('failoverLocation')]",
+      "tags": "[parameters('tags')]",
       "comments": "Network Security Group (NSG) for your web front end server subnet",
       "properties": {
         "securityRules": [
@@ -533,6 +542,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2020-05-01",
       "location": "[parameters('failoverLocation')]",
+      "tags": "[parameters('tags')]",
       "comments": "Network Security Group (NSG) for your application server subnet",
       "properties": {
         "securityRules": [
@@ -570,6 +580,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2020-05-01",
       "location": "[parameters('failoverLocation')]",
+      "tags": "[parameters('tags')]",
       "comments": "Network Security Group (NSG) for your DB server subnet",
       "properties": {
         "securityRules": [
