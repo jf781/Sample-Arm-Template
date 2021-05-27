@@ -49,8 +49,6 @@
     }
   },
   "variables": {
-    // "webAppBackendPool": "[if(greater(parameters('wfeServerVMCount'), 1), parameters('webAppBackendPoolAddresses'), parameters('webAppBackendPoolAddress'))]",
-    "webAppBackendPool": "[if(greater(parameters('wfeServerVMCount'), 1), parameters('webAppBackendPoolAddresses'), '10.10.0.4')]",
     "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'), parameters('appGatewaySubnetName'))]",
     "publicIpAddressName": "[concat(parameters('appGatewayName'), '-pip')]",
     "publicIpAddressSku": "Standard",
@@ -116,6 +114,7 @@
     },
     {
       "type": "Microsoft.Network/applicationGateways",
+      "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "apiVersion": "2020-05-01",
       "name": "[parameters('appGatewayName')]",
       "location": "[parameters('location')]",
@@ -170,15 +169,153 @@
               "copy": [
                 {
                   "name": "backendAddresses",
-                  "count": "[length(variables('webAppBackendPool'))]",
+                  "count": "[length(parameters('webAppBackendPoolAddresses'))]",
                   "input": {
-                    "ipAddress": "[variables('webAppBackendPool')[copyIndex('backendAddresses', 1)]]"
+                    "ipAddress": "[parameters('webAppBackendPoolAddresses')[copyIndex('backendAddresses')]]"
                   }
                 }
-                // "backendAddresses": [
-                //   {
-                //     "ipAddress": "[parameters('webAppBackendPoolAddress')]"
-                //   }
+              ]
+            }
+          }
+        ],
+        "backendHttpSettingsCollection": [
+          {
+            "name": "[variables('appGwHttpSettingName')]",
+            "properties": {
+              "Port": 80,
+              "Protocol": "Http",
+              "cookieBasedAffinity": "Disabled",
+              "requestTimeout": 20,
+              "pickHostNameFromBackendAddress": true
+            }
+          }
+        ],
+        "httpListeners": [
+          {
+            "name": "[variables('appGwListenerName')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('appGwFrontendIpConfigId')]"
+              },
+              "frontendPort": {
+                "id": "[variables('appGwFrontendPortId')]"
+              },
+              "protocol": "Http"
+            }
+          }
+        ],
+        "sslCertificates": [
+          {
+            "name": "appGwSslCertificate",
+            "properties": {
+              "data": "[parameters('appGatewaySSLCertificateData')]"
+            }
+          }
+        ],
+        "requestRoutingRules": [
+          {
+            "Name": "[variables('appGwRoutingRuleName')]",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[variables('appGwListenerId')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('appGwBackendAddressPoolId')]"
+              },
+              "backendHttpSettings": {
+                "id": "[variables('appGwHttpSettingId')]"
+              }
+            }
+          }
+        ],
+        "enableHttp2": true,
+        "probes": [
+          {
+            "name": "[variables('appGwHttpSettingProbeName')]",
+            "properties": {
+              "backendHttpSettings": [
+                {
+                  "id": "[variables('appGwHttpSettingId')]"
+                }
+              ],
+              "interval": 30,
+              "minServers": 0,
+              "path": "/",
+              "protocol": "Http",
+              "timeout": 30,
+              "unhealthyThreshold": 3,
+              "pickHostNameFromBackendHttpSettings": true
+            }
+          }
+        ],
+        "autoscaleConfiguration": {
+          "minCapacity": "[parameters('appGatewayAutoScaleMinValue')]",
+          "maxCapacity": "[parameters('appGatewayAutoScaleMaxValue')]"
+        },
+        "firewallPolicy": {
+          "id": "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/', parameters('webAppFirewallName'))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/applicationGateways",
+      "condition": "[not(greater(parameters('wfeServerVMCount'), 1))]",
+      "apiVersion": "2020-05-01",
+      "name": "[parameters('appGatewayName')]",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[parameters('managedIdResourceId')]": {
+          }
+        }
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpAddressName'))]",
+        "[concat('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies/', parameters('webAppFirewallName'))]"
+      ],
+      "properties": {
+        "sku": {
+          "name": "[variables('appGatewaySkuSize')]",
+          "tier": "[variables('appGatewayTier')]"
+        },
+        "gatewayIPConfigurations": [
+          {
+            "name": "[variables('appGwIpConfigName')]",
+            "properties": {
+              "subnet": {
+                "id": "[variables('virtualNetworkSubnetId')]"
+              }
+            }
+          }
+        ],
+        "frontendIPConfigurations": [
+          {
+            "name": "[variables('appGwFrontendIpConfigName')]",
+            "properties": {
+              "PublicIPAddress": {
+                "id": "[variables('publicIpAddressId')]"
+              }
+            }
+          }
+        ],
+        "frontendPorts": [
+          {
+            "name": "[variables('appGwFrontendPortName')]",
+            "properties": {
+              "Port": "[variables('appGwFrontendPort')]"
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('appGwBackendAddressPoolName')]",
+            "properties": {
+              "backendAddresses":[
+                {
+                  "ipAddress": "[parameters('webAppBackendPoolAddress')]"
+                }
               ]
             }
           }
@@ -269,9 +406,15 @@
       "type": "string",
       "value": "[reference(variables('publicIpAddressName')).dnsSettings.fqdn]"
     },
-    "webAppBackendPool": {
+    "webAppBackendPoolAddresses": {
+      "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "array",
-      "value": "[variables('webAppBackendPool')]"
+      "value": "[parameters('webAppBackendPoolAddresses')]"
+    },
+    "webAppBackendPoolAddress": {
+      "condition": "[not(greater(parameters('wfeServerVMCount'), 1))]",
+      "type": "string",
+      "value": "[parameters('webAppBackendPoolAddress')]"
     }
   }
 }
