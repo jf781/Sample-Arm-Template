@@ -167,14 +167,18 @@
           {
             "name": "[variables('appGwBackendAddressPoolName')]",
             "properties": {
-              "copy": [
-                {
-                  "name": "backendAddresses",
-                  "count": "[parameters('wfeServerVMCount')]",
-                  "input": {
-                    "ipAddress": "[variables('webAppBackendPool')[copyIndex('backendAddresses')]]"
+              // "copy": [
+              //   {
+              //     "name": "backendAddresses",
+              //     "count": "[parameters('wfeServerVMCount')]",
+              //     "input": {
+              //       "ipAddress": "[variables('webAppBackendPool')[copyIndex('backendAddresses')]]"
+              //     }
+              //   },
+                "backendAddresses": [
+                  {
+                    "ipAddress": "[parameters('webAppBackendPoolAddress')]"
                   }
-                }
               ]
             }
           }
