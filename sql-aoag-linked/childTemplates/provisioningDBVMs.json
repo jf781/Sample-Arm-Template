@@ -130,7 +130,7 @@
       "apiVersion": "2017-03-30",
       "type": "Microsoft.Compute/virtualMachines",
       "condition": "[not(greater(parameters('sqlServerVMCount'), 1))]",
-      "name": "[concat(parameters('sqlVMName'), copyindex())]",
+      "name": "[parameters('sqlVMName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
       ],
@@ -139,7 +139,7 @@
           "vmSize": "[parameters('sqlVMSize')]"
         },
         "osProfile": {
-          "computerName": "[concat(parameters('sqlVMName'), copyindex())]",
+          "computerName": "[parameters('sqlVMName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
