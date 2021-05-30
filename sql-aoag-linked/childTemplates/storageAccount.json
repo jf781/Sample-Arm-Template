@@ -5,7 +5,7 @@
     "location": {
       "type": "string"
     },
-    "diagStorageAccountName": {
+    "storageAccountName": {
       "type": "string"
     },
     "tags": {
@@ -15,7 +15,7 @@
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[parameters('diagStorageAccountName')]",
+      "name": "[parameters('storageAccountName')]",
       "apiVersion": "2019-06-01",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
@@ -39,7 +39,7 @@
   ],
   "outputs": {
       "blobUri": {
-        "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('diagStorageAccountName'))).primaryEndpoints.blob]",
+        "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))).primaryEndpoints.blob]",
         "type" : "string"
     }
   }
