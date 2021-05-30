@@ -563,7 +563,7 @@
             "name": "default-allow-web-front-end",
             "properties": {
               "priority": 1001,
-              "sourceAddressPrefix": "[parameters('webFrontEndSubnetAddressPrefix')]",
+              "sourceAddressPrefix": "[parameters('failoverWebFrontEndSubnetAddressPrefix')]",
               "protocol": "Tcp",
               "destinationPortRange": "443",
               "access": "Allow",
@@ -601,7 +601,7 @@
             "name": "default-allow-app-server",
             "properties": {
               "priority": 1001,
-              "sourceAddressPrefix": "[parameters('appServerSubnetAddresSpace')]",
+              "sourceAddressPrefix": "[parameters('failoverAppServerSubnetAddresSpace')]",
               "protocol": "Tcp",
               "destinationPortRange": "1433",
               "access": "Allow",
