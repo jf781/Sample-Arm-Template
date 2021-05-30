@@ -14,7 +14,7 @@
     "location": {
       "type": "string"
     },
-    "diagStorageAccountName": {
+    "storageAccountName": {
       "type": "string"
     },
     "wfeAvailabilitySetName": {
@@ -107,7 +107,7 @@
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": true,
-            "storageUri": "[concat('https://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
+            "storageUri": "[concat('https://',parameters('storageAccountName'),'.blob.core.windows.net')]"
           }
         }
       }
@@ -154,7 +154,7 @@
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": true,
-            "storageUri": "[concat('https://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
+            "storageUri": "[concat('https://',parameters('storageAccountName'),'.blob.core.windows.net')]"
           }
         }
       }
