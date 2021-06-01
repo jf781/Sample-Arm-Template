@@ -170,7 +170,7 @@
       }
     },    
     {
-      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(variables('wfeServerBaseName'), copyindex(), '-nic'), 'invalidWFENICs')]",
+      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(variables('wfeServerBaseName'), copyindex(1), '-nic'), 'invalidWFENICs')]",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
