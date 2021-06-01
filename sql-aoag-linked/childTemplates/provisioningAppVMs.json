@@ -8,7 +8,7 @@
     "adminPassword": {
       "type": "securestring"
     },
-    "appServerBaseName": {
+    "appName": {
       "type": "string"
     },
     "location": {
@@ -42,7 +42,8 @@
   "variables": {
     "availabilitySetConfiguration": {
       "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]"
-    }
+    },
+    "vmBaseName": "[concat(parameters('appName'), if(equals(parameters('location'), 'Central US'), 'a1', 'a2'), 'uiappvm0')]"
   },
   "resources": [
     {
@@ -64,7 +65,7 @@
       "apiVersion": "2020-12-01",
       "condition": "[greater(parameters('appServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('appServerBaseName'), copyindex())]",
+      "name": "[concat(variables('vmBaseName'), copyindex())]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
@@ -81,7 +82,7 @@
         "availabilitySet": "[if(greater(parameters('appServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]"
         ,
         "osProfile": {
-          "computerName": "[concat(parameters('appServerBaseName'), copyindex())]",
+          "computerName": "[concat(variables('vmBaseName'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -93,7 +94,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('appServerBaseName'), copyindex(),'_OSDisk')]",
+            "name": "[concat(variables('vmBaseName'), copyindex(),'_OSDisk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -101,7 +102,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('appServerBaseName'), copyindex(),'-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(variables('vmBaseName'), copyindex(),'-nic'))]"
             }
           ]
         },
@@ -117,7 +118,7 @@
       "apiVersion": "2020-12-01",
       "condition": "[not(greater(parameters('appServerVMCount'), 1))]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('appServerBaseName')]",
+      "name": "[concat(variables('vmBaseName'), 01)]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
@@ -127,7 +128,7 @@
           "vmSize": "[parameters('appServerVMSize')]"
         },
         "osProfile": {
-          "computerName": "[parameters('appServerBaseName')]",
+          "computerName": "[concat(variables('vmBaseName'), 01)]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -139,7 +140,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('appServerBaseName'), '_OSDisk')]",
+            "name": "[concat(variables('vmBaseName'), 01, '_OSDisk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -147,7 +148,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('appServerBaseName'), '-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(variables('vmBaseName'), 01, '-nic'))]"
             }
           ]
         },

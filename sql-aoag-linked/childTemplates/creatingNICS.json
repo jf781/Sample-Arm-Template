@@ -8,7 +8,7 @@
     "failoverLocation": {
       "type": "string"
     },
-    "sqlVMName": {
+    "appName": {
       "type": "string"
     },
     "sqlServerVMCount": {
@@ -20,9 +20,6 @@
     "sqlSubnetRef": {
       "type": "string"
     },
-    "failoverSqlVMName": {
-      "type": "string"
-    },
     "failoverSqlServerVMCount": {
       "type": "int"
     },
@@ -32,9 +29,6 @@
     "failoverSqlSubnetRef": {
       "type": "string"
     },
-    "wfeServerBaseName": {
-      "type": "string"
-    },
     "wfeServerVMCount": {
       "type": "int"
     },
@@ -42,9 +36,6 @@
       "type": "string"
     },
     "webFrontEndSubnetRef": {
-      "type": "string"
-    },
-    "appServerBaseName": {
       "type": "string"
     },
     "appServerVMCount": {
@@ -72,11 +63,16 @@
     },
     "wfeLoadBalancerConfig": {
       "id": "[parameters('wfeBEAddressPoolID')]"
-    }
+    },
+    "appServerBaseName": "[concat(parameters('appName'), if(equals(parameters('location'), 'Central US'), 'a1', 'a2'), 'uiappvm0')]",
+    "dbServerBaseName": "[concat(parameters('appName'), if(equals(parameters('location'), 'Central US'), 'a1', 'a2'), 'uidbvm0')]",
+    "failoverDBServerBaseName": "[concat(parameters('appName'), if(equals(parameters('failoverlocation'), 'East US 2'), 'a2', 'a1'), 'uidbvm0')]",
+    "webServerBaseName": "[concat(parameters('appName'), if(equals(parameters('location'), 'Central US'), 'a1', 'a2'), 'uiwebvm0')]"
+    
   },
   "resources": [
     {
-      "name": "[concat(parameters('sqlVMName'), copyindex(), '-nic')]",
+      "name": "[concat(variables('dbServerBaseName'), copyindex(), '-nic')]",
       "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -104,7 +100,7 @@
       }
     },
     {
-      "name": "[concat(parameters('sqlVMName'), '-nic')]",
+      "name": "[concat(variables('dbServerBaseName'), '01-nic')]",
       "condition": "[not(greater(parameters('sqlServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -125,7 +121,7 @@
       }
     },
     {
-      "name": "[concat(parameters('failoverSqlVMName'), copyindex(), '-nic')]",
+      "name": "[concat(variables('failoverDBServerBaseName'), copyindex(), '-nic')]",
       "condition": "[greater(parameters('failoverSqlServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('failoverLocation')]",
@@ -153,7 +149,7 @@
       }
     },
     {
-      "name": "[concat(parameters('failoverSqlVMName'), '-nic')]",
+      "name": "[concat(variables('failoverDBServerBaseName'), '01-nic')]",
       "condition": "[not(greater(parameters('failoverSqlServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('failoverLocation')]",
@@ -174,7 +170,7 @@
       }
     },    
     {
-      "name": "[concat(parameters('wfeServerBaseName'), copyindex(), '-nic')]",
+      "name": "[concat(variables('webServerBaseName'), copyindex(), '-nic')]",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -202,7 +198,7 @@
       }
     },
     {
-      "name": "[concat(parameters('wfeServerBaseName'), '-nic')]",
+      "name": "[concat(variables('webServerBaseName'), '01-nic')]",
       "condition": "[not(greater(parameters('wfeServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -223,7 +219,7 @@
       }
     },
     {
-      "name": "[concat(parameters('appServerBaseName'), copyindex(), '-nic')]",
+      "name": "[concat(variables('appServerBaseName'), copyindex(), '-nic')]",
       "condition": "[greater(parameters('appServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -251,7 +247,7 @@
       }
     },
     {
-      "name": "[concat(parameters('appServerBaseName'), '-nic')]",
+      "name": "[concat(variables('appServerBaseName'), '01-nic')]",
       "condition": "[not(greater(parameters('appServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -278,13 +274,13 @@
       "type": "array",
       "copy": {
         "count": "[parameters('wfeServerVMCount')]",
-        "input": "[reference(concat(parameters('wfeServerBaseName'), copyindex(), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
+        "input": "[reference(concat(variables('webServerBaseName'), copyindex(), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
       }
     },
     "webFrontEndIpAddress": {
     "condition": "[not(greater(parameters('wfeServerVMCount'), 1))]",
       "type": "string",
-      "value": "[reference(concat(parameters('wfeServerBaseName'), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
+      "value": "[reference(concat(variables('webServerBaseName'), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
     }
   }
 }
