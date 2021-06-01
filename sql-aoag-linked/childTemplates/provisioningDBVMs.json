@@ -96,7 +96,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(variables('vmBaseName'), copyindex(),'_OSDisk')]",
+            "name": "[concat(variables('vmBaseName'), copyindex(),'-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
@@ -136,7 +136,7 @@
       "apiVersion": "2017-03-30",
       "type": "Microsoft.Compute/virtualMachines",
       "condition": "[not(greater(parameters('sqlServerVMCount'), 1))]",
-      "name": "[concat(variables('vmBaseName'), 01)]",
+      "name": "[concat(variables('vmBaseName'), '01')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
@@ -146,7 +146,7 @@
           "vmSize": "[parameters('sqlVMSize')]"
         },
         "osProfile": {
-          "computerName": "[concat(variables('vmBaseName'), 01)]",
+          "computerName": "[concat(variables('vmBaseName'), '01')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -158,7 +158,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(variables('vmBaseName'), 01, '_OSDisk')]",
+            "name": "[concat(variables('vmBaseName'), '01-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
@@ -167,7 +167,7 @@
               "name": "dataDisks",
               "count": "[length(parameters('sqlServerDataDiskLayout'))]",
               "input": {
-                "name" : "[concat(variables('vmBaseName'), 01, '-data-disk-',parameters('sqlServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
+                "name" : "[concat(variables('vmBaseName'), '01-data-disk-',parameters('sqlServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
                 "createOption": "Empty",
                 "caching": "[parameters('sqlServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
                 "diskSizeGB": "[parameters('sqlServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
@@ -182,7 +182,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(variables('vmBaseName'), 01,'-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(variables('vmBaseName'), '01-nic'))]"
             }
           ]
         },
