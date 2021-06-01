@@ -72,7 +72,7 @@
   },
   "resources": [
     {
-      "name": "[concat(variables('dbServerBaseName'), copyindex(), '-nic')]",
+      "name": "[concat(variables('dbServerBaseName'), copyindex(1), '-nic')]",
       "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -121,7 +121,7 @@
       }
     },
     {
-      "name": "[concat(variables('failoverDBServerBaseName'), copyindex(), '-nic')]",
+      "name": "[concat(variables('failoverDBServerBaseName'), copyindex(1), '-nic')]",
       "condition": "[greater(parameters('failoverSqlServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('failoverLocation')]",
@@ -170,7 +170,7 @@
       }
     },    
     {
-      "name": "[concat(variables('wfeServerBaseName'), copyindex(), '-nic')]",
+      "name": "[concat(variables('wfeServerBaseName'), copyindex(1), '-nic')]",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -274,7 +274,7 @@
       "type": "array",
       "copy": {
         "count": "[parameters('wfeServerVMCount')]",
-        "input": "[reference(concat(variables('wfeServerBaseName'), copyindex(), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
+        "input": "[reference(concat(variables('wfeServerBaseName'), copyindex(1), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
       }
     },
     "webFrontEndIpAddress": {
