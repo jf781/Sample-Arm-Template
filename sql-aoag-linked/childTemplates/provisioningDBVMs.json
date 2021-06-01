@@ -68,7 +68,7 @@
       "apiVersion": "2017-03-30",
       "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(variables('vmBaseName'), copyindex())]",
+      "name": "[concat(variables('vmBaseName'), copyindex(1))]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
@@ -84,7 +84,7 @@
         },
         "availabilitySet": "[if(greater(parameters('sqlServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]",
         "osProfile": {
-          "computerName": "[concat(variables('vmBaseName'), copyindex())]",
+          "computerName": "[concat(variables('vmBaseName'), copyindex(1))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -96,7 +96,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(variables('vmBaseName'), copyindex(),'-os-disk')]",
+            "name": "[concat(variables('vmBaseName'), copyindex(1),'-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
@@ -105,7 +105,7 @@
               "name": "dataDisks",
               "count": "[length(parameters('sqlServerDataDiskLayout'))]",
               "input": {
-                "name" : "[concat(variables('vmBaseName'), copyindex(),'-data-disk-',parameters('sqlServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
+                "name" : "[concat(variables('vmBaseName'), copyindex(1),'-data-disk-',parameters('sqlServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
                 "createOption": "Empty",
                 "caching": "[parameters('sqlServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
                 "diskSizeGB": "[parameters('sqlServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
@@ -120,7 +120,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(variables('vmBaseName'), copyindex(),'-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(variables('vmBaseName'), copyindex(1),'-nic'))]"
             }
           ]
         },
