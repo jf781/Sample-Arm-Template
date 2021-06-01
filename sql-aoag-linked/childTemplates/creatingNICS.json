@@ -274,7 +274,7 @@
       "type": "array",
       "copy": {
         "count": "[parameters('wfeServerVMCount')]",
-        "input": "[reference(concat(variables('wfeServerBaseName'), copyindex(), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
+        "input": "[reference(concat(variables('wfeServerBaseName'), copyindex(1), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
       }
     },
     "webFrontEndIpAddress": {
