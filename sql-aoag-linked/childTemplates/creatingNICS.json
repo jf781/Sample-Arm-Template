@@ -170,7 +170,7 @@
       }
     },    
     {
-      "name": "[concat(variables('wfeServerBaseName'), copyindex(), '-nic')]",
+      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(variables('wfeServerBaseName'), copyindex(), '-nic'), 'invalidWFENICs')]",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -198,7 +198,7 @@
       }
     },
     {
-      "name": "[concat(variables('wfeServerBaseName'), '1-nic')]",
+      "name": "[if(not(greater(parameters('wfeServerVMCount'), 1)), concat(variables('wfeServerBaseName'), '1-nic'), 'invalidWFENIC')]",
       "condition": "[not(greater(parameters('wfeServerVMCount'), 1))]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
