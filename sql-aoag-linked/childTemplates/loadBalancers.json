@@ -1,0 +1,368 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "failoverLocation": {
+      "type": "string"
+    },
+    "sqlServerVMCount": {
+      "type": "int"
+    },
+    "sqlLBName": {
+      "type": "string"
+    },
+    "sqlLBFE": {
+      "type": "string"
+    },
+    "sqlLBIPAddress": {
+      "type": "string"
+    },
+    "sqlSubnetRef": {
+      "type": "string"
+    },
+    "sqlLBBE": {
+      "type": "string"
+    },
+    "sqlLBBEID": {
+      "type": "string"
+    },
+    "sqlLBFEConfigID": {
+      "type": "string"
+    },
+    "sqlLBProbeID": {
+      "type": "string"
+    },
+    "sqlLBProbe": {
+      "type": "string"
+    },
+    "failoverSqlServerVMCount": {
+      "type": "int"
+    },
+    "failoverSqlLBName": {
+      "type": "string"
+    },
+    "failoverSqlLBFE": {
+      "type": "string"
+    },
+    "failoverSqlLBIPAddress": {
+      "type": "string"
+    },
+    "failoverSqlSubnetRef": {
+      "type": "string"
+    },
+    "failoverSqlLBBE": {
+      "type": "string"
+    },
+    "failoverSqlLBBEID": {
+      "type": "string"
+    },
+    "failoverSqlLBFEConfigID": {
+      "type": "string"
+    },
+    "failoverSqlLBProbeID": {
+      "type": "string"
+    },
+    "appServerVMCount": {
+      "type": "int"
+    },
+    "appLBName": {
+      "type": "string"
+    },
+    "appLBFE": {
+      "type": "string"
+    },
+    "appLBBE": {
+      "type": "string"
+    },
+    "appLBIPAddress": {
+      "type": "string"
+    },
+    "appSubnetRef": {
+      "type": "string"
+    },
+    "appLBBEID": {
+      "type": "string"
+    },
+    "appLBFEConfigID": {
+      "type": "string"
+    },
+    "appLBProbeID": {
+      "type": "string"
+    },
+    "appLBProbe": {
+      "type": "string"
+    },
+    "wfeServerVMCount": {
+      "type": "int"
+    },
+    "wfeLBName": {
+      "type": "string"
+    },
+    "wfeLBFE": {
+      "type": "string"
+    },
+    "wfeLBBE": {
+      "type": "string"
+    },
+    "wfeLBIPAddress": {
+      "type": "string"
+    },
+    "webFrontEndSubnetRef": {
+      "type": "string"
+    },
+    "wfeLBBEID": {
+      "type": "string"
+    },
+    "wfeLBFEConfigID": {
+      "type": "string"
+    },
+    "wfeLBProbeID": {
+      "type": "string"
+    },
+    "wfeLBProbe": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "object"
+    }
+  },
+  "resources": [
+    {
+      "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
+      "apiVersion": "2015-06-15",
+      "name": "[parameters('sqlLBName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[parameters('sqlLBFE')]",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('sqlLBIPAddress')]",
+              "subnet": {
+                "id": "[parameters('sqlSubnetRef')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[parameters('sqlLBBE')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "SQLAlwaysOnListener",
+            "properties": {
+              "backendAddressPool": {
+                "id": "[parameters('sqlLBBEID')]"
+              },
+              "frontendIPConfiguration": {
+                "id": "[parameters('sqlLBFEConfigID')]"
+              },
+              "probe": {
+                "id": "[parameters('sqlLBProbeID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 1433,
+              "backendPort": 1433,
+              "enableFloatingIP": true
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[parameters('sqlLBProbe')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 59999,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "condition": "[greater(parameters('failoverSqlServerVMCount'), 1)]",
+      "apiVersion": "2015-06-15",
+      "name": "[parameters('failoverSqlLBName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[parameters('failoverLocation')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[parameters('failoverSqlLBFE')]",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('failoverSqlLBIPAddress')]",
+              "subnet": {
+                "id": "[parameters('failoverSqlSubnetRef')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[parameters('failoverSqlLBBE')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "SQLAlwaysOnListener",
+            "properties": {
+              "backendAddressPool": {
+                "id": "[parameters('failoverSqlLBBEID')]"
+              },
+              "frontendIPConfiguration": {
+                "id": "[parameters('failoverSqlLBFEConfigID')]"
+              },
+              "probe": {
+                "id": "[parameters('failoverSqlLBProbeID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 1433,
+              "backendPort": 1433,
+              "enableFloatingIP": true
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[parameters('sqlLBProbe')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 59999,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "condition": "[greater(parameters('appServerVMCount'), 1)]",
+      "apiVersion": "2015-06-15",
+      "name": "[parameters('appLBName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[parameters('appLBFE')]",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('appLBIPAddress')]",
+              "subnet": {
+                "id": "[parameters('appSubnetRef')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[parameters('appLBBE')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "AppServersListener",
+            "properties": {
+              "backendAddressPool": {
+                "id": "[parameters('appLBBEID')]"
+              },
+              "frontendIPConfiguration": {
+                "id": "[parameters('appLBFEConfigID')]"
+              },
+              "probe": {
+                "id": "[parameters('appLBProbeID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "loadDistribution": "SourceIP",
+              "enableFloatingIP": true
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[parameters('appLBProbe')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 80,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
+      "apiVersion": "2015-06-15",
+      "name": "[parameters('wfeLBName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[parameters('wfeLBFE')]",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[parameters('wfeLBIPAddress')]",
+              "subnet": {
+                "id": "[parameters('webFrontEndSubnetRef')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[parameters('wfeLBBE')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "WebFrontEndListner",
+            "properties": {
+              "backendAddressPool": {
+                "id": "[parameters('wfeLBBEID')]"
+              },
+              "frontendIPConfiguration": {
+                "id": "[parameters('wfeLBFEConfigID')]"
+              },
+              "probe": {
+                "id": "[parameters('wfeLBProbeID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "loadDistribution": "SourceIP",
+              "enableFloatingIP": true
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[parameters('wfeLBProbe')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 80,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
