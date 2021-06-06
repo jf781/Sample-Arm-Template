@@ -1,0 +1,617 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Primary locaiton for the resources"
+      }
+    },
+    "failoverLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "The location for the failover resources"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network Name."
+      }
+    },
+    "failoverVirtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover virtual Network Name."
+      }
+    },
+    "virtualNetworkAddressSpace": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network Address Space."
+      }
+    },
+    "failoverVirtualNetworkAddressSpace": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover virtual Network Address Space."
+      }
+    },
+    "appGatewaySubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of application servers subnet."
+      }
+    },
+    "appGatewaySubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Application Gateway subnet address space."
+      }
+    },
+    "failoverAppGatewaySubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of failover application gateway servers subnet."
+      }
+    },
+    "failoverAppGatewaySubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover application gateway subnet address space."
+      }
+    },
+    "webFrontEndSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of web front end subnet."
+      }
+    },
+    "webFrontEndSubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Web front end subnet address space."
+      }
+    },
+    "failoverWebFrontEndSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of failover web front end subnet."
+      }
+    },
+    "failoverWebFrontEndSubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover web front end subnet address space."
+      }
+    },
+    "appServerSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of app server subnet."
+      }
+    },
+    "appServerSubnetAddresSpace": {
+      "type": "string",
+      "metadata": {
+        "description": "App Server subnet address space."
+      }
+    },
+    "failoverAppServerSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of failover app server subnet."
+      }
+    },
+    "failoverAppServerSubnetAddresSpace": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover app Server subnet address space."
+      }
+    },
+    "sqlServerSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of SQL servers subnet."
+      }
+    },
+    "sqlServerSubnetAddressSpace": {
+      "type": "string",
+      "metadata": {
+        "description": "SQL servers subnet address space."
+      }
+    },
+    "failoverSqlServerSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of failover SQL servers subnet."
+      }
+    },
+    "failoverSqlServerSubnetAddressSpace": {
+      "type": "string",
+      "metadata": {
+        "description": "Failover SQL servers subnet address space."
+      }
+    },
+    "webFrontEndNsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "NSG for Web Front End Servers."
+      }
+    },
+    "appServerNsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "NSG for Web Front End Servers."
+      }
+    },
+    "sqlServerNsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "NSG for Web Front End Servers."
+      }
+    },
+    "failoverWebFrontEndNsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "NSG for failover Web Front End Servers."
+      }
+    },
+    "failoverAppServerNsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "NSG for failover Web Front End Servers."
+      }
+    },
+    "failoverSqlServerNsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "NSG for failover Web Front End Servers."
+      }
+    },
+    "primaryDNSAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The Primary DNS server configured for this Vnet"
+      }
+    },
+    "secondaryDNSAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The Primary DNS server configured for this Vnet"
+      }
+    },
+    "tags": {
+      "type": "object"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('virtualNetworkName')]",
+      "apiVersion": "2020-05-01",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "comments": "This will build a Virtual Network.",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('webFrontEndNsgName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('appServerNsgName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('sqlServerNsgName'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('virtualNetworkAddressSpace')]"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": [
+            "[parameters('primaryDNSAddress')]",
+            "[parameters('secondaryDNSAddress')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[parameters('appGatewaySubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('appGatewaySubnetAddressPrefix')]"
+            }
+          },
+          {
+            "name": "[parameters('webFrontEndSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('webFrontEndSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('webFrontEndNsgName'))]"
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "[parameters('appServerSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('appServerSubnetAddresSpace')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('appServerNsgName'))]"
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "[parameters('sqlServerSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('sqlServerSubnetAddressSpace')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('sqlServerNsgName'))]"
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('failoverVirtualNetworkName')]",
+      "apiVersion": "2020-05-01",
+      "location": "[parameters('failoverLocation')]",
+      "tags": "[parameters('tags')]",
+      "comments": "This will build a Virtual Network.",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('failoverWebFrontEndNsgName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('failoverAppServerNsgName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('failoverSqlServerNsgName'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('failoverVirtualNetworkAddressSpace')]"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": [
+            "[parameters('primaryDNSAddress')]",
+            "[parameters('secondaryDNSAddress')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[parameters('failoverAppGatewaySubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('failoverAppGatewaySubnetAddressPrefix')]"
+            }
+          },
+          {
+            "name": "[parameters('failoverWebFrontEndSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('failoverWebFrontEndSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverWebFrontEndNsgName'))]"
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "[parameters('failoverAppServerSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('failoverAppServerSubnetAddresSpace')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverAppServerNsgName'))]"
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "[parameters('failoverSqlServerSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('failoverSqlServerSubnetAddressSpace')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverSqlServerNsgName'))]"
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                      "*"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('webFrontEndNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-05-01",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "comments": "Network Security Group (NSG) for your web front end server subnet",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "default-allow-rdp",
+            "properties": {
+              "priority": 1000,
+              "sourceAddressPrefix": "*",
+              "protocol": "Tcp",
+              "destinationPortRange": "3389",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "default-allow-https",
+            "properties": {
+              "priority": 1001,
+              "sourceAddressPrefix": "*",
+              "protocol": "Tcp",
+              "destinationPortRange": "443",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "default-allow-http",
+            "properties": {
+              "priority": 1002,
+              "sourceAddressPrefix": "*",
+              "protocol": "Tcp",
+              "destinationPortRange": "80",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('appServerNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-05-01",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "comments": "Network Security Group (NSG) for your application server subnet",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "default-allow-rdp",
+            "properties": {
+              "priority": 1000,
+              "sourceAddressPrefix": "*",
+              "protocol": "Tcp",
+              "destinationPortRange": "3389",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "default-allow-web-front-end",
+            "properties": {
+              "priority": 1001,
+              "sourceAddressPrefix": "[parameters('webFrontEndSubnetAddressPrefix')]",
+              "protocol": "Tcp",
+              "destinationPortRange": "443",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('sqlServerNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-05-01",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "comments": "Network Security Group (NSG) for your DB server subnet",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "default-allow-rdp",
+            "properties": {
+              "priority": 1000,
+              "sourceAddressPrefix": "*",
+              "protocol": "Tcp",
+              "destinationPortRange": "3389",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "default-allow-app-server",
+            "properties": {
+              "priority": 1001,
+              "sourceAddressPrefix": "[parameters('appServerSubnetAddresSpace')]",
+              "protocol": "Tcp",
+              "destinationPortRange": "1433",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('failoverWebFrontEndNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-05-01",
+      "location": "[parameters('failoverLocation')]",
+      "tags": "[parameters('tags')]",
+      "comments": "Network Security Group (NSG) for your web front end server subnet",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "default-allow-rdp",
+            "properties": {
+              "priority": 1000,
+              "sourceAddressPrefix": "*",
+              "protocol": "Tcp",
+              "destinationPortRange": "3389",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "default-allow-https",
+            "properties": {
+              "priority": 1001,
+              "sourceAddressPrefix": "*",
+              "protocol": "Tcp",
+              "destinationPortRange": "443",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "default-allow-http",
+            "properties": {
+              "priority": 1002,
+              "sourceAddressPrefix": "*",
+              "protocol": "Tcp",
+              "destinationPortRange": "80",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('failoverAppServerNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-05-01",
+      "location": "[parameters('failoverLocation')]",
+      "tags": "[parameters('tags')]",
+      "comments": "Network Security Group (NSG) for your application server subnet",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "default-allow-rdp",
+            "properties": {
+              "priority": 1000,
+              "sourceAddressPrefix": "*",
+              "protocol": "Tcp",
+              "destinationPortRange": "3389",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "default-allow-web-front-end",
+            "properties": {
+              "priority": 1001,
+              "sourceAddressPrefix": "[parameters('failoverWebFrontEndSubnetAddressPrefix')]",
+              "protocol": "Tcp",
+              "destinationPortRange": "443",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('failoverSqlServerNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-05-01",
+      "location": "[parameters('failoverLocation')]",
+      "tags": "[parameters('tags')]",
+      "comments": "Network Security Group (NSG) for your DB server subnet",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "default-allow-rdp",
+            "properties": {
+              "priority": 1000,
+              "sourceAddressPrefix": "*",
+              "protocol": "Tcp",
+              "destinationPortRange": "3389",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "default-allow-app-server",
+            "properties": {
+              "priority": 1001,
+              "sourceAddressPrefix": "[parameters('failoverAppServerSubnetAddresSpace')]",
+              "protocol": "Tcp",
+              "destinationPortRange": "1433",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
