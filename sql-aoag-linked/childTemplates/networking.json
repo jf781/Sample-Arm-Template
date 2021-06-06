@@ -26,18 +26,6 @@
         "description": "Failover virtual Network Name."
       }
     },
-    "virtualNetworkAddressSpace": {
-      "type": "string",
-      "metadata": {
-        "description": "Virtual Network Address Space."
-      }
-    },
-    "failoverVirtualNetworkAddressSpace": {
-      "type": "string",
-      "metadata": {
-        "description": "Failover virtual Network Address Space."
-      }
-    },
     "appGatewaySubnetName": {
       "type": "string",
       "metadata": {
@@ -170,18 +158,6 @@
         "description": "NSG for failover Web Front End Servers."
       }
     },
-    "primaryDNSAddress": {
-      "type": "string",
-      "metadata": {
-        "description": "The Primary DNS server configured for this Vnet"
-      }
-    },
-    "secondaryDNSAddress": {
-      "type": "string",
-      "metadata": {
-        "description": "The Primary DNS server configured for this Vnet"
-      }
-    },
     "tags": {
       "type": "object"
     }
@@ -190,171 +166,153 @@
   },
   "resources": [
     {
-      "type": "Microsoft.Network/virtualNetworks",
-      "name": "[parameters('virtualNetworkName')]",
-      "apiVersion": "2020-05-01",
-      "location": "[parameters('location')]",
-      "tags": "[parameters('tags')]",
-      "comments": "This will build a Virtual Network.",
+      "name": "[concat(parameters('virtualNetworkName'), '/', parameters('appGatewaySubnetName'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-11-01",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('webFrontEndNsgName'))]",
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('appServerNsgName'))]",
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('sqlServerNsgName'))]"
       ],
       "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[parameters('virtualNetworkAddressSpace')]"
-          ]
+        "addressPrefix": "[parameters('appGatewaySubnetAddressPrefix')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('virtualNetworkName'), '/', parameters('appServerSubnetName'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('appServerNsgName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('appServerSubnetAddresSpace')]",
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('appServerNsgName'))]"
         },
-        "dhcpOptions": {
-          "dnsServers": [
-            "[parameters('primaryDNSAddress')]",
-            "[parameters('secondaryDNSAddress')]"
-          ]
-        },
-        "subnets": [
+        "serviceEndpoints": [
           {
-            "name": "[parameters('appGatewaySubnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('appGatewaySubnetAddressPrefix')]"
-            }
-          },
-          {
-            "name": "[parameters('webFrontEndSubnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('webFrontEndSubnetAddressPrefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('webFrontEndNsgName'))]"
-              },
-              "serviceEndpoints": [
-                {
-                  "service": "Microsoft.KeyVault",
-                  "locations": [
-                      "*"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "name": "[parameters('appServerSubnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('appServerSubnetAddresSpace')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('appServerNsgName'))]"
-              },
-              "serviceEndpoints": [
-                {
-                  "service": "Microsoft.KeyVault",
-                  "locations": [
-                      "*"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "name": "[parameters('sqlServerSubnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('sqlServerSubnetAddressSpace')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('sqlServerNsgName'))]"
-              },
-              "serviceEndpoints": [
-                {
-                  "service": "Microsoft.KeyVault",
-                  "locations": [
-                      "*"
-                  ]
-                }
-              ]
-            }
+            "service": "Microsoft.KeyVault",
+            "locations": [
+                "*"
+            ]
           }
         ]
       }
     },
     {
-      "type": "Microsoft.Network/virtualNetworks",
-      "name": "[parameters('failoverVirtualNetworkName')]",
-      "apiVersion": "2020-05-01",
-      "location": "[parameters('failoverLocation')]",
-      "tags": "[parameters('tags')]",
-      "comments": "This will build a Virtual Network.",
+      "name": "[concat(parameters('virtualNetworkName'), '/', parameters('sqlServerSubnetName'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-11-01",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('failoverWebFrontEndNsgName'))]",
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('failoverAppServerNsgName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('sqlServerNsgName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('sqlServerSubnetAddressSpace')]",
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('sqlServerNsgName'))]"
+        },
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.KeyVault",
+            "locations": [
+                "*"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('virtualNetworkName'), '/', parameters('webFrontEndSubnetName'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('webFrontEndNsgName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('webFrontEndSubnetAddressPrefix')]",
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('webFrontEndNsgName'))]"
+        },
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.KeyVault",
+            "locations": [
+                "*"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('failoverVirtualNetworkName'), '/', parameters('failoverAppGatewaySubnetName'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('failoverAppGatewaySubnetAddressPrefix')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('failoverVirtualNetworkName'), '/', parameters('failoverAppServerSubnetName'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('failoverAppServerNsgName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('failoverAppServerSubnetAddresSpace')]",
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverAppServerNsgName'))]"
+        },
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.KeyVault",
+            "locations": [
+                "*"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('failoverVirtualNetworkName'), '/', parameters('failoverSqlServerSubnetName'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('failoverSqlServerNsgName'))]"
       ],
       "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[parameters('failoverVirtualNetworkAddressSpace')]"
-          ]
+        "addressPrefix": "[parameters('failoverSqlServerSubnetAddressSpace')]",
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverSqlServerNsgName'))]"
         },
-        "dhcpOptions": {
-          "dnsServers": [
-            "[parameters('primaryDNSAddress')]",
-            "[parameters('secondaryDNSAddress')]"
-          ]
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.KeyVault",
+            "locations": [
+                "*"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('failoverVirtualNetworkName'), '/', parameters('failoverWebFrontEndSubnetName'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('failoverWebFrontEndNsgName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('failoverWebFrontEndSubnetAddressPrefix')]",
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverWebFrontEndNsgName'))]"
         },
-        "subnets": [
+        "serviceEndpoints": [
           {
-            "name": "[parameters('failoverAppGatewaySubnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('failoverAppGatewaySubnetAddressPrefix')]"
-            }
-          },
-          {
-            "name": "[parameters('failoverWebFrontEndSubnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('failoverWebFrontEndSubnetAddressPrefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverWebFrontEndNsgName'))]"
-              },
-              "serviceEndpoints": [
-                {
-                  "service": "Microsoft.KeyVault",
-                  "locations": [
-                      "*"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "name": "[parameters('failoverAppServerSubnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('failoverAppServerSubnetAddresSpace')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverAppServerNsgName'))]"
-              },
-              "serviceEndpoints": [
-                {
-                  "service": "Microsoft.KeyVault",
-                  "locations": [
-                      "*"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "name": "[parameters('failoverSqlServerSubnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('failoverSqlServerSubnetAddressSpace')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('failoverSqlServerNsgName'))]"
-              },
-              "serviceEndpoints": [
-                {
-                  "service": "Microsoft.KeyVault",
-                  "locations": [
-                      "*"
-                  ]
-                }
-              ]
-            }
+            "service": "Microsoft.KeyVault",
+            "locations": [
+                "*"
+            ]
           }
         ]
       }
@@ -613,5 +571,7 @@
         ]
       }
     }
-  ]
+  ],
+  "outputs": {
+  }
 }
