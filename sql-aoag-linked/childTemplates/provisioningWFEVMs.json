@@ -8,7 +8,7 @@
     "adminPassword": {
       "type": "securestring"
     },
-    "appName": {
+    "vmBaseName": {
       "type": "string"
     },
     "location": {
@@ -42,8 +42,7 @@
   "variables": {
       "availabilitySetConfiguration": {
       "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('wfeAvailabilitySetName'))]"
-    },
-    "vmBaseName": "[concat(parameters('appName'), if(equals(parameters('location'), 'Central US'), 'a1', 'a2'), 'uiwebvm0')]"
+    }
   },
   "resources": [
     {
@@ -65,7 +64,7 @@
       "apiVersion": "2017-03-30",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(variables('vmBaseName'), copyindex(1)), 'invalidVMs')]",
+      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('vmbaseName'), copyindex(1)), 'invalidVMs')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
@@ -81,7 +80,7 @@
         },
         "availabilitySet": "[if(greater(parameters('wfeServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]",
         "osProfile": {
-          "computerName": "[concat(variables('vmBaseName'), copyindex(1))]",
+          "computerName": "[concat(parameters('vmbaseName'), copyindex(1))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -93,7 +92,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(variables('vmBaseName'), copyindex(1),'-os-disk')]",
+            "name": "[concat(parameters('vmbaseName'), copyindex(1),'-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -101,7 +100,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(variables('vmBaseName'), copyindex(1),'-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), copyindex(1),'-nic'))]"
             }
           ]
         },
@@ -117,7 +116,7 @@
       "apiVersion": "2017-03-30",
       "condition": "[not(greater(parameters('wfeServerVMCount'), 1))]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[if(not(greater(parameters('wfeServerVMCount'), 1)),concat(variables('vmBaseName'), '1'), 'invalidVM')]",
+      "name": "[if(not(greater(parameters('wfeServerVMCount'), 1)),concat(parameters('vmbaseName'), '1'), 'invalidVM')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
@@ -128,7 +127,7 @@
         },
         "availabilitySet": "[if(greater(parameters('wfeServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]",
         "osProfile": {
-          "computerName": "[concat(variables('vmBaseName'), '1')]",
+          "computerName": "[concat(parameters('vmbaseName'), '1')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -140,7 +139,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(variables('vmBaseName'),  '1-os-disk')]",
+            "name": "[concat(parameters('vmbaseName'),  '1-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -148,7 +147,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(variables('vmBaseName'), '1-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), '1-nic'))]"
             }
           ]
         },
