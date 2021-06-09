@@ -38,6 +38,12 @@
     "sqlImageSKU": {
       "type": "string"
     },
+    "sqlBEAddressPoolID": {
+      "type": "string"
+    },
+    "sqlSubnetRef": {
+      "type": "string"
+    },
     "tags": {
       "type": "object"
     }
@@ -45,6 +51,9 @@
   "variables": {
     "availabilitySetConfiguration": {
       "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]"
+    },
+    "sqlLoadBalancerConfig": {
+      "id": "[parameters('sqlBEAddressPoolID')]"
     }
   },
   "resources": [
@@ -64,6 +73,55 @@
       }
     },
     {
+      "name": "[concat(parameters('vmbaseName'), copyindex(1), '-nic')]",
+      "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "apiVersion": "2020-08-01",
+      "copy": {
+        "name": "sqlNicLoop",
+        "count": "[parameters('sqlServerVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('sqlSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('sqlServerVMCount'), 1), variables('sqlLoadBalancerConfig'), json('null'))]"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('vmbaseName'), '1-nic')]",
+      "condition": "[equals(parameters('sqlServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "apiVersion": "2020-08-01",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('sqlSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
       "apiVersion": "2017-03-30",
       "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
@@ -71,7 +129,8 @@
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]"
+        "[resourceId('Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), copyIndex(1), '-nic'))]"
       ],
       "copy": {
         "name": "sqlvirtualMachineLoop",
@@ -137,9 +196,10 @@
       "condition": "[not(greater(parameters('sqlServerVMCount'), 1))]",
       "name": "[concat(parameters('vmbaseName'), '01')]",
       "location": "[parameters('location')]",
-      "tags": "[parameters('tags')]",
       "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), '1-nic'))]"
       ],
+      "tags": "[parameters('tags')]",
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('sqlVMSize')]"
