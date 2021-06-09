@@ -35,6 +35,12 @@
     "appServerImageSKU": {
       "type": "string"
     },
+    "appBEAddressPoolID": {
+      "type": "string"
+    },
+    "appServerSubnetRef": {
+      "type": "string"
+    },
     "tags": {
       "type": "object"
     }
@@ -42,6 +48,9 @@
   "variables": {
     "availabilitySetConfiguration": {
       "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]"
+    },
+    "appLoadBalancerConfig": {
+      "id": "[parameters('appBEAddressPoolID')]"
     }
   },
   "resources": [
@@ -60,6 +69,55 @@
         "platformUpdateDomainCount": 3
       }
     },
+{
+      "name": "[concat(parameters('vmBaseName'), copyindex(2), '-nic')]",
+      "condition": "[greater(parameters('appServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "apiVersion": "2020-08-01",
+      "copy": {
+        "name": "appNicLoop",
+        "count": "[parameters('appServerVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('appServerSubnetRef')]"
+              },
+             "loadBalancerBackendAddressPools": [
+               "[if(greater(parameters('appServerVMCount'), 1), variables('appLoadBalancerConfig'), json('null'))]"
+             ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('vmBaseName'), '1-nic')]",
+      "condition": "[equals(parameters('appServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "apiVersion": "2020-08-01",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('appServerSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
     {
       "apiVersion": "2020-12-01",
       "condition": "[greater(parameters('appServerVMCount'), 1)]",
@@ -68,7 +126,8 @@
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]"
+        "[resourceId('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('appAvailabilitySetName'), copyindex(2), '-nic'))]"
       ],
       "copy": {
         "name": "appServerMachineLoop",
@@ -81,7 +140,7 @@
         "availabilitySet": "[if(greater(parameters('appServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]"
         ,
         "osProfile": {
-          "computerName": "[concat(parameters('vmbaseName'), copyindex())]",
+          "computerName": "[concat(parameters('vmbaseName'), copyindex(2))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -93,7 +152,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('vmbaseName'), copyindex(),'-os-disk')]",
+            "name": "[concat(parameters('vmbaseName'), copyindex(2),'-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -101,7 +160,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), copyindex(),'-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), copyindex(2),'-nic'))]"
             }
           ]
         },
@@ -121,6 +180,7 @@
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('appAvailabilitySetName'), '1-nic'))]"
       ],
       "properties": {
         "hardwareProfile": {
