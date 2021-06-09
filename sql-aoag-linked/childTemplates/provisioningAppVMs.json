@@ -70,7 +70,7 @@
       }
     },
 {
-      "name": "[concat(parameters('vmBaseName'), copyIndex(2), '-nic')]",
+      "name": "[if(greater(parameters('appServerVMCount'), 1), concat(parameters('vmBaseName'), copyIndex(1), '-nic'), 'invalidWFENICs')]",
       "condition": "[greater(parameters('appServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -98,7 +98,7 @@
       }
     },
     {
-      "name": "[concat(parameters('vmBaseName'), '1-nic')]",
+      "name": "[if(equals(parameters('appServerVMCount'), 1), concat(parameters('vmBaseName'), '1-nic'), 'invalidWFENIC')]",
       "condition": "[equals(parameters('appServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -122,12 +122,12 @@
       "apiVersion": "2020-12-01",
       "condition": "[greater(parameters('appServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('vmbaseName'), copyIndex(2))]",
+      "name": "[if(greater(parameters('appServerVMCount'), 1), concat(parameters('vmbaseName'), copyIndex(1)), 'invalidVMs')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/availabilitySets/',parameters('appAvailabilitySetName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), copyIndex(2), '-nic'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), copyIndex(1), '-nic'))]"
       ],
       "copy": {
         "name": "appServerMachineLoop",
@@ -140,7 +140,7 @@
         "availabilitySet": "[if(greater(parameters('appServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]"
         ,
         "osProfile": {
-          "computerName": "[concat(parameters('vmbaseName'), copyIndex(2))]",
+          "computerName": "[concat(parameters('vmbaseName'), copyIndex(1))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -152,7 +152,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('vmbaseName'), copyIndex(2),'-os-disk')]",
+            "name": "[concat(parameters('vmbaseName'), copyIndex(1),'-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -160,7 +160,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), copyIndex(2),'-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), copyIndex(1),'-nic'))]"
             }
           ]
         },
@@ -174,9 +174,9 @@
     },
     {
       "apiVersion": "2020-12-01",
-      "condition": "[not(greater(parameters('appServerVMCount'), 1))]",
+      "condition": "[equals(parameters('appServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('vmbaseName'), '1')]",
+      "name": "[if(equals(parameters('appServerVMCount'), 1), concat(parameters('vmbaseName'), '01'), 'invalidVM')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [

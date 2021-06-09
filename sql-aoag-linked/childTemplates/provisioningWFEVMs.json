@@ -34,6 +34,11 @@
     },
     "wfeServerImageSKU": {
       "type": "string"
+    },"wfeBEAddressPoolID": {
+      "type": "string"
+    },
+    "webFrontEndSubnetRef": {
+      "type": "string"
     },
     "tags": {
       "type": "object"
@@ -42,7 +47,10 @@
   "variables": {
       "availabilitySetConfiguration": {
       "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('wfeAvailabilitySetName'))]"
-    }
+    },
+    "wfeLoadBalancerConfig": {
+      "id": "[parameters('wfeBEAddressPoolID')]"
+    }  
   },
   "resources": [
     {
@@ -61,10 +69,59 @@
       }
     },
     {
+      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('vmBaseName'), copyIndex(1), '-nic'), 'invalidWFENICs')]",
+      "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "apiVersion": "2020-08-01",
+      "copy": {
+        "name": "wfeNicLoop",
+        "count": "[parameters('wfeServerVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('webFrontEndSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[if(equals(parameters('wfeServerVMCount'), 1), concat(parameters('vmBaseName'), '1-nic'), 'invalidWFENIC')]",
+      "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "apiVersion": "2020-08-01",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('webFrontEndSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
       "apiVersion": "2017-03-30",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('vmbaseName'), copyindex(1)), 'invalidVMs')]",
+      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('vmbaseName'), copyIndex(1)), 'invalidVMs')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
@@ -80,7 +137,7 @@
         },
         "availabilitySet": "[if(greater(parameters('wfeServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]",
         "osProfile": {
-          "computerName": "[concat(parameters('vmbaseName'), copyindex(1))]",
+          "computerName": "[concat(parameters('vmbaseName'), copyIndex(1))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -92,7 +149,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('vmbaseName'), copyindex(1),'-os-disk')]",
+            "name": "[concat(parameters('vmbaseName'), copyIndex(1),'-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -100,7 +157,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), copyindex(1),'-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), copyIndex(1),'-nic'))]"
             }
           ]
         },
@@ -114,9 +171,9 @@
     },
     {
       "apiVersion": "2017-03-30",
-      "condition": "[not(greater(parameters('wfeServerVMCount'), 1))]",
+      "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[if(not(greater(parameters('wfeServerVMCount'), 1)),concat(parameters('vmbaseName'), '1'), 'invalidVM')]",
+      "name": "[if(equals(parameters('wfeServerVMCount'), 1),concat(parameters('vmbaseName'), '1'), 'invalidVM')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
