@@ -73,7 +73,7 @@
       }
     },
     {
-      "name": "[concat(parameters('vmbaseName'), copyindex(1), '-nic')]",
+      "name": "[concat(parameters('vmbaseName'), copyIndex(2), '-nic')]",
       "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -125,12 +125,12 @@
       "apiVersion": "2017-03-30",
       "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('vmbaseName'), copyindex(1))]",
+      "name": "[concat(parameters('vmbaseName'), copyIndex(2))]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/availabilitySets/',parameters('sqlAvailabilitySetName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), copyIndex(1), '-nic'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), copyIndex(2), '-nic'))]"
       ],
       "copy": {
         "name": "sqlvirtualMachineLoop",
@@ -142,7 +142,7 @@
         },
         "availabilitySet": "[if(greater(parameters('sqlServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]",
         "osProfile": {
-          "computerName": "[concat(parameters('vmbaseName'), copyindex(1))]",
+          "computerName": "[concat(parameters('vmbaseName'), copyIndex(2))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -154,7 +154,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('vmbaseName'), copyindex(1),'-os-disk')]",
+            "name": "[concat(parameters('vmbaseName'), copyIndex(2),'-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
@@ -163,7 +163,7 @@
               "name": "dataDisks",
               "count": "[length(parameters('sqlServerDataDiskLayout'))]",
               "input": {
-                "name" : "[concat(parameters('vmbaseName'), copyindex(1),'-data-disk-',parameters('sqlServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
+                "name" : "[concat(parameters('vmbaseName'), copyIndex(2),'-data-disk-',parameters('sqlServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
                 "createOption": "Empty",
                 "caching": "[parameters('sqlServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
                 "diskSizeGB": "[parameters('sqlServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
@@ -178,7 +178,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), copyindex(1),'-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), copyIndex(2),'-nic'))]"
             }
           ]
         },
