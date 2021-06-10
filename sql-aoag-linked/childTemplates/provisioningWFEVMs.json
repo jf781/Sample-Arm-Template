@@ -220,5 +220,18 @@
     }
   ],
   "outputs": {
+    "webFrontEndIpAddresses": {
+      "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
+      "type": "array",
+      "copy": {
+        "count": "[parameters('wfeServerVMCount')]",
+        "input": "[reference(concat(parameters('vmBaseName'), copyindex(1), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
+      }
+    },
+    "webFrontEndIpAddress": {
+    "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
+      "type": "string",
+      "value": "[reference(concat(parameters('vmBaseName'), '1-nic')).ipConfigurations[0].properties.privateIPAddress]"
+    }
   }
 }
