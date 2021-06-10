@@ -125,7 +125,8 @@
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/availabilitySets/',parameters('wfeAvailabilitySetName'))]"
+        "[resourceId('Microsoft.Compute/availabilitySets/',parameters('wfeAvailabilitySetName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), copyIndex(1), '-nic'))]"
       ],
       "copy": {
         "name": "wfeServerMachineLoop",
@@ -177,6 +178,7 @@
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), '1-nic'))]"
       ],
       "properties": {
         "hardwareProfile": {
