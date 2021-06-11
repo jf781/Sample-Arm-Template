@@ -20,10 +20,7 @@
     "appGatewayAutoScaleMaxValue": {
       "type": "int"
     },
-    "virtualNetworkName": {
-      "type": "string"
-    },
-    "appGatewaySubnetName": {
+    "appGatewaySubnetRef": {
       "type": "string"
     },
     "appGatewaySSLCertificateData": {
@@ -52,7 +49,6 @@
     }
   },
   "variables": {
-    "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'), parameters('appGatewaySubnetName'))]",
     "publicIpAddressName": "[concat(parameters('appGatewayName'), '-pip')]",
     "publicIpAddressSku": "Standard",
     "publicIpAddressAllocationType": "Static",
@@ -145,7 +141,7 @@
             "name": "[variables('appGwIpConfigName')]",
             "properties": {
               "subnet": {
-                "id": "[variables('virtualNetworkSubnetId')]"
+                "id": "[parameters('appGatewaySubnetRef')]"
               }
             }
           }
@@ -292,7 +288,7 @@
             "name": "[variables('appGwIpConfigName')]",
             "properties": {
               "subnet": {
-                "id": "[variables('virtualNetworkSubnetId')]"
+                "id": "[parameters('appGatewaySubnetRef')]"
               }
             }
           }
