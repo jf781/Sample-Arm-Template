@@ -102,6 +102,7 @@
       "type": "Microsoft.Network/virtualNetworks/subnets",
       "apiVersion": "2020-11-01",
       "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/subnets/', parameters('appGatewaySubnetName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('appServerNsgName'))]"
       ],
       "properties": {
@@ -124,6 +125,8 @@
       "type": "Microsoft.Network/virtualNetworks/subnets",
       "apiVersion": "2020-11-01",
       "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/subnets/', parameters('appGatewaySubnetName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/subnets/', parameters('appServerSubnetName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('sqlServerNsgName'))]"
       ],
       "properties": {
@@ -146,6 +149,9 @@
       "type": "Microsoft.Network/virtualNetworks/subnets",
       "apiVersion": "2020-11-01",
       "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/subnets/', parameters('appGatewaySubnetName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/subnets/', parameters('appServerSubnetName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/subnets/', parameters('sqlServerSubnetName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', parameters('webFrontEndNsgName'))]"
       ],
       "properties": {
