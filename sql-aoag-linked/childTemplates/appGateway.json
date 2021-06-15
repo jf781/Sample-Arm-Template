@@ -45,16 +45,16 @@
       "type": "string"
     },
     "urlPrefix1AppBackendPoolAddress": {
-      "type": "array"
+      "type": "string"
     },
     "urlPrefix1AppBackendPoolAddresses": {
-      "type": "string"
-    },
-    "urlPrefix2AppBackendPoolAddress": {
       "type": "array"
     },
-    "urlPrefix2AppBackendPoolAddresses": {
+    "urlPrefix2AppBackendPoolAddress": {
       "type": "string"
+    },
+    "urlPrefix2AppBackendPoolAddresses": {
+      "type": "array"
     },
     "wfeServerVMCount": {
       "type": "int"
