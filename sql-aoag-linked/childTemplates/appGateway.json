@@ -71,7 +71,8 @@
     "appGwBackendAddressPoolId": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', parameters('appGatewayName'), variables('appGwBackendAddressPoolName'))]",
     "appGwBackendAffinityCookieName": "[concat(parameters('appName'), 'SessionAffinityCookie')]",
     "appGwListenerName": "[concat(parameters('appName'), 'Listener')]",
-    "appGwListenerId": "[resourceId('Microsoft.Network/applicationGateways/httpListeners/', parameters('appGatewayName'), '/httpListeners/', variables('appGwListenerName'))]",
+    "appGwListenerIdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName'), '/httpListeners/', variables('appGwListenerName'), '-http'))]",
+    "appGwListenerIdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName'), '/httpListeners/', variables('appGwListenerName'), '-https'))]",
     "appGwRoutingRuleNameHttp": "[concat(parameters('appName'), 'HttpToHttps')]",
     "appGwRoutingRuleNameHttps": "[concat(parameters('appName'), 'Https')]",
     "appGwRedirectionName": "[concat(parameters('appName'), 'RedirectHttpToHttps')]"
@@ -250,7 +251,7 @@
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
-                "id": "[variables('appGwListenerId')]"
+                "id": "[variables('appGwListenerIdHttps')]"
               },
               "backendAddressPool": {
                 "id": "[variables('appGwBackendAddressPoolId')]"
@@ -265,7 +266,7 @@
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
-                "id": "[variables('appGwListenerId')]"
+                "id": "[variables('appGwListenerIdHttp')]"
               },
               "reredirectConfiguration":{
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/redirectConfigurations/', variables('appGwRedirectionName'))]"
@@ -279,7 +280,7 @@
             "properties": {
               "redirectType": "Permanent",
               "targetListener": {
-                "id": "[variables('appGwListenerId')]"
+                "id": "[variables('appGwListenerIdHttp')]"
               },
               "includePath": true,
               "includeQueryString": true,
@@ -451,7 +452,7 @@
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
-                "id": "[variables('appGwListenerId')]"
+                "id": "[variables('appGwListenerIdHttps')]"
               },
               "backendAddressPool": {
                 "id": "[variables('appGwBackendAddressPoolId')]"
@@ -466,7 +467,7 @@
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
-                "id": "[variables('appGwListenerId')]"
+                "id": "[variables('appGwListenerIdHttp')]"
               },
               "reredirectConfiguration":{
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/redirectConfigurations/', variables('appGwRedirectionName'))]"
@@ -480,7 +481,7 @@
             "properties": {
               "redirectType": "Permanent",
               "targetListener": {
-                "id": "[variables('appGwListenerId')]"
+                "id": "[variables('appGwListenerIdHttp')]"
               },
               "includePath": true,
               "includeQueryString": true,
