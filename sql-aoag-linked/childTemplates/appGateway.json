@@ -55,20 +55,27 @@
     "publicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIpAddressName'))]",
     "appGatewaySkuSize": "WAF_v2",
     "appGatewayTier": "WAF_v2",
-    "appGwIpConfigName": "appGatewayIpConfigName",
-    "appGwFrontendPortName": "appGatewayFrontendPort_80",
-    "appGwFrontendPort": 80,
-    "appGwFrontendPortId": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts/', parameters('appGatewayName'), variables('appGwFrontendPortName'))]",
-    "appGwFrontendIpConfigName": "appGatewayPublicFrontendIpConfig",
+    "appGwIpConfigName": "[concat(parameters('appName'), 'IpConfigName')]",
+    "appGwFrontendPortNameHttp": "[concat(parameters('appName'), 'FrontendPort')]",
+    "appGwFrontendPortNameHttps": "[concat(parameters('appName'), 'FrontendPortHttps')]",
+    "appGwFrontendPortHttp": 80,
+    "appGwFrontendPortHttps": 443,
+    "appGwFrontendPortIdHttp": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts/', parameters('appGatewayName'), variables('appGwFrontendPortNameHttp'))]",
+    "appGwFrontendPortIdHttps": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts/', parameters('appGatewayName'), variables('appGwFrontendPortNameHttps'))]",
+    "appGwFrontendIpConfigName": "[concat(parameters('appName'), 'PublicFrontendIpConfig')]",
     "appGwFrontendIpConfigId": "[resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations/', parameters('appGatewayName'), variables('appGwFrontendIpConfigName'))]",
-    "appGwHttpSettingName": "appGatewayHttpSetting_80",
+    "appGwHttpSettingName": "[concat(parameters('appName'), 'HttpSetting')]",
     "appGwHttpSettingId": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection/', parameters('appGatewayName'), variables('appGwHttpSettingName'))]",
-    "appGwHttpSettingProbeName": "appGatewayHttpSettingProbe_80",
+    "appGwHttpSettingProbeName": "[concat(parameters('appName'), 'HttpSettingProbe')]",
     "appGwBackendAddressPoolName": "[concat('appGateway', parameters('appName'), 'BackendPool')]",
     "appGwBackendAddressPoolId": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', parameters('appGatewayName'), variables('appGwBackendAddressPoolName'))]",
-    "appGwListenerName": "appGatewayListener",
+    "appGwBackendAffinityCookieName": "[concat(parameters('appName'), 'SessionAffinityCookie')]",
+    "appGwListenerName": "[concat(parameters('appName'), 'Listener')]",
     "appGwListenerId": "[resourceId('Microsoft.Network/applicationGateways/httpListeners/', parameters('appGatewayName'), variables('appGwListenerName'))]",
-    "appGwRoutingRuleName": "appGatewayRoutingRule"
+    "appGwRoutingRuleNameHttp": "[concat(parameters('appName'), 'HttpToHttps')]",
+    "appGwRoutingRuleNameHttps": "[concat(parameters('appName'), 'Https')]",
+    "appGwRedirectionName": "[concat(parameters('appName'), 'RedirectHttpToHttps')]"
+
   },
   "resources": [
     {
@@ -158,9 +165,15 @@
         ],
         "frontendPorts": [
           {
-            "name": "[variables('appGwFrontendPortName')]",
+            "name": "[variables('appGwFrontendPortNameHttp')]",
             "properties": {
-              "Port": "[variables('appGwFrontendPort')]"
+              "Port": "[variables('appGwFrontendPortHttp')]"
+            }
+          },
+          {
+            "name": "[variables('appGwFrontendPortNameHttps')]",
+            "properties": {
+              "Port": "[variables('appGwFrontendPortHttps')]"
             }
           }
         ],
@@ -184,25 +197,42 @@
           {
             "name": "[variables('appGwHttpSettingName')]",
             "properties": {
-              "Port": 80,
-              "Protocol": "Http",
-              "cookieBasedAffinity": "Disabled",
+              "Port": 443,
+              "Protocol": "Https",
+              "cookieBasedAffinity": "Enabled",
+              "affinityCookieName": "[variables('appGwBackendAffinityCookieName')]",
+              "connectionDraining": {
+                "enabled": true,
+                "drainTimeoutInSec": 180
+              },
               "requestTimeout": 20,
-              "pickHostNameFromBackendAddress": true
+              "pickHostNameFromBackendAddress": false
             }
           }
         ],
         "httpListeners": [
           {
-            "name": "[variables('appGwListenerName')]",
+            "name": "[concat(variables('appGwListenerName'), '-http')]",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('appGwFrontendIpConfigId')]"
               },
               "frontendPort": {
-                "id": "[variables('appGwFrontendPortId')]"
+                "id": "[variables('appGwFrontendPortIdHttp')]"
               },
               "protocol": "Http"
+            }
+          },
+          {
+            "name": "[concat(variables('appGwListenerName'), '-https')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('appGwFrontendIpConfigId')]"
+              },
+              "frontendPort": {
+                "id": "[variables('appGwFrontendPortIdHttps')]"
+              },
+              "protocol": "Https"
             }
           }
         ],
@@ -216,7 +246,7 @@
         ],
         "requestRoutingRules": [
           {
-            "Name": "[variables('appGwRoutingRuleName')]",
+            "Name": "[variables('appGwRoutingRuleNameHttps')]",
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
@@ -228,6 +258,36 @@
               "backendHttpSettings": {
                 "id": "[variables('appGwHttpSettingId')]"
               }
+            }
+          },
+          {
+            "Name": "[variables('appGwRoutingRuleNameHttp')]",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[variables('appGwListenerId')]"
+              },
+              "reredirectConfiguration":{
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/redirectConfigurations/', variables('appGwRedirectionName'))]"
+              }
+            }
+          }
+        ],
+        "redirectConfigurations": [
+          {
+            "name": "[variables('appGwRedirectionName')]",
+            "properties": {
+              "redirectType": "Permanent",
+              "targetListener": {
+                "id": "[variables('appGwListenerId')]"
+              },
+              "includePath": true,
+              "includeQueryString": true,
+              "requestRoutingRules": [
+                {
+                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRuleNameHttp'))]"
+                }
+              ]
             }
           }
         ],
@@ -244,10 +304,15 @@
               "interval": 30,
               "minServers": 0,
               "path": "/",
-              "protocol": "Http",
+              "protocol": "Https",
               "timeout": 30,
               "unhealthyThreshold": 3,
-              "pickHostNameFromBackendHttpSettings": true
+              "pickHostNameFromBackendHttpSettings": false,
+              "match": {
+                "statusCodes": [
+                  "200-399"
+                ]
+              }
             }
           }
         ],
@@ -262,7 +327,7 @@
     },
     {
       "type": "Microsoft.Network/applicationGateways",
-      "condition": "[not(greater(parameters('wfeServerVMCount'), 1))]",
+      "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
       "apiVersion": "2020-05-01",
       "name": "[if(equals(parameters('wfeServerVMCount'), 1), parameters('appGatewayName'), 'invalidAppGWName')]",
       "location": "[parameters('location')]",
@@ -305,9 +370,15 @@
         ],
         "frontendPorts": [
           {
-            "name": "[variables('appGwFrontendPortName')]",
+            "name": "[variables('appGwFrontendPortNameHttp')]",
             "properties": {
-              "Port": "[variables('appGwFrontendPort')]"
+              "Port": "[variables('appGwFrontendPortHttp')]"
+            }
+          },
+          {
+            "name": "[variables('appGwFrontendPortNameHttps')]",
+            "properties": {
+              "Port": "[variables('appGwFrontendPortHttps')]"
             }
           }
         ],
@@ -327,25 +398,42 @@
           {
             "name": "[variables('appGwHttpSettingName')]",
             "properties": {
-              "Port": 80,
-              "Protocol": "Http",
-              "cookieBasedAffinity": "Disabled",
+              "Port": 443,
+              "Protocol": "Https",
+             "cookieBasedAffinity": "Enabled",
+              "affinityCookieName": "[variables('appGwBackendAffinityCookieName')]",
+              "connectionDraining": {
+                "enabled": true,
+                "drainTimeoutInSec": 180
+              },
               "requestTimeout": 20,
-              "pickHostNameFromBackendAddress": true
+              "pickHostNameFromBackendAddress": false
             }
           }
         ],
         "httpListeners": [
           {
-            "name": "[variables('appGwListenerName')]",
+            "name": "[concat(variables('appGwListenerName'), '-http')]",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('appGwFrontendIpConfigId')]"
               },
               "frontendPort": {
-                "id": "[variables('appGwFrontendPortId')]"
+                "id": "[variables('appGwFrontendPortIdHttp')]"
               },
               "protocol": "Http"
+            }
+          },
+          {
+            "name": "[concat(variables('appGwListenerName'), '-https')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('appGwFrontendIpConfigId')]"
+              },
+              "frontendPort": {
+                "id": "[variables('appGwFrontendPortIdHttps')]"
+              },
+              "protocol": "Https"
             }
           }
         ],
@@ -359,7 +447,7 @@
         ],
         "requestRoutingRules": [
           {
-            "Name": "[variables('appGwRoutingRuleName')]",
+            "Name": "[variables('appGwRoutingRuleNameHttps')]",
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
@@ -371,6 +459,36 @@
               "backendHttpSettings": {
                 "id": "[variables('appGwHttpSettingId')]"
               }
+            }
+          },
+          {
+            "Name": "[variables('appGwRoutingRuleNameHttp')]",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[variables('appGwListenerId')]"
+              },
+              "reredirectConfiguration":{
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/redirectConfigurations/', variables('appGwRedirectionName'))]"
+              }
+            }
+          }
+        ],
+        "redirectConfigurations": [
+          {
+            "name": "[variables('appGwRedirectionName')]",
+            "properties": {
+              "redirectType": "Permanent",
+              "targetListener": {
+                "id": "[variables('appGwListenerId')]"
+              },
+              "includePath": true,
+              "includeQueryString": true,
+              "requestRoutingRules": [
+                {
+                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRuleNameHttp'))]"
+                }
+              ]
             }
           }
         ],
@@ -387,10 +505,15 @@
               "interval": 30,
               "minServers": 0,
               "path": "/",
-              "protocol": "Http",
+              "protocol": "Https",
               "timeout": 30,
               "unhealthyThreshold": 3,
-              "pickHostNameFromBackendHttpSettings": true
+              "pickHostNameFromBackendHttpSettings": false,
+              "match": {
+                "statusCodes": [
+                  "200-399"
+                ]
+              }
             }
           }
         ],
