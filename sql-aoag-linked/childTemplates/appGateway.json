@@ -271,7 +271,7 @@
               "httpListener": {
                 "id": "[variables('appGwListenerIdHttp')]"
               },
-              "reredirectConfiguration":{
+              "redirectConfiguration":{
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirectionName')))]"
               }
             }
@@ -475,7 +475,7 @@
               "httpListener": {
                 "id": "[variables('appGwListenerIdHttp')]"
               },
-              "reredirectConfiguration":{
+              "redirectConfiguration":{
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirectionName')))]"
               }
             }
