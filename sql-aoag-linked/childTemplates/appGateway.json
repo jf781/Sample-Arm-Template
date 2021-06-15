@@ -124,7 +124,7 @@
     {
       "type": "Microsoft.Network/applicationGateways",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
-      "apiVersion": "2020-05-01",
+      "apiVersion": "2020-11-01",
       "name": "[if(greater(parameters('wfeServerVMCount'), 1), parameters('appGatewayName'), 'invalidAppGWNames')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
@@ -332,7 +332,7 @@
     {
       "type": "Microsoft.Network/applicationGateways",
       "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
-      "apiVersion": "2020-05-01",
+      "apiVersion": "2020-11-01",
       "name": "[if(equals(parameters('wfeServerVMCount'), 1), parameters('appGatewayName'), 'invalidAppGWName')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
