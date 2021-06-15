@@ -14,6 +14,15 @@
     "appName": {
       "type": "string"
     },
+    "urlPrefix1": {
+      "type": "string"
+    },
+    "urlPrefix2": {
+      "type": "string"
+    },
+    "orgDomainName": {
+      "type": "string"
+    },
     "appGatewayAutoScaleMinValue": {
       "type": "int"
     },
@@ -55,6 +64,8 @@
     "publicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIpAddressName'))]",
     "appGatewaySkuSize": "WAF_v2",
     "appGatewayTier": "WAF_v2",
+    "appGwUrl1": "[concat(parameters('urlPrefix1'), '.', parameters('orgDomainName'))]",
+    "appGwUrl2": "[concat(parameters('urlPrefix2'), '.', parameters('orgDomainName'))]",
     "appGwIpConfigName": "[concat(parameters('appName'), 'IpConfigName')]",
     "appGwFrontendPortNameHttp": "[concat(parameters('appName'), 'FrontendPort')]",
     "appGwFrontendPortNameHttps": "[concat(parameters('appName'), 'FrontendPortHttps')]",
@@ -314,7 +325,8 @@
               "protocol": "Https",
               "timeout": 30,
               "unhealthyThreshold": 3,
-              "pickHostNameFromBackendHttpSettings": true,
+              "pickHostNameFromBackendHttpSettings": false,
+              "host": "[variables('appGwUrl1')]",
               "match": {
                 "statusCodes": [
                   "200-399"
@@ -414,7 +426,7 @@
                 "drainTimeoutInSec": 180
               },
               "requestTimeout": 20,
-              "pickHostNameFromBackendAddress": true,
+              "pickHostNameFromBackendAddress": false,
               "probe": {
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/probes/', variables('appGwHttpSettingProbeName')))]"
               }
@@ -521,7 +533,8 @@
               "protocol": "Https",
               "timeout": 30,
               "unhealthyThreshold": 3,
-              "pickHostNameFromBackendHttpSettings": true,
+              "pickHostNameFromBackendHttpSettings": false,
+              "host": "[variables('appGwUrl1')]",
               "match": {
                 "statusCodes": [
                   "200-399"
