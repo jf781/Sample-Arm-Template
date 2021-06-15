@@ -255,18 +255,31 @@
     }
   ],
   "outputs": {
-    "webFrontEndIpAddresses": {
+    "urlPrefix1FrontEndIpAddresses": {
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "array",
       "copy": {
         "count": "[parameters('wfeServerVMCount')]",
-        "input": "[reference(concat(parameters('vmBaseName'), copyindex(1), '-nic')).ipConfigurations]"
+        "input": "[reference(concat(parameters('vmBaseName'), copyindex(1), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
       }
     },
-    "webFrontEndIpAddress": {
-    "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
-      "type": "string",
-      "value": "[reference(concat(parameters('vmBaseName'), '1-nic')).ipConfigurations]"
+    "urlPrefix2FrontEndIpAddresses": {
+      "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
+      "type": "array",
+      "copy": {
+        "count": "[parameters('wfeServerVMCount')]",
+        "input": "[reference(concat(parameters('vmBaseName'), copyindex(1), '-nic')).ipConfigurations[1].properties.privateIPAddress]"
+      }
+    },
+    "urlPrefix1FrontEndIpAddress": {
+      "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
+        "type": "string",
+        "value": "[reference(concat(parameters('vmBaseName'), '1-nic')).ipConfigurations[0].properties.privateIPAddress]"
+    },
+    "urlPrefix2FrontEndIpAddress": {
+      "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
+        "type": "string",
+        "value": "[reference(concat(parameters('vmBaseName'), '1-nic')).ipConfigurations[1].properties.privateIPAddress]"
     }
   }
 }
