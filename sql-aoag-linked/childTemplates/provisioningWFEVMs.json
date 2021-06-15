@@ -96,7 +96,8 @@
               },
               "loadBalancerBackendAddressPools": [
                 "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
-              ]
+              ],
+              "primary": true
             }
           },
           {
@@ -132,7 +133,8 @@
               },
               "loadBalancerBackendAddressPools": [
                 "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
-              ]
+              ],
+              "primary": true
             }
           },
           {
