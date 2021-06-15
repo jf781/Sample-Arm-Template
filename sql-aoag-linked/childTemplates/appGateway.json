@@ -207,7 +207,10 @@
                 "drainTimeoutInSec": 180
               },
               "requestTimeout": 20,
-              "pickHostNameFromBackendAddress": true
+              "pickHostNameFromBackendAddress": true,
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/probes/', variables('appGwHttpSettingProbeName')))]"
+              }
             }
           }
         ],
@@ -411,7 +414,10 @@
                 "drainTimeoutInSec": 180
               },
               "requestTimeout": 20,
-              "pickHostNameFromBackendAddress": true
+              "pickHostNameFromBackendAddress": true,
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/probes/', variables('appGwHttpSettingProbeName')))]"
+              }
             }
           }
         ],
