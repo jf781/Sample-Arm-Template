@@ -233,6 +233,9 @@
               "frontendPort": {
                 "id": "[variables('appGwFrontendPortIdHttps')]"
               },
+              "sslCertificate": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
+              },
               "protocol": "Https"
             }
           }
