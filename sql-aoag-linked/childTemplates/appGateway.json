@@ -272,7 +272,7 @@
                 "id": "[variables('appGwListenerIdHttp')]"
               },
               "reredirectConfiguration":{
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/redirectConfigurations/', variables('appGwRedirectionName'))]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirectionName')))]"
               }
             }
           }
@@ -476,7 +476,7 @@
                 "id": "[variables('appGwListenerIdHttp')]"
               },
               "reredirectConfiguration":{
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/redirectConfigurations/', variables('appGwRedirectionName'))]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirectionName')))]"
               }
             }
           }
