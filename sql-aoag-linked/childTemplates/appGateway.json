@@ -90,7 +90,7 @@
     "appGwBackendAddressPool2Id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', parameters('appGatewayName'), variables('appGwBackendAddressPool2Name'))]",
     "appGwBackendAffinityCookieName": "[concat(parameters('appName'), 'SessionAffinityCookie')]",
     "appGwListener1Name": "[concat(parameters('appName'), '-', parameters('urlPrefix1'), 'Listener')]",
-    "appGwListener2Name": "[concat(parameters('appName'), '-', parameters('urlPrefix1'), 'Listener')]",
+    "appGwListener2Name": "[concat(parameters('appName'), '-', parameters('urlPrefix2'), 'Listener')]",
     "appGwListener1IdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener1Name'), '-http'))]",
     "appGwListener1IdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener1Name'), '-https'))]",
     "appGwListener2IdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener2Name'), '-http'))]",
