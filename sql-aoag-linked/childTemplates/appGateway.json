@@ -71,7 +71,7 @@
     "appGwBackendAddressPoolId": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', parameters('appGatewayName'), variables('appGwBackendAddressPoolName'))]",
     "appGwBackendAffinityCookieName": "[concat(parameters('appName'), 'SessionAffinityCookie')]",
     "appGwListenerName": "[concat(parameters('appName'), 'Listener')]",
-    "appGwListenerId": "[resourceId('Microsoft.Network/applicationGateways/httpListeners/', parameters('appGatewayName'), variables('appGwListenerName'))]",
+    "appGwListenerId": "[resourceId('Microsoft.Network/applicationGateways/httpListeners/', parameters('appGatewayName'), '/httpListeners/', variables('appGwListenerName'))]",
     "appGwRoutingRuleNameHttp": "[concat(parameters('appName'), 'HttpToHttps')]",
     "appGwRoutingRuleNameHttps": "[concat(parameters('appName'), 'Https')]",
     "appGwRedirectionName": "[concat(parameters('appName'), 'RedirectHttpToHttps')]"
