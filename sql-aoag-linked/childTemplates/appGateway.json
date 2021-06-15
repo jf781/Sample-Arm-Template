@@ -207,7 +207,7 @@
                 "drainTimeoutInSec": 180
               },
               "requestTimeout": 20,
-              "pickHostNameFromBackendAddress": false
+              "pickHostNameFromBackendAddress": true
             }
           }
         ],
@@ -311,7 +311,7 @@
               "protocol": "Https",
               "timeout": 30,
               "unhealthyThreshold": 3,
-              "pickHostNameFromBackendHttpSettings": false,
+              "pickHostNameFromBackendHttpSettings": true,
               "match": {
                 "statusCodes": [
                   "200-399"
@@ -411,7 +411,7 @@
                 "drainTimeoutInSec": 180
               },
               "requestTimeout": 20,
-              "pickHostNameFromBackendAddress": false
+              "pickHostNameFromBackendAddress": true
             }
           }
         ],
@@ -515,7 +515,7 @@
               "protocol": "Https",
               "timeout": 30,
               "unhealthyThreshold": 3,
-              "pickHostNameFromBackendHttpSettings": false,
+              "pickHostNameFromBackendHttpSettings": true,
               "match": {
                 "statusCodes": [
                   "200-399"
