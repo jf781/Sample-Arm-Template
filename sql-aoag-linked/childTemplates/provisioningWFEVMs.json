@@ -11,6 +11,12 @@
     "vmBaseName": {
       "type": "string"
     },
+    "urlPrefix1": {
+      "type": "string"
+    },
+    "urlPrefix2": {
+      "type": "string"
+    },
     "location": {
       "type": "string"
     },
@@ -82,7 +88,19 @@
       "properties": {
         "ipConfigurations": [
           {
-            "name": "ipconfig1",
+            "name": "[concat(parameters('urlPrefix1'), 'ipConfig')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('webFrontEndSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
+              ]
+            }
+          },
+          {
+            "name": "[concat(parameters('urlPrefix2'), 'ipConfig')]",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
@@ -106,12 +124,27 @@
       "properties": {
         "ipConfigurations": [
           {
-            "name": "ipconfig1",
+            "name": "[concat(parameters('urlPrefix1'), 'ipConfig')]",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "id": "[parameters('webFrontEndSubnetRef')]"
-              }
+              },
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
+              ]
+            }
+          },
+          {
+            "name": "[concat(parameters('urlPrefix2'), 'ipConfig')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('webFrontEndSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
+              ]
             }
           }
         ]
@@ -225,13 +258,13 @@
       "type": "array",
       "copy": {
         "count": "[parameters('wfeServerVMCount')]",
-        "input": "[reference(concat(parameters('vmBaseName'), copyindex(1), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
+        "input": "[reference(concat(parameters('vmBaseName'), copyindex(1), '-nic')).ipConfigurations]"
       }
     },
     "webFrontEndIpAddress": {
     "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
       "type": "string",
-      "value": "[reference(concat(parameters('vmBaseName'), '1-nic')).ipConfigurations[0].properties.privateIPAddress]"
+      "value": "[reference(concat(parameters('vmBaseName'), '1-nic')).ipConfigurations]"
     }
   }
 }
