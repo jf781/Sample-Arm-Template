@@ -89,9 +89,12 @@
     "appGwBackendAddressPool1Id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', parameters('appGatewayName'), variables('appGwBackendAddressPool1Name'))]",
     "appGwBackendAddressPool2Id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', parameters('appGatewayName'), variables('appGwBackendAddressPool2Name'))]",
     "appGwBackendAffinityCookieName": "[concat(parameters('appName'), 'SessionAffinityCookie')]",
-    "appGwListenerName": "[concat(parameters('appName'), 'Listener')]",
-    "appGwListenerIdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListenerName'), '-http'))]",
-    "appGwListenerIdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListenerName'), '-https'))]",
+    "appGwListener1Name": "[concat(parameters('appName'), '-', parameters('urlPrefix1'), 'Listener')]",
+    "appGwListener2Name": "[concat(parameters('appName'), '-', parameters('urlPrefix1'), 'Listener')]",
+    "appGwListener1IdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener1Name'), '-http'))]",
+    "appGwListener1IdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener1Name'), '-https'))]",
+    "appGwListener2IdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener2Name'), '-http'))]",
+    "appGwListener2IdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener2Name'), '-https'))]",
     "appGwRoutingRuleNameHttp": "[concat(parameters('appName'), 'HttpToHttps')]",
     "appGwRoutingRuleNameHttps": "[concat(parameters('appName'), 'Https')]",
     "appGwRedirectionName": "[concat(parameters('appName'), 'RedirectHttpToHttps')]"
@@ -249,7 +252,7 @@
         ],
         "httpListeners": [
           {
-            "name": "[concat(variables('appGwListenerName'), '-http')]",
+            "name": "[concat(variables('appGwListener1Name'), '-http')]",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('appGwFrontendIpConfigId')]"
@@ -257,11 +260,12 @@
               "frontendPort": {
                 "id": "[variables('appGwFrontendPortIdHttp')]"
               },
-              "protocol": "Http"
+              "protocol": "Http",
+              "hostName": "[variables('appGwUrl1')]"
             }
           },
           {
-            "name": "[concat(variables('appGwListenerName'), '-https')]",
+            "name": "[concat(variables('appGwListener1Name'), '-https')]",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('appGwFrontendIpConfigId')]"
@@ -272,7 +276,37 @@
               "sslCertificate": {
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
               },
-              "protocol": "Https"
+              "protocol": "Https",
+              "hostName": "[variables('appGwUrl1')]"
+            }
+          },
+          {
+            "name": "[concat(variables('appGwListener2Name'), '-http')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('appGwFrontendIpConfigId')]"
+              },
+              "frontendPort": {
+                "id": "[variables('appGwFrontendPortIdHttp')]"
+              },
+              "protocol": "Http",
+              "hostName": "[variables('appGwUrl2')]"
+            }
+          },
+          {
+            "name": "[concat(variables('appGwListener2Name'), '-https')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('appGwFrontendIpConfigId')]"
+              },
+              "frontendPort": {
+                "id": "[variables('appGwFrontendPortIdHttps')]"
+              },
+              "sslCertificate": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
+              },
+              "protocol": "Https",
+              "hostName": "[variables('appGwUrl2')]"
             }
           }
         ],
@@ -290,7 +324,7 @@
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
-                "id": "[variables('appGwListenerIdHttps')]"
+                "id": "[variables('appGwListener1IdHttps')]"
               },
               "backendAddressPool": {
                 "id": "[variables('appGwBackendAddressPool1Id')]"
@@ -305,7 +339,7 @@
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
-                "id": "[variables('appGwListenerIdHttp')]"
+                "id": "[variables('appGwListener1IdHttp')]"
               },
               "redirectConfiguration":{
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirectionName')))]"
@@ -319,7 +353,7 @@
             "properties": {
               "redirectType": "Permanent",
               "targetListener": {
-                "id": "[variables('appGwListenerIdHttps')]"
+                "id": "[variables('appGwListener1IdHttps')]"
               },
               "includePath": true,
               "includeQueryString": true,
@@ -467,7 +501,7 @@
         ],
         "httpListeners": [
           {
-            "name": "[concat(variables('appGwListenerName'), '-http')]",
+            "name": "[concat(variables('appGwListener1Name'), '-http')]",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('appGwFrontendIpConfigId')]"
@@ -475,11 +509,12 @@
               "frontendPort": {
                 "id": "[variables('appGwFrontendPortIdHttp')]"
               },
-              "protocol": "Http"
+              "protocol": "Http",
+              "hostName": "[variables('appGwUrl1')]"
             }
           },
           {
-            "name": "[concat(variables('appGwListenerName'), '-https')]",
+            "name": "[concat(variables('appGwListener1Name'), '-https')]",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('appGwFrontendIpConfigId')]"
@@ -490,7 +525,37 @@
               "sslCertificate": {
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
               },
-              "protocol": "Https"
+              "protocol": "Https",
+              "hostName": "[variables('appGwUrl1')]"
+            }
+          },
+          {
+            "name": "[concat(variables('appGwListener2Name'), '-http')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('appGwFrontendIpConfigId')]"
+              },
+              "frontendPort": {
+                "id": "[variables('appGwFrontendPortIdHttp')]"
+              },
+              "protocol": "Http",
+              "hostName": "[variables('appGwUrl2')]"
+            }
+          },
+          {
+            "name": "[concat(variables('appGwListener2Name'), '-https')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('appGwFrontendIpConfigId')]"
+              },
+              "frontendPort": {
+                "id": "[variables('appGwFrontendPortIdHttps')]"
+              },
+              "sslCertificate": {
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
+              },
+              "protocol": "Https",
+              "hostName": "[variables('appGwUrl2')]"
             }
           }
         ],
@@ -508,7 +573,7 @@
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
-                "id": "[variables('appGwListenerIdHttps')]"
+                "id": "[variables('appGwListener1IdHttps')]"
               },
               "backendAddressPool": {
                 "id": "[variables('appGwBackendAddressPool1Id')]"
@@ -523,7 +588,7 @@
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
-                "id": "[variables('appGwListenerIdHttp')]"
+                "id": "[variables('appGwListener1IdHttp')]"
               },
               "redirectConfiguration":{
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirectionName')))]"
@@ -537,7 +602,7 @@
             "properties": {
               "redirectType": "Permanent",
               "targetListener": {
-                "id": "[variables('appGwListenerIdHttps')]"
+                "id": "[variables('appGwListener1IdHttps')]"
               },
               "includePath": true,
               "includeQueryString": true,
