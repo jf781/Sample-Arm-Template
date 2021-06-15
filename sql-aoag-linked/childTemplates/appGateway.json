@@ -95,9 +95,12 @@
     "appGwListener1IdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener1Name'), '-https'))]",
     "appGwListener2IdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener2Name'), '-http'))]",
     "appGwListener2IdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener2Name'), '-https'))]",
-    "appGwRoutingRuleNameHttp": "[concat(parameters('appName'), 'HttpToHttps')]",
-    "appGwRoutingRuleNameHttps": "[concat(parameters('appName'), 'Https')]",
-    "appGwRedirectionName": "[concat(parameters('appName'), 'RedirectHttpToHttps')]"
+    "appGwRoutingRule1NameHttp": "[concat(parameters('appName'), '-', parameters('urlPrefix1'),'HttpToHttps')]",
+    "appGwRoutingRule1NameHttps": "[concat(parameters('appName'), '-', parameters('urlPrefix1'),'Https')]",
+    "appGwRoutingRule2NameHttp": "[concat(parameters('appName'), '-', parameters('urlPrefix2'),'HttpToHttps')]",
+    "appGwRoutingRule2NameHttps": "[concat(parameters('appName'), '-', parameters('urlPrefix2'),'Https')]",
+    "appGwRedirection1Name": "[concat(parameters('appName'), '-', parameters('urlPrefix1'), 'RedirectHttpToHttps')]",
+    "appGwRedirection2Name": "[concat(parameters('appName'), '-', parameters('urlPrefix2'), 'RedirectHttpToHttps')]"
 
   },
   "resources": [
@@ -320,7 +323,7 @@
         ],
         "requestRoutingRules": [
           {
-            "Name": "[variables('appGwRoutingRuleNameHttps')]",
+            "Name": "[variables('appGwRoutingRule1NameHttps')]",
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
@@ -335,21 +338,48 @@
             }
           },
           {
-            "Name": "[variables('appGwRoutingRuleNameHttp')]",
+            "Name": "[variables('appGwRoutingRule1NameHttp')]",
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
                 "id": "[variables('appGwListener1IdHttp')]"
               },
               "redirectConfiguration":{
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirectionName')))]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirection1Name')))]"
+              }
+            }
+          },
+          {
+            "Name": "[variables('appGwRoutingRule2NameHttps')]",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[variables('appGwListener2IdHttps')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('appGwBackendAddressPool2Id')]"
+              },
+              "backendHttpSettings": {
+                "id": "[variables('appGwHttpSettingId')]"
+              }
+            }
+          },
+          {
+            "Name": "[variables('appGwRoutingRule2NameHttp')]",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[variables('appGwListener2IdHttp')]"
+              },
+              "redirectConfiguration":{
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirection2Name')))]"
               }
             }
           }
         ],
         "redirectConfigurations": [
           {
-            "name": "[variables('appGwRedirectionName')]",
+            "name": "[variables('appGwRedirection1Name')]",
             "properties": {
               "redirectType": "Permanent",
               "targetListener": {
@@ -359,7 +389,23 @@
               "includeQueryString": true,
               "requestRoutingRules": [
                 {
-                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRuleNameHttp'))]"
+                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRule1NameHttp'))]"
+                }
+              ]
+            }
+          },
+          {
+            "name": "[variables('appGwRedirection2Name')]",
+            "properties": {
+              "redirectType": "Permanent",
+              "targetListener": {
+                "id": "[variables('appGwListener2IdHttps')]"
+              },
+              "includePath": true,
+              "includeQueryString": true,
+              "requestRoutingRules": [
+                {
+                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRule2NameHttp'))]"
                 }
               ]
             }
@@ -569,7 +615,7 @@
         ],
         "requestRoutingRules": [
           {
-            "Name": "[variables('appGwRoutingRuleNameHttps')]",
+            "Name": "[variables('appGwRoutingRule1NameHttps')]",
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
@@ -584,21 +630,48 @@
             }
           },
           {
-            "Name": "[variables('appGwRoutingRuleNameHttp')]",
+            "Name": "[variables('appGwRoutingRule1NameHttp')]",
             "properties": {
               "RuleType": "Basic",
               "httpListener": {
                 "id": "[variables('appGwListener1IdHttp')]"
               },
               "redirectConfiguration":{
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirectionName')))]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirection1Name')))]"
+              }
+            }
+          },
+          {
+            "Name": "[variables('appGwRoutingRule2NameHttps')]",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[variables('appGwListener2IdHttps')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('appGwBackendAddressPool2Id')]"
+              },
+              "backendHttpSettings": {
+                "id": "[variables('appGwHttpSettingId')]"
+              }
+            }
+          },
+          {
+            "Name": "[variables('appGwRoutingRule2NameHttp')]",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[variables('appGwListener2IdHttp')]"
+              },
+              "redirectConfiguration":{
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirection2Name')))]"
               }
             }
           }
         ],
         "redirectConfigurations": [
           {
-            "name": "[variables('appGwRedirectionName')]",
+            "name": "[variables('appGwRedirection1Name')]",
             "properties": {
               "redirectType": "Permanent",
               "targetListener": {
@@ -608,7 +681,23 @@
               "includeQueryString": true,
               "requestRoutingRules": [
                 {
-                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRuleNameHttp'))]"
+                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRule1NameHttp'))]"
+                }
+              ]
+            }
+          },
+          {
+            "name": "[variables('appGwRedirection2Name')]",
+            "properties": {
+              "redirectType": "Permanent",
+              "targetListener": {
+                "id": "[variables('appGwListener2IdHttps')]"
+              },
+              "includePath": true,
+              "includeQueryString": true,
+              "requestRoutingRules": [
+                {
+                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRule2NameHttp'))]"
                 }
               ]
             }
