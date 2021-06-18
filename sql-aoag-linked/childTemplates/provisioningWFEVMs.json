@@ -32,6 +32,9 @@
     "wfeServerVMCount": {
       "type": "int"
     },
+    "wfeVmIndexStart": {
+      "type": "int"
+    },
     "wfeServerImagePublisher": {
       "type": "string"
     },
@@ -75,7 +78,7 @@
       }
     },
     {
-      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('vmBaseName'), copyIndex(1), '-nic'), 'invalidWFENICs')]",
+      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('vmBaseName'), copyIndex(parameters('wfeVmIndexStart')), '-nic'), 'invalidWFENICs')]",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -156,12 +159,12 @@
       "apiVersion": "2017-03-30",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('vmbaseName'), copyIndex(1)), 'invalidVMs')]",
+      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('vmbaseName'), copyIndex(parameters('wfeVmIndexStart'))), 'invalidVMs')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/availabilitySets/',parameters('wfeAvailabilitySetName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), copyIndex(1), '-nic'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), copyIndex(parameters('wfeVmIndexStart')), '-nic'))]"
       ],
       "copy": {
         "name": "wfeServerMachineLoop",
@@ -173,7 +176,7 @@
         },
         "availabilitySet": "[if(greater(parameters('wfeServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]",
         "osProfile": {
-          "computerName": "[concat(parameters('vmbaseName'), copyIndex(1))]",
+          "computerName": "[concat(parameters('vmbaseName'), copyIndex(parameters('wfeVmIndexStart')))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -185,7 +188,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('vmbaseName'), copyIndex(1),'-os-disk')]",
+            "name": "[concat(parameters('vmbaseName'), copyIndex(parameters('wfeVmIndexStart')),'-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -193,7 +196,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), copyIndex(1),'-nic'))]"
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), copyIndex(parameters('wfeVmIndexStart')),'-nic'))]"
             }
           ]
         },
@@ -260,7 +263,7 @@
       "type": "array",
       "copy": {
         "count": "[parameters('wfeServerVMCount')]",
-        "input": "[reference(concat(parameters('vmBaseName'), copyindex(1), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
+        "input": "[reference(concat(parameters('vmBaseName'), copyindex(parameters('wfeVmIndexStart')), '-nic')).ipConfigurations[0].properties.privateIPAddress]"
       }
     },
     "urlPrefix2FrontEndIpAddresses": {
@@ -268,7 +271,7 @@
       "type": "array",
       "copy": {
         "count": "[parameters('wfeServerVMCount')]",
-        "input": "[reference(concat(parameters('vmBaseName'), copyindex(1), '-nic')).ipConfigurations[1].properties.privateIPAddress]"
+        "input": "[reference(concat(parameters('vmBaseName'), copyindex(parameters('wfeVmIndexStart')), '-nic')).ipConfigurations[1].properties.privateIPAddress]"
       }
     },
     "urlPrefix1FrontEndIpAddress": {
