@@ -70,29 +70,30 @@
     "publicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIpAddressName'))]",
     "appGatewaySkuSize": "WAF_v2",
     "appGatewayTier": "WAF_v2",
+    "appGatewayIndexedName": "[concat(parameters('appGatewayName'), parameters('appGwIndexStart'))]",
     "appGwIpConfigName": "[concat(parameters('appName'), 'IpConfigName')]",
     "appGwFrontendPortNameHttp": "[concat(parameters('appName'), 'FrontendPort')]",
     "appGwFrontendPortNameHttps": "[concat(parameters('appName'), 'FrontendPortHttps')]",
     "appGwFrontendPortHttp": 80,
     "appGwFrontendPortHttps": 443,
-    "appGwFrontendPortIdHttp": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts/', parameters('appGatewayName'), variables('appGwFrontendPortNameHttp'))]",
-    "appGwFrontendPortIdHttps": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts/', parameters('appGatewayName'), variables('appGwFrontendPortNameHttps'))]",
+    "appGwFrontendPortIdHttp": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts/', variables('appGatewayIndexedName'), variables('appGwFrontendPortNameHttp'))]",
+    "appGwFrontendPortIdHttps": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts/', variables('appGatewayIndexedName'), variables('appGwFrontendPortNameHttps'))]",
     "appGwFrontendIpConfigName": "[concat(parameters('appName'), 'PublicFrontendIpConfig')]",
-    "appGwFrontendIpConfigId": "[resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations/', parameters('appGatewayName'), variables('appGwFrontendIpConfigName'))]",
+    "appGwFrontendIpConfigId": "[resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations/', variables('appGatewayIndexedName'), variables('appGwFrontendIpConfigName'))]",
     "appGwHttpSettingName": "[concat(parameters('appName'), 'HttpSetting')]",
-    "appGwHttpSettingId": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection/', parameters('appGatewayName'), variables('appGwHttpSettingName'))]",
+    "appGwHttpSettingId": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection/', variables('appGatewayIndexedName'), variables('appGwHttpSettingName'))]",
     "appGwHttpSettingProbeName": "[concat(parameters('appName'), 'HttpSettingProbe')]",
     "appGwBackendAddressPool1Name": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix1'), '.')), 'BackendPool')]",
     "appGwBackendAddressPool2Name": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix2'), '.')), 'BackendPool')]",
-    "appGwBackendAddressPool1Id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', parameters('appGatewayName'), variables('appGwBackendAddressPool1Name'))]",
-    "appGwBackendAddressPool2Id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', parameters('appGatewayName'), variables('appGwBackendAddressPool2Name'))]",
+    "appGwBackendAddressPool1Id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', variables('appGatewayIndexedName'), variables('appGwBackendAddressPool1Name'))]",
+    "appGwBackendAddressPool2Id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', variables('appGatewayIndexedName'), variables('appGwBackendAddressPool2Name'))]",
     "appGwBackendAffinityCookieName": "[concat(parameters('appName'), 'SessionAffinityCookie')]",
     "appGwListener1Name": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix1'), '.')), 'Listener')]",
     "appGwListener2Name": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix2'), '.')), 'Listener')]",
-    "appGwListener1IdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener1Name'), '-http'))]",
-    "appGwListener1IdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener1Name'), '-https'))]",
-    "appGwListener2IdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener2Name'), '-http'))]",
-    "appGwListener2IdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener2Name'), '-https'))]",
+    "appGwListener1IdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', variables('appGatewayIndexedName')), concat('/httpListeners/', variables('appGwListener1Name'), '-http'))]",
+    "appGwListener1IdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', variables('appGatewayIndexedName')), concat('/httpListeners/', variables('appGwListener1Name'), '-https'))]",
+    "appGwListener2IdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', variables('appGatewayIndexedName')), concat('/httpListeners/', variables('appGwListener2Name'), '-http'))]",
+    "appGwListener2IdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', variables('appGatewayIndexedName')), concat('/httpListeners/', variables('appGwListener2Name'), '-https'))]",
     "appGwRoutingRule1NameHttp": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix1'), '.')),'HttpToHttps')]",
     "appGwRoutingRule1NameHttps": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix1'), '.')),'Https')]",
     "appGwRoutingRule2NameHttp": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix2'), '.')),'HttpToHttps')]",
@@ -148,7 +149,7 @@
       "type": "Microsoft.Network/applicationGateways",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "apiVersion": "2020-11-01",
-      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('appGatewayName'), parameters('appGwIndexStart')), 'invalidAppGWNames')]",
+      "name": "[if(greater(parameters('wfeServerVMCount'), 1), variables('appGatewayIndexedName'), 'invalidAppGWNames')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "identity": {
@@ -246,7 +247,7 @@
               "requestTimeout": 20,
               "pickHostNameFromBackendAddress": true,
               "probe": {
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/probes/', variables('appGwHttpSettingProbeName')))]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), concat('/probes/', variables('appGwHttpSettingProbeName')))]"
               }
             }
           }
@@ -275,7 +276,7 @@
                 "id": "[variables('appGwFrontendPortIdHttps')]"
               },
               "sslCertificate": {
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), '/sslCertificates/appGwSslCertificate')]"
               },
               "protocol": "Https",
               "hostName": "[parameters('urlPrefix1')]"
@@ -304,7 +305,7 @@
                 "id": "[variables('appGwFrontendPortIdHttps')]"
               },
               "sslCertificate": {
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), '/sslCertificates/appGwSslCertificate')]"
               },
               "protocol": "Https",
               "hostName": "[parameters('urlPrefix2')]"
@@ -343,7 +344,7 @@
                 "id": "[variables('appGwListener1IdHttp')]"
               },
               "redirectConfiguration":{
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirection1Name')))]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), concat('/redirectConfigurations/', variables('appGwRedirection1Name')))]"
               }
             }
           },
@@ -370,7 +371,7 @@
                 "id": "[variables('appGwListener2IdHttp')]"
               },
               "redirectConfiguration":{
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirection2Name')))]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), concat('/redirectConfigurations/', variables('appGwRedirection2Name')))]"
               }
             }
           }
@@ -387,7 +388,7 @@
               "includeQueryString": true,
               "requestRoutingRules": [
                 {
-                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRule1NameHttp'))]"
+                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), '/requestRoutingRules/', variables('appGwRoutingRule1NameHttp'))]"
                 }
               ]
             }
@@ -403,7 +404,7 @@
               "includeQueryString": true,
               "requestRoutingRules": [
                 {
-                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRule2NameHttp'))]"
+                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), '/requestRoutingRules/', variables('appGwRoutingRule2NameHttp'))]"
                 }
               ]
             }
@@ -448,7 +449,7 @@
       "type": "Microsoft.Network/applicationGateways",
       "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
       "apiVersion": "2020-11-01",
-      "name": "[if(equals(parameters('wfeServerVMCount'), 1), concat(parameters('appGatewayName'), parameters('appGwIndexStart')), 'invalidAppGWName')]",
+      "name": "[if(equals(parameters('wfeServerVMCount'), 1), variables('appGatewayIndexedName'), 'invalidAppGWName')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "identity": {
@@ -538,7 +539,7 @@
               "requestTimeout": 20,
               "pickHostNameFromBackendAddress": false,
               "probe": {
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/probes/', variables('appGwHttpSettingProbeName')))]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), concat('/probes/', variables('appGwHttpSettingProbeName')))]"
               }
             }
           }
@@ -567,7 +568,7 @@
                 "id": "[variables('appGwFrontendPortIdHttps')]"
               },
               "sslCertificate": {
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), '/sslCertificates/appGwSslCertificate')]"
               },
               "protocol": "Https",
               "hostName": "[parameters('urlPrefix1')]"
@@ -596,7 +597,7 @@
                 "id": "[variables('appGwFrontendPortIdHttps')]"
               },
               "sslCertificate": {
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), '/sslCertificates/appGwSslCertificate')]"
               },
               "protocol": "Https",
               "hostName": "[parameters('urlPrefix2')]"
@@ -635,7 +636,7 @@
                 "id": "[variables('appGwListener1IdHttp')]"
               },
               "redirectConfiguration":{
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirection1Name')))]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), concat('/redirectConfigurations/', variables('appGwRedirection1Name')))]"
               }
             }
           },
@@ -662,7 +663,7 @@
                 "id": "[variables('appGwListener2IdHttp')]"
               },
               "redirectConfiguration":{
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), concat('/redirectConfigurations/', variables('appGwRedirection2Name')))]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), concat('/redirectConfigurations/', variables('appGwRedirection2Name')))]"
               }
             }
           }
@@ -679,7 +680,7 @@
               "includeQueryString": true,
               "requestRoutingRules": [
                 {
-                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRule1NameHttp'))]"
+                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), '/requestRoutingRules/', variables('appGwRoutingRule1NameHttp'))]"
                 }
               ]
             }
@@ -695,7 +696,7 @@
               "includeQueryString": true,
               "requestRoutingRules": [
                 {
-                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/requestRoutingRules/', variables('appGwRoutingRule2NameHttp'))]"
+                  "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('appGatewayIndexedName')), '/requestRoutingRules/', variables('appGwRoutingRule2NameHttp'))]"
                 }
               ]
             }
