@@ -14,6 +14,9 @@
     "appName": {
       "type": "string"
     },
+    "appGwIndexStart": {
+      "type": "int"
+    },
     "urlPrefix1": {
       "type": "string"
     },
@@ -61,7 +64,7 @@
     }
   },
   "variables": {
-    "publicIpAddressName": "[concat(parameters('appGatewayName'), '-pip')]",
+    "publicIpAddressName": "[concat(parameters('appGatewayName'), parameters('appGwIndexStart'), '-pip')]",
     "publicIpAddressSku": "Standard",
     "publicIpAddressAllocationType": "Static",
     "publicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIpAddressName'))]",
@@ -145,7 +148,7 @@
       "type": "Microsoft.Network/applicationGateways",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "apiVersion": "2020-11-01",
-      "name": "[if(greater(parameters('wfeServerVMCount'), 1), parameters('appGatewayName'), 'invalidAppGWNames')]",
+      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('appGatewayName'), parameters('appGwIndexStart')), 'invalidAppGWNames')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "identity": {
@@ -445,7 +448,7 @@
       "type": "Microsoft.Network/applicationGateways",
       "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
       "apiVersion": "2020-11-01",
-      "name": "[if(equals(parameters('wfeServerVMCount'), 1), parameters('appGatewayName'), 'invalidAppGWName')]",
+      "name": "[if(equals(parameters('wfeServerVMCount'), 1), concat(parameters('appGatewayName'), parameters('appGwIndexStart')), 'invalidAppGWName')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "identity": {
