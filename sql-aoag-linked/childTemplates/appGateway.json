@@ -20,9 +20,6 @@
     "urlPrefix2": {
       "type": "string"
     },
-    "orgDomainName": {
-      "type": "string"
-    },
     "appGatewayAutoScaleMinValue": {
       "type": "int"
     },
@@ -70,8 +67,6 @@
     "publicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIpAddressName'))]",
     "appGatewaySkuSize": "WAF_v2",
     "appGatewayTier": "WAF_v2",
-    "appGwUrl1": "[concat(parameters('urlPrefix1'), '.', parameters('orgDomainName'))]",
-    "appGwUrl2": "[concat(parameters('urlPrefix2'), '.', parameters('orgDomainName'))]",
     "appGwIpConfigName": "[concat(parameters('appName'), 'IpConfigName')]",
     "appGwFrontendPortNameHttp": "[concat(parameters('appName'), 'FrontendPort')]",
     "appGwFrontendPortNameHttps": "[concat(parameters('appName'), 'FrontendPortHttps')]",
@@ -84,23 +79,23 @@
     "appGwHttpSettingName": "[concat(parameters('appName'), 'HttpSetting')]",
     "appGwHttpSettingId": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection/', parameters('appGatewayName'), variables('appGwHttpSettingName'))]",
     "appGwHttpSettingProbeName": "[concat(parameters('appName'), 'HttpSettingProbe')]",
-    "appGwBackendAddressPool1Name": "[concat(parameters('appName'), '-', parameters('urlPrefix1'), 'BackendPool')]",
-    "appGwBackendAddressPool2Name": "[concat(parameters('appName'), '-', parameters('urlPrefix2'), 'BackendPool')]",
+    "appGwBackendAddressPool1Name": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix1'), '.')), 'BackendPool')]",
+    "appGwBackendAddressPool2Name": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix2'), '.')), 'BackendPool')]",
     "appGwBackendAddressPool1Id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', parameters('appGatewayName'), variables('appGwBackendAddressPool1Name'))]",
     "appGwBackendAddressPool2Id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', parameters('appGatewayName'), variables('appGwBackendAddressPool2Name'))]",
     "appGwBackendAffinityCookieName": "[concat(parameters('appName'), 'SessionAffinityCookie')]",
-    "appGwListener1Name": "[concat(parameters('appName'), '-', parameters('urlPrefix1'), 'Listener')]",
-    "appGwListener2Name": "[concat(parameters('appName'), '-', parameters('urlPrefix2'), 'Listener')]",
+    "appGwListener1Name": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix1'), '.')), 'Listener')]",
+    "appGwListener2Name": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix2'), '.')), 'Listener')]",
     "appGwListener1IdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener1Name'), '-http'))]",
     "appGwListener1IdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener1Name'), '-https'))]",
     "appGwListener2IdHttp": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener2Name'), '-http'))]",
     "appGwListener2IdHttps": "[concat(resourceId('Microsoft.Network/applicationGateways/', parameters('appGatewayName')), concat('/httpListeners/', variables('appGwListener2Name'), '-https'))]",
-    "appGwRoutingRule1NameHttp": "[concat(parameters('appName'), '-', parameters('urlPrefix1'),'HttpToHttps')]",
-    "appGwRoutingRule1NameHttps": "[concat(parameters('appName'), '-', parameters('urlPrefix1'),'Https')]",
-    "appGwRoutingRule2NameHttp": "[concat(parameters('appName'), '-', parameters('urlPrefix2'),'HttpToHttps')]",
-    "appGwRoutingRule2NameHttps": "[concat(parameters('appName'), '-', parameters('urlPrefix2'),'Https')]",
-    "appGwRedirection1Name": "[concat(parameters('appName'), '-', parameters('urlPrefix1'), 'RedirectHttpToHttps')]",
-    "appGwRedirection2Name": "[concat(parameters('appName'), '-', parameters('urlPrefix2'), 'RedirectHttpToHttps')]"
+    "appGwRoutingRule1NameHttp": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix1'), '.')),'HttpToHttps')]",
+    "appGwRoutingRule1NameHttps": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix1'), '.')),'Https')]",
+    "appGwRoutingRule2NameHttp": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix2'), '.')),'HttpToHttps')]",
+    "appGwRoutingRule2NameHttps": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix2'), '.')),'Https')]",
+    "appGwRedirection1Name": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix1'), '.')), 'RedirectHttpToHttps')]",
+    "appGwRedirection2Name": "[concat(parameters('appName'), '-', first(split(parameters('urlPrefix2'), '.')), 'RedirectHttpToHttps')]"
 
   },
   "resources": [
@@ -264,7 +259,7 @@
                 "id": "[variables('appGwFrontendPortIdHttp')]"
               },
               "protocol": "Http",
-              "hostName": "[variables('appGwUrl1')]"
+              "hostName": "[parameters('urlPrefix1')]"
             }
           },
           {
@@ -280,7 +275,7 @@
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
               },
               "protocol": "Https",
-              "hostName": "[variables('appGwUrl1')]"
+              "hostName": "[parameters('urlPrefix1')]"
             }
           },
           {
@@ -293,7 +288,7 @@
                 "id": "[variables('appGwFrontendPortIdHttp')]"
               },
               "protocol": "Http",
-              "hostName": "[variables('appGwUrl2')]"
+              "hostName": "[parameters('urlPrefix2')]"
             }
           },
           {
@@ -309,7 +304,7 @@
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
               },
               "protocol": "Https",
-              "hostName": "[variables('appGwUrl2')]"
+              "hostName": "[parameters('urlPrefix2')]"
             }
           }
         ],
@@ -428,7 +423,7 @@
               "timeout": 30,
               "unhealthyThreshold": 3,
               "pickHostNameFromBackendHttpSettings": false,
-              "host": "[variables('appGwUrl1')]",
+              "host": "[parameters('urlPrefix1')]",
               "match": {
                 "statusCodes": [
                   "200-399"
@@ -556,7 +551,7 @@
                 "id": "[variables('appGwFrontendPortIdHttp')]"
               },
               "protocol": "Http",
-              "hostName": "[variables('appGwUrl1')]"
+              "hostName": "[parameters('urlPrefix1')]"
             }
           },
           {
@@ -572,7 +567,7 @@
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
               },
               "protocol": "Https",
-              "hostName": "[variables('appGwUrl1')]"
+              "hostName": "[parameters('urlPrefix1')]"
             }
           },
           {
@@ -585,7 +580,7 @@
                 "id": "[variables('appGwFrontendPortIdHttp')]"
               },
               "protocol": "Http",
-              "hostName": "[variables('appGwUrl2')]"
+              "hostName": "[parameters('urlPrefix2')]"
             }
           },
           {
@@ -601,7 +596,7 @@
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/sslCertificates/appGwSslCertificate')]"
               },
               "protocol": "Https",
-              "hostName": "[variables('appGwUrl2')]"
+              "hostName": "[parameters('urlPrefix2')]"
             }
           }
         ],
@@ -720,7 +715,7 @@
               "timeout": 30,
               "unhealthyThreshold": 3,
               "pickHostNameFromBackendHttpSettings": false,
-              "host": "[variables('appGwUrl1')]",
+              "host": "[parameters('urlPrefix1')]",
               "match": {
                 "statusCodes": [
                   "200-399"
