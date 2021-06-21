@@ -411,6 +411,10 @@
           }
         ],
         "enableHttp2": true,
+        "sslPolicy": {
+          "policyType": "Predefined",
+          "policyName": "AppGwSslPolicy20170401S"
+        },
         "probes": [
           {
             "name": "[variables('appGwHttpSettingProbeName')]",
