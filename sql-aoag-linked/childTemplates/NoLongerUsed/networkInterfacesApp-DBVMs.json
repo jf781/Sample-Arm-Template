@@ -1,0 +1,179 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "failoverLocation": {
+      "type": "string"
+    },
+    "appServerBaseName": {
+      "type": "string"
+    },
+    "failoversqlServerBaseName": {
+      "type": "string"
+    },
+    "sqlServerBaseName": {
+      "type": "string"
+    },
+    "wfeServerBaseName": {
+      "type": "string"
+    },
+    "sqlServerVMCount": {
+      "type": "int"
+    },
+    "sqlBEAddressPoolID": {
+      "type": "string"
+    },
+    "sqlSubnetRef": {
+      "type": "string"
+    },
+    "failoverSqlServerVMCount": {
+      "type": "int"
+    },
+    "failoverSqlBEAddressPoolID": {
+      "type": "string"
+    },
+    "failoverSqlSubnetRef": {
+      "type": "string"
+    },
+    "wfeServerVMCount": {
+      "type": "int"
+    },
+    "wfeBEAddressPoolID": {
+      "type": "string"
+    },
+    "webFrontEndSubnetRef": {
+      "type": "string"
+    },
+    "appServerVMCount": {
+      "type": "int"
+    },
+    "appBEAddressPoolID": {
+      "type": "string"
+    },
+    "appServerSubnetRef": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "object"
+    }
+  },
+  "variables":{
+    "sqlLoadBalancerConfig": {
+      "id": "[parameters('sqlBEAddressPoolID')]"
+    },
+    "failoverSqlLoadBalancerConfig": {
+      "id": "[parameters('failoverSqlBEAddressPoolID')]"
+    },
+    "appLoadBalancerConfig": {
+      "id": "[parameters('appBEAddressPoolID')]"
+    },
+    "wfeLoadBalancerConfig": {
+      "id": "[parameters('wfeBEAddressPoolID')]"
+    }    
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('sqlServerBaseName'), copyindex(), '-nic')]",
+      "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "apiVersion": "2020-08-01",
+      "copy": {
+        "name": "sqlNicLoop",
+        "count": "[parameters('sqlServerVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('sqlSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('sqlServerVMCount'), 1), variables('sqlLoadBalancerConfig'), json('null'))]"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('sqlServerBaseName'), '1-nic')]",
+      "condition": "[equals(parameters('sqlServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "apiVersion": "2020-08-01",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('sqlSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },   
+    {
+      "name": "[concat(parameters('appServerBaseName'), copyindex(), '-nic')]",
+      "condition": "[greater(parameters('appServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "apiVersion": "2020-08-01",
+      "copy": {
+        "name": "appNicLoop",
+        "count": "[parameters('appServerVMCount')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('appServerSubnetRef')]"
+              },
+             "loadBalancerBackendAddressPools": [
+               "[if(greater(parameters('appServerVMCount'), 1), variables('appLoadBalancerConfig'), json('null'))]"
+             ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('appServerBaseName'), '1-nic')]",
+      "condition": "[equals(parameters('appServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "apiVersion": "2020-08-01",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('appServerSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+  }
+}
