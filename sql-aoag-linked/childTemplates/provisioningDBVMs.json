@@ -194,7 +194,7 @@
       "apiVersion": "2020-12-01",
       "type": "Microsoft.Compute/virtualMachines",
       "condition": "[equals(parameters('sqlServerVMCount'), 1)]",
-      "name": "[if(equals(parameters('sqlServerVMCount'), 1), concat(parameters('vmbaseName'), '01'), 'invalidVM')]",
+      "name": "[if(equals(parameters('sqlServerVMCount'), 1), concat(parameters('vmbaseName'), '1'), 'invalidVM')]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), '1-nic'))]"
