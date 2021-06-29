@@ -122,7 +122,7 @@
       }
     },
     {
-      "apiVersion": "2017-03-30",
+      "apiVersion": "2020-12-01",
       "condition": "[greater(parameters('sqlServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[if(greater(parameters('sqlServerVMCount'), 1), concat(parameters('vmbaseName'), copyIndex(1)), 'invalidVMs')]",
@@ -191,7 +191,7 @@
       }
     },
     {
-      "apiVersion": "2017-03-30",
+      "apiVersion": "2020-12-01",
       "type": "Microsoft.Compute/virtualMachines",
       "condition": "[equals(parameters('sqlServerVMCount'), 1)]",
       "name": "[if(equals(parameters('sqlServerVMCount'), 1), concat(parameters('vmbaseName'), '01'), 'invalidVM')]",
