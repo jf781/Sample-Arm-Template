@@ -164,7 +164,7 @@
       "tags": "[parameters('tags')]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/availabilitySets/',parameters('wfeAvailabilitySetName'))]",
-        "[concat(resourceId('Microsoft.Network/networkInterfaces/', parameters('vmBaseName'), copyIndex(parameters('wfeVmIndexStart')), '-nic'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), copyIndex(parameters('wfeVmIndexStart')), '-nic'))]"
       ],
       "copy": {
         "name": "wfeServerMachineLoop",
