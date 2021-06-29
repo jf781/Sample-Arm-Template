@@ -212,7 +212,7 @@
       "apiVersion": "2020-12-01",
       "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[if(equals(parameters('wfeServerVMCount'), 1),concat(parameters('vmbaseName'), '1'), 'invalidVM')]",
+      "name": "[if(equals(parameters('wfeServerVMCount'), 1), concat(parameters('vmbaseName'), '1'), 'invalidVM')]",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "dependsOn": [
@@ -222,7 +222,6 @@
         "hardwareProfile": {
           "vmSize": "[parameters('wfeServerVMSize')]"
         },
-        "availabilitySet": "[if(greater(parameters('wfeServerVMCount'), 1), variables('availabilitySetConfiguration'), json('null'))]",
         "osProfile": {
           "computerName": "[concat(parameters('vmbaseName'), '1')]",
           "adminUsername": "[parameters('adminUsername')]",
@@ -236,7 +235,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('vmbaseName'),  '1-os-disk')]",
+            "name": "[concat(parameters('vmbaseName'), '1-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
