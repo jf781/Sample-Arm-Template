@@ -78,7 +78,8 @@
       }
     },
     {
-      "name": "[concat(parameters('vmBaseName'), copyIndex(parameters('wfeVmIndexStart')), '-nic')]",
+      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('vmBaseName'), copyIndex(parameters('wfeVmIndexStart')), '-nic'), 'invalidWFENICs')]",
+      "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
@@ -87,6 +88,43 @@
         "name": "wfeNicLoop",
         "count": "[parameters('wfeServerVMCount')]"
       },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[concat(parameters('urlPrefix1'), 'ipConfig')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('webFrontEndSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
+              ],
+              "primary": true
+            }
+          },
+          {
+            "name": "[concat(parameters('urlPrefix2'), 'ipConfig')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('webFrontEndSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[if(equals(parameters('wfeServerVMCount'), 1), concat(parameters('vmBaseName'), '1-nic'), 'invalidWFENIC')]",
+      "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "apiVersion": "2020-08-01",
       "properties": {
         "ipConfigurations": [
           {
@@ -169,54 +207,54 @@
           }
         }
       }
+    },
+    {
+      "apiVersion": "2020-12-01",
+      "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[if(equals(parameters('wfeServerVMCount'), 1), concat(parameters('vmbaseName'), '1'), 'invalidVM')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), '1-nic'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('wfeServerVMSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(parameters('vmbaseName'), '1')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('wfeServerImagePublisher')]",
+            "offer": "[parameters('wfeServerImageOffer')]",
+            "sku": "[parameters('wfeServerImageSKU')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(parameters('vmbaseName'), '1-os-disk')]",
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), '1-nic'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat('https://',parameters('storageAccountName'),'.blob.core.windows.net')]"
+          }
+        }
+      }
     }
-    // {
-    //   "apiVersion": "2020-12-01",
-    //   "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
-    //   "type": "Microsoft.Compute/virtualMachines",
-    //   "name": "[if(equals(parameters('wfeServerVMCount'), 1), concat(parameters('vmbaseName'), '1'), 'invalidVM')]",
-    //   "location": "[parameters('location')]",
-    //   "tags": "[parameters('tags')]",
-    //   "dependsOn": [
-    //     "[resourceId('Microsoft.Network/networkInterfaces/', concat(parameters('vmBaseName'), '1-nic'))]"
-    //   ],
-    //   "properties": {
-    //     "hardwareProfile": {
-    //       "vmSize": "[parameters('wfeServerVMSize')]"
-    //     },
-    //     "osProfile": {
-    //       "computerName": "[concat(parameters('vmbaseName'), '1')]",
-    //       "adminUsername": "[parameters('adminUsername')]",
-    //       "adminPassword": "[parameters('adminPassword')]"
-    //     },
-    //     "storageProfile": {
-    //       "imageReference": {
-    //         "publisher": "[parameters('wfeServerImagePublisher')]",
-    //         "offer": "[parameters('wfeServerImageOffer')]",
-    //         "sku": "[parameters('wfeServerImageSKU')]",
-    //         "version": "latest"
-    //       },
-    //       "osDisk": {
-    //         "name": "[concat(parameters('vmbaseName'), '1-os-disk')]",
-    //         "caching": "ReadWrite",
-    //         "createOption": "FromImage"
-    //       }
-    //     },
-    //     "networkProfile": {
-    //       "networkInterfaces": [
-    //         {
-    //           "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',concat(parameters('vmbaseName'), '1-nic'))]"
-    //         }
-    //       ]
-    //     },
-    //     "diagnosticsProfile": {
-    //       "bootDiagnostics": {
-    //         "enabled": true,
-    //         "storageUri": "[concat('https://',parameters('storageAccountName'),'.blob.core.windows.net')]"
-    //       }
-    //     }
-    //   }
-    // }
   ],
   "outputs": {
     "urlPrefix1FrontEndIpAddresses": {
