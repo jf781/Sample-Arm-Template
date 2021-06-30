@@ -78,7 +78,7 @@
       }
     },
     {
-      "name": "[if(greater(parameters('wfeServerVMCount'), 1), concat(parameters('vmBaseName'), copyIndex(parameters('wfeVmIndexStart')), '-nic'), 'invalidWFENICs')]",
+      "name": "[concat(parameters('vmBaseName'), copyIndex(parameters('wfeVmIndexStart')), '-nic')]",
       "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -88,43 +88,6 @@
         "name": "wfeNicLoop",
         "count": "[parameters('wfeServerVMCount')]"
       },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "[concat(parameters('urlPrefix1'), 'ipConfig')]",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "subnet": {
-                "id": "[parameters('webFrontEndSubnetRef')]"
-              },
-              "loadBalancerBackendAddressPools": [
-                "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
-              ],
-              "primary": true
-            }
-          },
-          {
-            "name": "[concat(parameters('urlPrefix2'), 'ipConfig')]",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "subnet": {
-                "id": "[parameters('webFrontEndSubnetRef')]"
-              },
-              "loadBalancerBackendAddressPools": [
-                "[if(greater(parameters('wfeServerVMCount'), 1), variables('wfeLoadBalancerConfig'), json('null'))]"
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "[if(equals(parameters('wfeServerVMCount'), 1), concat(parameters('vmBaseName'), '1-nic'), 'invalidWFENIC')]",
-      "condition": "[equals(parameters('wfeServerVMCount'), 1)]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "location": "[parameters('location')]",
-      "tags": "[parameters('tags')]",
-      "apiVersion": "2020-08-01",
       "properties": {
         "ipConfigurations": [
           {
