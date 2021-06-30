@@ -79,7 +79,6 @@
     },
     {
       "name": "[concat(parameters('vmBaseName'), copyIndex(parameters('wfeVmIndexStart')), '-nic')]",
-      "condition": "[greater(parameters('wfeServerVMCount'), 1)]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
