@@ -179,6 +179,27 @@
       "properties": {
         "securityRules": [
           {
+            "name": "allow-ingress-onprem-any",
+            "properties": {
+              "priority": 200,
+              "sourceAddressPrefixes": [
+                 "10.1.2.0/24",
+                 "10.1.4.0/24",
+                 "172.16.3.0/24",
+                 "172.16.2.0/24",
+                 "192.168.100.0/30",
+                 "10.1.19.0/24",
+                 "10.1.18.0/24"
+              ],
+              "protocol": "*",
+              "destinationPortRange": "*",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
             "name": "default-allow-rdp",
             "properties": {
               "priority": 1000,
@@ -216,6 +237,40 @@
               "sourcePortRange": "*",
               "destinationAddressPrefix": "*"
             }
+          },
+          {
+            "name": "allow-egress-dc-any",
+            "properties": {
+              "priority": 102,
+              "sourceAddressPrefix": "[parameters('appServerSubnetAddresSpace')]",
+              "protocol": "*",
+              "destinationPortRange": "*",
+              "access": "Allow",
+              "direction": "Outbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "10.10.4.0/28"
+            }
+          },
+          {
+            "name": "allow-egress-onprem-any",
+            "properties": {
+              "priority": 200,
+              "sourceAddressPrefix": "[parameters('appServerSubnetAddresSpace')]",
+              "protocol": "*",
+              "destinationPortRange": "*",
+              "access": "Allow",
+              "direction": "Outbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefixes": [
+                "10.1.2.0/24",
+                "10.1.4.0/24",
+                "172.16.3.0/24",
+                "172.16.2.0/24",
+                "192.168.100.0/30",
+                "10.1.19.0/24",
+                "10.1.18.0/24"
+              ]
+            }
           }
         ]
       }
@@ -229,6 +284,27 @@
       "comments": "Network Security Group (NSG) for your application server subnet",
       "properties": {
         "securityRules": [
+          {
+            "name": "allow-ingress-onprem-any",
+            "properties": {
+              "priority": 200,
+              "sourceAddressPrefixes": [
+                 "10.1.2.0/24",
+                 "10.1.4.0/24",
+                 "172.16.3.0/24",
+                 "172.16.2.0/24",
+                 "192.168.100.0/30",
+                 "10.1.19.0/24",
+                 "10.1.18.0/24"
+              ],
+              "protocol": "*",
+              "destinationPortRange": "*",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
           {
             "name": "default-allow-rdp",
             "properties": {
@@ -254,6 +330,40 @@
               "sourcePortRange": "*",
               "destinationAddressPrefix": "*"
             }
+          },
+          {
+            "name": "allow-egress-dc-any",
+            "properties": {
+              "priority": 102,
+              "sourceAddressPrefix": "[parameters('appServerSubnetAddresSpace')]",
+              "protocol": "*",
+              "destinationPortRange": "*",
+              "access": "Allow",
+              "direction": "Outbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "10.10.4.0/28"
+            }
+          },
+          {
+            "name": "allow-egress-onprem-any",
+            "properties": {
+              "priority": 200,
+              "sourceAddressPrefix": "[parameters('appServerSubnetAddresSpace')]",
+              "protocol": "*",
+              "destinationPortRange": "*",
+              "access": "Allow",
+              "direction": "Outbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefixes": [
+                "10.1.2.0/24",
+                "10.1.4.0/24",
+                "172.16.3.0/24",
+                "172.16.2.0/24",
+                "192.168.100.0/30",
+                "10.1.19.0/24",
+                "10.1.18.0/24"
+              ]
+            }
           }
         ]
       }
@@ -267,6 +377,27 @@
       "comments": "Network Security Group (NSG) for your DB server subnet",
       "properties": {
         "securityRules": [
+          {
+            "name": "allow-ingress-onprem-any",
+            "properties": {
+              "priority": 200,
+              "sourceAddressPrefixes": [
+                 "10.1.2.0/24",
+                 "10.1.4.0/24",
+                 "172.16.3.0/24",
+                 "172.16.2.0/24",
+                 "192.168.100.0/30",
+                 "10.1.19.0/24",
+                 "10.1.18.0/24"
+              ],
+              "protocol": "*",
+              "destinationPortRange": "*",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
           {
             "name": "default-allow-rdp",
             "properties": {
@@ -291,6 +422,40 @@
               "direction": "Inbound",
               "sourcePortRange": "*",
               "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "allow-egress-dc-any",
+            "properties": {
+              "priority": 102,
+              "sourceAddressPrefix": "[parameters('appServerSubnetAddresSpace')]",
+              "protocol": "*",
+              "destinationPortRange": "*",
+              "access": "Allow",
+              "direction": "Outbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "10.10.4.0/28"
+            }
+          },
+          {
+            "name": "allow-egress-onprem-any",
+            "properties": {
+              "priority": 200,
+              "sourceAddressPrefix": "[parameters('appServerSubnetAddresSpace')]",
+              "protocol": "*",
+              "destinationPortRange": "*",
+              "access": "Allow",
+              "direction": "Outbound",
+              "sourcePortRange": "*",
+              "destinationAddressPrefixes": [
+                "10.1.2.0/24",
+                "10.1.4.0/24",
+                "172.16.3.0/24",
+                "172.16.2.0/24",
+                "192.168.100.0/30",
+                "10.1.19.0/24",
+                "10.1.18.0/24"
+              ]
             }
           }
         ]
