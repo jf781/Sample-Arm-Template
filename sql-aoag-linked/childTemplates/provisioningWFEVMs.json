@@ -201,7 +201,7 @@
               "name": "dataDisks",
               "count": "[length(parameters('wfeServerDataDiskLayout'))]",
               "input": {
-                "name" : "[concat(parameters('vmbaseName'), copyIndex(1), '-data-disk-',parameters('wfeServerDataDiskLayout')[copyIndex('datadisks', 1)].lun)]",
+                "name" : "[concat(parameters('vmbaseName'), copyIndex(parameters('wfeVmIndexStart')), '-data-disk-',parameters('wfeServerDataDiskLayout')[copyIndex('datadisks', 1)].lun)]",
                 "createOption": "Empty",
                 "caching": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
                 "diskSizeGB": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
