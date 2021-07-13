@@ -201,11 +201,11 @@
               "name": "dataDisks",
               "count": "[length(parameters('wfeServerDataDiskLayout'))]",
               "input": {
-                "name" : "[concat(parameters('vmbaseName'), copyIndex(1),'-data-disk-',parameters('wfeServerDataDiskLayout')[copyindex('dataDisks', 1)].lun)]",
+                "name" : "[concat(parameters('vmbaseName'), copyIndex(1),'-data-disk-',parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
                 "createOption": "Empty",
-                "caching": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks', 1)].caching]",
-                "diskSizeGB": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks', 1)].diskSizeGB]",
-                "lun": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks', 1)].lun]",
+                "caching": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
+                "diskSizeGB": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
+                "lun": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].lun]",
                 "managedDisk": {
                   "storageAccountType": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks', 1)].diskSku]"
                 }
@@ -264,13 +264,13 @@
               "name": "dataDisks",
               "count": "[length(parameters('wfeServerDataDiskLayout'))]",
               "input": {
-                "name" : "[concat(parameters('vmbaseName'), '1-data-disk-',parameters('wfeServerDataDiskLayout')[copyindex('dataDisks', 1)].lun)]",
+                "name" : "[concat(parameters('vmbaseName'), copyIndex(1), '-data-disk-',parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
                 "createOption": "Empty",
-                "caching": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks', 1)].caching]",
-                "diskSizeGB": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks', 1)].diskSizeGB]",
-                "lun": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks', 1)].lun]",
+                "caching": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
+                "diskSizeGB": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
+                "lun": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].lun]",
                 "managedDisk": {
-                  "storageAccountType": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks', 1)].diskSku]"
+                  "storageAccountType": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].diskSku]"
                 }
               }
             }
