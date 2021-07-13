@@ -35,9 +35,9 @@
     "appServerImageSKU": {
       "type": "string"
     },
-    "appServerDataDiskLayout": {
-      "type": "array"
-    },
+    // "appServerDataDiskLayout": {
+    //   "type": "array"
+    // },
     "appBEAddressPoolID": {
       "type": "string"
     },
@@ -158,23 +158,23 @@
             "name": "[concat(parameters('vmbaseName'), copyIndex(1),'-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          },
-          "copy": [
-            {
-              "name": "dataDisks",
-              "count": "[length(parameters('appServerDataDiskLayout'))]",
-              "input": {
-                "name" : "[concat(parameters('vmbaseName'), '1-data-disk-',parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
-                "createOption": "Empty",
-                "caching": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
-                "diskSizeGB": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
-                "lun": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun]",
-                "managedDisk": {
-                  "storageAccountType": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].diskSku]"
-                }
-              }
-            }
-          ]
+          }
+          // "copy": [
+          //   {
+          //     "name": "dataDisks",
+          //     "count": "[length(parameters('appServerDataDiskLayout'))]",
+          //     "input": {
+          //       "name" : "[concat(parameters('vmbaseName'), '1-data-disk-',parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
+          //       "createOption": "Empty",
+          //       "caching": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
+          //       "diskSizeGB": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
+          //       "lun": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun]",
+          //       "managedDisk": {
+          //         "storageAccountType": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].diskSku]"
+          //       }
+          //     }
+          //   }
+          // ]
         },
         "networkProfile": {
           "networkInterfaces": [
@@ -221,23 +221,23 @@
             "name": "[concat(parameters('vmbaseName'), '1-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          },
-          "copy": [
-            {
-              "name": "dataDisks",
-              "count": "[length(parameters('appServerDataDiskLayout'))]",
-              "input": {
-                "name" : "[concat(parameters('vmbaseName'), '1-data-disk-',parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
-                "createOption": "Empty",
-                "caching": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
-                "diskSizeGB": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
-                "lun": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun]",
-                "managedDisk": {
-                  "storageAccountType": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].diskSku]"
-                }
-              }
-            }
-          ]
+          }
+          // "copy": [
+          //   {
+          //     "name": "dataDisks",
+          //     "count": "[length(parameters('appServerDataDiskLayout'))]",
+          //     "input": {
+          //       "name" : "[concat(parameters('vmbaseName'), '1-data-disk-',parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
+          //       "createOption": "Empty",
+          //       "caching": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
+          //       "diskSizeGB": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
+          //       "lun": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun]",
+          //       "managedDisk": {
+          //         "storageAccountType": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].diskSku]"
+          //       }
+          //     }
+          //   }
+          // ]
         },
         "networkProfile": {
           "networkInterfaces": [
