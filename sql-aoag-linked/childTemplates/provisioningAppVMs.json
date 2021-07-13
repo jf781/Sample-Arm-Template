@@ -164,13 +164,13 @@
               "name": "dataDisks",
               "count": "[length(parameters('appServerDataDiskLayout'))]",
               "input": {
-                "name" : "[concat(parameters('vmbaseName'), '1-data-disk-',parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
+                "name" : "[concat(parameters('vmbaseName'), copyIndex(1),'-data-disk-',parameters('appServerDataDiskLayout')[copyindex('dataDisks', 1)].lun)]",
                 "createOption": "Empty",
-                "caching": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
-                "diskSizeGB": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
-                "lun": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun]",
+                "caching": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks', 1)].caching]",
+                "diskSizeGB": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks', 1)].diskSizeGB]",
+                "lun": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks', 1)].lun]",
                 "managedDisk": {
-                  "storageAccountType": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].diskSku]"
+                  "storageAccountType": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks', 1)].diskSku]"
                 }
               }
             }
@@ -227,13 +227,13 @@
               "name": "dataDisks",
               "count": "[length(parameters('appServerDataDiskLayout'))]",
               "input": {
-                "name" : "[concat(parameters('vmbaseName'), '1-data-disk-',parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
+                "name" : "[concat(parameters('vmbaseName'), '1-data-disk-',parameters('appServerDataDiskLayout')[copyindex('dataDisks', 1)].lun)]",
                 "createOption": "Empty",
-                "caching": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
-                "diskSizeGB": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
-                "lun": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].lun]",
+                "caching": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks', 1)].caching]",
+                "diskSizeGB": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks', 1)].diskSizeGB]",
+                "lun": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks', 1)].lun]",
                 "managedDisk": {
-                  "storageAccountType": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks')].diskSku]"
+                  "storageAccountType": "[parameters('appServerDataDiskLayout')[copyindex('dataDisks', 1)].diskSku]"
                 }
               }
             }
