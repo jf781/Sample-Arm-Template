@@ -44,9 +44,9 @@
     "wfeServerImageSKU": {
       "type": "string"
     },
-    // "wfeServerDataDiskLayout": {
-    //   "type": "array"
-    // },
+    "wfeServerDataDiskLayout": {
+      "type": "array"
+    },
     "wfeBEAddressPoolID": {
       "type": "string"
     },
@@ -195,23 +195,23 @@
             "name": "[concat(parameters('vmbaseName'), copyIndex(parameters('wfeVmIndexStart')),'-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          }
-          // "copy": [
-          //   {
-          //     "name": "dataDisks",
-          //     "count": "[length(parameters('wfeServerDataDiskLayout'))]",
-          //     "input": {
-          //       "name" : "[concat(parameters('vmbaseName'), copyIndex(parameters('wfeVmIndexStart')),'-data-disk-',parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
-          //       "createOption": "Empty",
-          //       "caching": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
-          //       "diskSizeGB": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
-          //       "lun": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].lun]",
-          //       "managedDisk": {
-          //         "storageAccountType": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].diskSku]"
-          //       }
-          //     }
-          //   }
-          // ]
+          },
+          "copy": [
+            {
+              "name": "dataDisks",
+              "count": "[length(parameters('wfeServerDataDiskLayout'))]",
+              "input": {
+                "name" : "[concat(parameters('vmbaseName'), copyIndex(parameters('wfeVmIndexStart')),'-data-disk-',parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].lun)]",
+                "createOption": "Empty",
+                "caching": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
+                "diskSizeGB": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
+                "lun": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].lun]",
+                "managedDisk": {
+                  "storageAccountType": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].diskSku]"
+                }
+              }
+            }
+          ]
         },
         "networkProfile": {
           "networkInterfaces": [
@@ -258,23 +258,23 @@
             "name": "[concat(parameters('vmbaseName'), '1-os-disk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          }
-          // "copy": [
-          //   {
-          //     "name": "dataDisks",
-          //     "count": "[length(parameters('wfeServerDataDiskLayout'))]",
-          //     "input": {
-          //       "name" : "[concat(parameters('vmbaseName'), '1-data-disk-',parameters('wfeServerDataDiskLayout')[copyIndex('datadisks', 1)].lun)]",
-          //       "createOption": "Empty",
-          //       "caching": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
-          //       "diskSizeGB": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
-          //       "lun": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].lun]",
-          //       "managedDisk": {
-          //         "storageAccountType": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].diskSku]"
-          //       }
-          //     }
-          //   }
-          // ]
+          },
+          "copy": [
+            {
+              "name": "dataDisks",
+              "count": "[length(parameters('wfeServerDataDiskLayout'))]",
+              "input": {
+                "name" : "[concat(parameters('vmbaseName'), '1-data-disk-',parameters('wfeServerDataDiskLayout')[copyIndex('datadisks', 1)].lun)]",
+                "createOption": "Empty",
+                "caching": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
+                "diskSizeGB": "[parameters('wfeServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
+                "lun": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].lun]",
+                "managedDisk": {
+                  "storageAccountType": "[parameters('wfeServerDataDiskLayout')[copyindex('dataDisks')].diskSku]"
+                }
+              }
+            }
+          ]
         },
         "networkProfile": {
           "networkInterfaces": [
