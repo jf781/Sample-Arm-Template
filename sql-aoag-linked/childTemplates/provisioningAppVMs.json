@@ -164,7 +164,7 @@
               "name": "dataDisks",
               "count": "[length(parameters('appServerDataDiskLayout'))]",
               "input": {
-                "name" : "[concat(parameters('vmbaseName'), copyIndex('appServerMachineLoop', 1),'-data-disk-',parameters('appServerDataDiskLayout')[copyIndex('datadisks', 1)].lun)]",
+                "name" : "[concat(parameters('vmbaseName'), copyIndex('appServerMachineLoop', 1),'-data-disk-',parameters('appServerDataDiskLayout')[copyIndex('datadisks')].lun)]",
                 "createOption": "Empty",
                 "caching": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].caching]",
                 "diskSizeGB": "[parameters('appServerDataDiskLayout')[copyIndex('dataDisks')].diskSizeGB]",
