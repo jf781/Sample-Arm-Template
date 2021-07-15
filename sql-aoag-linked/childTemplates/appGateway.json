@@ -85,13 +85,13 @@
     }
   },
   "variables": {
-    "publicIpAddressName": "[concat(parameters('appGatewayName'), parameters('appGwIndexStart'), '-pip')]",
+    "publicIpAddressName": "[concat(parameters('appName'), '-agw0', parameters('appGwIndexStart'), '-pip0', parameters('appGwIndexStart'))]",
     "publicIpAddressSku": "Standard",
     "publicIpAddressAllocationType": "Static",
     "publicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIpAddressName'))]",
     "appGatewaySkuSize": "WAF_v2",
     "appGatewayTier": "WAF_v2",
-    "appGatewayIndexedName": "[concat(parameters('appGatewayName'), parameters('appGwIndexStart'))]",
+    "appGatewayIndexedName": "[concat('sns-a1-core-hub-', parameters('appName'), '-agw0', parameters('appGwIndexStart'))]",
     "appGwIpConfigName": "[concat(parameters('appName'), 'IpConfigName')]",
     "appGwFrontendPortNameHttp": "[concat(parameters('appName'), 'FrontendPort')]",
     "appGwFrontendPortNameHttps": "[concat(parameters('appName'), 'FrontendPortHttps')]",
