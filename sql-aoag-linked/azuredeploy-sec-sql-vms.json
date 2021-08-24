@@ -1,0 +1,248 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Primary location to deploy the resources."
+      }
+    },
+    "appName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the application to deploy"
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the storage account used for diagnostics and Cloud Share witness for SQL"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the virtual network."
+      }
+    },
+    "virtualNetworkResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "The the name of the resource group that contains the vnets"
+      }
+    },
+    "sqlServerSubnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of database servers subnet."
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Administrator of the new VMs and Domain"
+      }
+    },
+    "vmSecretName": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The name of the secret for the admin credentials."
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the KeyVault that contains SSL certificate"
+      }
+    },
+    "keyVaultResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "The the name of the resource group that contains the key vault"
+      }
+    },
+    "sqlServerVMCount": {
+      "type": "int",
+      "metadata": {
+        "description": "The number of SQL servers to deploy"
+      }
+    },
+    "sqlVMSize": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_DS1",
+        "Standard_DS2",
+        "Standard_DS3",
+        "Standard_DS4",
+        "Standard_DS11",
+        "Standard_DS12",
+        "Standard_DS13",
+        "Standard_DS14",
+        "Standard_DS1_v2",
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2",
+        "Standard_DS5_v2",
+        "Standard_DS11_v2",
+        "Standard_DS12_v2",
+        "Standard_DS13_v2",
+        "Standard_DS14_v2",
+        "Standard_DS15_v2",
+        "Standard_GS1",
+        "Standard_GS2",
+        "Standard_GS3",
+        "Standard_GS4",
+        "Standard_GS4",
+        "Standard_GS5"
+      ],
+      "metadata": {
+        "description": "The size of the SQL VMs Created"
+      },
+      "defaultValue": "Standard_DS4"
+    },
+    "sqlServerDataDiskLayout": {
+      "type": "array",
+      "metadata": {
+        "description": "An object that defines the data disk layout of the SQL servers"
+      }
+    },
+    "sqlServerVersion": {
+      "type": "string",
+      "allowedValues": [
+        "SQL2012SP3-WS2012R2",
+        "SQL2014SP1-WS2012R2",
+        "SQL2016-WS2012R2",
+        "sql2019-ws2019"
+      ],
+      "metadata": {
+        "description": "The Sql Server Version"
+      },
+      "defaultValue": "SQL2014SP1-WS2012R2"
+    },
+    "templatesBaseUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "Linked Templates base url"
+      }
+    },
+    "resourceTags": {
+      "type": "object",
+      "metadata": {
+        "description": "Tags applied to resource created within this template."
+      }
+    }
+  },
+  "variables": {
+    "sqlSubnetRef": "[resourceId(parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets/', parameters('virtualNetworkName'),parameters('sqlServerSubnetName'))]",
+    "keyVaultResourceId": "[resourceId(parameters('keyVaultResourceGroupName'),'Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
+    "vmSettings": {
+      "vmBaseNames": {
+        "sqlVMName": "[concat(take(parameters('appName'), 3), if(equals(parameters('location'), 'Central US'), 'a1', 'a2'), 'uatsqlvm0')]"
+      },
+      "availabilitySets": {
+        "sqlAvailabilitySetName": "[concat(parameters('appName'), '-sqlAvailabilitySet')]"
+      },
+      "windowsImagePublisher": "MicrosoftWindowsServer",
+      "windowsImageOffer": "WindowsServer",
+      "windowsImageSKU": "2019-Datacenter",
+      "sqlImagePublisher": "MicrosoftSQLServer",
+      "sqlImageOffer": "[parameters('sqlServerVersion')]"
+    },
+    "SQL2012SP2-WS2012R2": "Enterprise",
+    "SQL2012SP3-WS2012R2": "Enterprise",
+    "SQL2014-WS2012R2": "Enterprise",
+    "SQL2014SP1-WS2012R2": "Enterprise",
+    "SQL2016-WS2012R2": "Enterprise",
+    "sql2019-ws2019": "Enterprise",
+    "sql2016sp2-ws2019": "Enterprise",
+    "lbSettings": {
+      "sqlLBFE": "[concat(parameters('appName'), '-sqlLBFE')]",
+      "sqlLBBE": "[concat(parameters('appName'), '-sqlLBBE')]",
+      "sqlLBName": "[concat(parameters('appName'), '-sqlLoadBalancer')]"
+    },
+    "sqlLBProbe": "SQLAlwaysOnEndPointProbe",
+    "ids": {
+      "sqlLBID": "[resourceId(parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/loadBalancers',variables('lbSettings').sqlLBName)]"
+    },
+    "derivedIds": {
+      "sqlBEAddressPoolID": "[concat(variables('ids').sqlLBID,'/backendAddressPools/',variables('lbSettings').sqlLBBE)]",
+      "sqlLBFEConfigID": "[concat(variables('ids').sqlLBID,'/frontendIPConfigurations/',variables('lbSettings').sqlLBFE)]",
+      "sqlLBProbeID": "[concat(variables('ids').sqlLBID,'/probes/',variables('sqlLBProbe'))]"
+    },
+    "configuration": {
+      "provisioningDBVMsUrl": "[concat(parameters('templatesBaseUrl'),'/provisioningDBVMs.json')]"
+    }
+  },
+  "resources": [
+    {
+      "name": "DatabaseVMs",
+      "condition": "[greater(parameters('sqlServerVMCount'), 0)]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').provisioningDBVMsUrl]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "sqlAvailabilitySetName": {
+            "value": "[variables('vmSettings').availabilitySets.sqlAvailabilitySetName]"
+          },
+          "sqlBEAddressPoolID": {
+            "value": "[variables('derivedIds').sqlBEAddressPoolID]"
+          },
+          "sqlSubnetRef": {
+            "value": "[variables('sqlSubnetRef')]"
+          },
+          "vmBaseName": {
+            "value": "[variables('vmSettings').vmBaseNames.sqlVMName]"
+          },
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword" :{
+            "reference": {
+              "keyVault": {
+                "id": "[variables('keyVaultResourceId')]"
+              },
+              "secretName": "[parameters('vmSecretName')]"
+            }
+          },
+          "sqlVMSize": {
+            "value": "[parameters('sqlVMSize')]"
+          },
+          "sqlServerDataDiskLayout": {
+            "value": "[parameters('sqlServerDataDiskLayout')]"
+          },
+          "sqlServerVMCount": {
+            "value": "[parameters('sqlServerVMCount')]"
+          },
+          "sqlImagePublisher": {
+            "value": "[variables('vmSettings').sqlImagePublisher]"
+          },
+          "sqlImageOffer": {
+            "value": "[variables('vmSettings').sqlImageOffer]"
+          },
+          "sqlImageSKU": {
+            "value": "[variables(parameters('sqlServerVersion'))]"
+          },
+          "tags": {
+            "value": "[parameters('resourceTags')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+  }
+}
